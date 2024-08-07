@@ -1,47 +1,41 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
-</script>
-
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <div id="app">
+    <nav>
+      <router-link to="/">Home</router-link>
+      <br>
+      <router-link to="/register">Register</router-link>
+    </nav>
+    <Header /> <!-- Header wird hier eingebunden -->
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
+    <router-view></router-view> <!-- Hier werden die Routeninhalte dargestellt -->
 
-  <main>
-    <TheWelcome />
-  </main>
+    <Footer /> <!-- Footer wird hier eingebunden -->
+  </div>
 </template>
 
-<style scoped>
-header {
-  line-height: 1.5;
+<script setup>
+import Header from './components/Header.vue'; // Importiere den Header
+import Footer from './components/Footer.vue'; // Importiere den Footer
+
+
+
+</script>
+
+<style>
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+#app {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+main {
+  flex: 1;
 }
 </style>
