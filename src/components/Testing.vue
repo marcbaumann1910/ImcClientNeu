@@ -24,6 +24,43 @@
     <br>
     <button @click="register">Register</button>
 
+    <br>
+    <br>
+    <input
+        type="test"
+        placeholder="vorname"
+        v-model="vorname"
+    />
+    <br>
+    <br>
+    <input
+        type="test"
+        placeholder="nachname"
+        v-model="nachname"
+    />
+
+    <br>
+    <br>
+
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Vorname</th>
+        <th>Nachname</th>
+        <th>Verein</th>
+        <th>Email</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="user in usersList" :key="user.Vorname">
+        <td>{{ user.Vorname }}</td>
+        <td>{{ user.Nachname }}</td>
+        <td>{{ user.Verein }}</td>
+      </tr>
+      </tbody>
+    </table>
+
   </div>
 </template>
 
@@ -35,19 +72,49 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 const email = ref('');
 const password = ref('');
 const id = ref('');
+const vorname = ref('');
+const nachname = ref('');
+const usersList = ref([]); // Array zum Speichern der Benutzerliste
+
 
 async function register() {
   try {
     const response = await AuthenticationService.testing({
       id: id.value
     });
-    console.log('response', response.data);
+    const users = response.data[0];
+    usersList.value = response.data[0];
+    console.log('users', users[0].Vorname);
+    console.log('response', response);
     console.log(email.value, password.value);
+    vorname.value = users.Vorname;
+    nachname.value = users.Verein;
+
+    if (Array.isArray(users)) {
+      // Beispiel: Greife auf das erste Element zu
+      console.log('Vorname des ersten Benutzers:', users[0].Vorname);
+
+      // Setze die Werte für das erste Benutzerobjekt
+      email.value = users[0].Vorname;
+      password.value = users[0].Verein;
+
+      // Falls du die Daten in einer Liste darstellen möchtest:
+      // Benutzerliste durchlaufen und etwas tun
+      users.forEach(user => {
+        console.log('Verein:', user.Verein);
+        console.log('Vorname:', user.Vorname);
+        console.log('Nachname:', user.Nachname);
+      });
+
+    } else {
+      console.log('response.data ist kein Array');
+    }
+
+
 
   }catch (err) {
     console.log(err);
   }
-
 }
 
 </script>
