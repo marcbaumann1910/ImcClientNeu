@@ -4,6 +4,8 @@
       <router-link to="/">Home</router-link>
       <br>
       <router-link to="/register">Register</router-link>
+      <br>
+      <router-link to="/testing">Testing</router-link>
     </nav>
     <Header /> <!-- Header wird hier eingebunden -->
 
@@ -16,8 +18,6 @@
 <script setup>
 import Header from './components/Header.vue'; // Importiere den Header
 import Footer from './components/Footer.vue'; // Importiere den Footer
-
-
 
 </script>
 

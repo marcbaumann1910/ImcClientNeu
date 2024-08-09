@@ -1,6 +1,6 @@
 <template>
   <div class="register">
-    <h1>Register</h1>
+    <h1>Testing</h1>
     <input
         type="email"
         placeholder="Email"
@@ -38,7 +38,7 @@ const id = ref('');
 
 async function register() {
   try {
-    const response = await AuthenticationService.register({
+    const response = await AuthenticationService.testing({
       id: id.value
     });
     console.log('response', response.data);
