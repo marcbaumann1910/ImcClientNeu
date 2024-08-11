@@ -83,12 +83,15 @@ async function register() {
       id: id.value
     });
     const users = response.data[0];
-    usersList.value = response.data[0];
+    console.log('users_: ', users)
+    //usersList.value = response.data[0];
+    //Gibt die Daten an userList und dies wird in der Tabelle verarbeitet!
+    usersList.value = users;
     console.log('users', users[0].Vorname);
     console.log('response', response);
     console.log(email.value, password.value);
-    vorname.value = users.Vorname;
-    nachname.value = users.Verein;
+    vorname.value = users[0].Vorname;
+    nachname.value = users[0].Verein;
 
     if (Array.isArray(users)) {
       // Beispiel: Greife auf das erste Element zu
