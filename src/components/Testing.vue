@@ -53,7 +53,8 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="user in usersList" :key="user.Vorname">
+      <tr v-for="user in usersList" :key="user.IDBenutzer">
+        <td>{{ user.IDBenutzer }}</td>
         <td>{{ user.Vorname }}</td>
         <td>{{ user.Nachname }}</td>
         <td>{{ user.Verein }}</td>
@@ -82,16 +83,22 @@ async function register() {
     const response = await AuthenticationService.testing({
       id: id.value
     });
-    const users = response.data[0];
+    const users = response.data;
     console.log('users_: ', users)
-    //usersList.value = response.data[0];
     //Gibt die Daten an userList und dies wird in der Tabelle verarbeitet!
-    usersList.value = users;
-    console.log('users', users[0].Vorname);
+    usersList.value = response.data;
+    console.log('users_Vorname:', users[0].Vorname);
+    console.log('IDBenutzer:', users[0].IDBenutzer)
     console.log('response', response);
     console.log(email.value, password.value);
-    vorname.value = users[0].Vorname;
-    nachname.value = users[0].Verein;
+    vorname.value = users.Vorname;
+    nachname.value = users.Verein;
+
+    users.forEach(user => {
+      console.log('Verein_forEach:', user.Verein);
+      console.log('Vorname_forEach:', user.Vorname);
+      console.log('Nachname_forEach:', user.Nachname);
+    });
 
     if (Array.isArray(users)) {
       // Beispiel: Greife auf das erste Element zu
@@ -108,6 +115,7 @@ async function register() {
         console.log('Vorname:', user.Vorname);
         console.log('Nachname:', user.Nachname);
       });
+
 
     } else {
       console.log('response.data ist kein Array');
