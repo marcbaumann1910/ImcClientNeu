@@ -93,6 +93,7 @@ async function register() {
     console.log(email.value, password.value);
     vorname.value = users.Vorname;
     nachname.value = users.Verein;
+    console.log('test');
 
     users.forEach(user => {
       console.log('Verein_forEach:', user.Verein);
