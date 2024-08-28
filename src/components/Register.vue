@@ -62,8 +62,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import {watch, onMounted} from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import AuthenticationService from "@/services/AuthenticationService.js";
 
 const verein = ref('');
@@ -81,6 +80,20 @@ async function register() {
   {
     console.log('Verein is missing');
     errorMessage.value = 'Verein is missing';
+    return;
+  }
+
+  if(vorname.value.length === 0)
+  {
+    console.log('Vorname is missing');
+    errorMessage.value = 'Vorname is missing';
+    return;
+  }
+
+  if(nachname.value.length === 0)
+  {
+    console.log('Nachname is missing');
+    errorMessage.value = 'Nachname is missing';
     return;
   }
 
@@ -132,6 +145,12 @@ async function autofill() {
   password.value = '123456';
   passwordConfirmation.value = '123456';
 }
+
+watch(vorname, (newVal, oldVal) => {
+  console.log(newVal);
+})
+
+//onMounted();
 
 </script>
 
