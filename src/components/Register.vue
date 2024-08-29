@@ -132,8 +132,20 @@ async function register() {
     console.log('Neue ID: ', response.data.insertId)
 
   }catch (err) {
-    console.log(err);
-  }
+    //console.log('CatchBlock in Register.vue', err); //Gibt das komplette Error-Objekt zurück
+    console.log('err.response.data: ', err.response.data);
+    //Field kommt vom Backend und wird von mir erzeugt und zurückgegeben
+    //Auf die Bezeichnung des Feldes kann somit zugegriffen werden, bei Bedarf
+    console.log('err.response.data.field: ', err.response.data.field);
+      if(err.response)
+      {
+        console.log(err.response.data.error);
+        errorMessage.value = err.response.data.error;
+      }
+      else {
+        console.log('Ein unbekannter Fehler ist aufgetreten', err.message)
+      }
+    }
 
 }
 
@@ -142,8 +154,8 @@ async function autofill() {
   nachname.value = 'Baumann';
   verein.value = 'Willstätter Hexen 1958 e.V.';
   email.value = 'info@marc79.de';
-  password.value = '123456';
-  passwordConfirmation.value = '123456';
+  password.value = 'Hallo-2024!';
+  passwordConfirmation.value = 'Hallo-2024!';
 }
 
 watch(vorname, (newVal, oldVal) => {
