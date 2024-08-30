@@ -1,64 +1,70 @@
 <template>
+  <v-container>
   <div class="register">
     <h1>Register</h1>
-    <input
+<!--    <v-row class="d-flex justify-center">-->
+    <v-text-field
         type="text"
-        placeholder="Verein"
         v-model="verein"
-    />
-    <br>
-    <br>
-    <input
-        type="text"
-        placeholder="Vorname"
+        label="Verein"
+        outlined
+        class="mx-2"
+        style="max-width: 300px;"
+    ></v-text-field>
+
+    <v-text-field
         v-model="vorname"
-    />
-    <br>
-    <br>
-    <input
-        type="text"
-        placeholder="Nachname"
-        v-model="nachname"
-    />
-    <br>
-    <br>
-    <input
-        type="email"
-        placeholder="Email"
+        label="Vorname"
+        outlined
+        class="mx-2"
+        style="max-width: 300px;"
+    ></v-text-field>
+
+    <v-text-field
         v-model="email"
-    />
-    <br>
-    <br>
-    <input
-        type="password"
-        placeholder="Passwort"
+        type="email"
+        label="Email"
+        outlined
+        class="mx-2"
+        style="max-width: 300px;"
+    ></v-text-field>
+
+    <v-text-field
         v-model="password"
-    />
-    <br>
-    <br>
-    <input
-      type="password"
-      placeholder="Password confirmation"
-      v-model="passwordConfirmation"
-    />
-    <br>
-    <br>
-    <input
-        type="text"
-        placeholder="ID-Benutzer"
+        type="password"
+        label="Passwort"
+        outlined
+        class="mx-2"
+        style="max-width: 300px;"
+    ></v-text-field>
+    <v-text-field
+        v-model="passwordConfirmation"
+        type="password"
+        label="Password wiederholen"
+        outlined
+        class="mx-2"
+        style="max-width: 300px;"
+
+    ></v-text-field>
+<!--    </v-row>-->
+    <v-text-field
+        label="ID-Benutzer"
         v-model="id"
-    />
+        outlined
+        class="mx-2"
+        style="max-width: 300px;"
+    ></v-text-field>
+    <v-btn @click="register" color="primary">Register</v-btn>
     <br>
     <br>
-    <button @click="register">Register</button>
-    <br>
-    <button @click="autofill">AutoFill</button>
+    <v-btn @click="autofill" color="primary">Autofill</v-btn>
     <br>
     <a >
-      {{ errorMessage }}
+      {{ errorMessageAusgabe }}
     </a>
 
   </div>
+  </v-container>
 </template>
 
 <script setup>
@@ -72,52 +78,53 @@ const email = ref('');
 const password = ref('');
 const passwordConfirmation = ref('');
 const id = ref('');
-const errorMessage = ref('');
+const errorMessageAusgabe = ref('');
+
 
 async function register() {
 
   if(verein.value.length === 0)
   {
     console.log('Verein is missing');
-    errorMessage.value = 'Verein is missing';
+    errorMessageAusgabe.value = 'Verein is missing';
     return;
   }
 
   if(vorname.value.length === 0)
   {
     console.log('Vorname is missing');
-    errorMessage.value = 'Vorname is missing';
+    errorMessageAusgabe.value = 'Vorname is missing';
     return;
   }
 
   if(nachname.value.length === 0)
   {
     console.log('Nachname is missing');
-    errorMessage.value = 'Nachname is missing';
+    errorMessageAusgabe.value = 'Nachname is missing';
     return;
   }
 
   if(email.value.length === 0)
   {
     console.log('Email is missing');
-    errorMessage.value = 'Email is missing';
+    errorMessageAusgabe.value = 'Email is missing';
     return;
   }
 
   if(password.value.length === 0 || passwordConfirmation.value.length === 0)
   {
     console.log('password or passwort Confirmation is empty');
-    errorMessage.value = ref('password or passwort Confirmation is empty')
+    errorMessageAusgabe.value = ref('password or passwort Confirmation is empty')
     return;
   }
   if(password.value !== passwordConfirmation.value)
   {
     console.log('password Confirmation is not correct');
-    errorMessage.value = 'password Confirmation is not correct';
+    errorMessageAusgabe.value = 'password Confirmation is not correct';
     return;
   }
 
-  errorMessage.value = ref('');
+  errorMessageAusgabe.value = ref('');
 
   try {
     const response = await AuthenticationService.register({
@@ -140,7 +147,8 @@ async function register() {
       if(err.response)
       {
         console.log(err.response.data.error);
-        errorMessage.value = err.response.data.error;
+        errorMessageAusgabe.value = err.response.data.error;
+
       }
       else {
         console.log('Ein unbekannter Fehler ist aufgetreten', err.message)
@@ -167,6 +175,7 @@ watch(vorname, (newVal, oldVal) => {
 </script>
 
 <style scoped>
+
 /* Stile für die Register-Komponente */
 input {
   margin-left: 10px;
@@ -182,4 +191,6 @@ a {
   color: red;
 
 }
+
+
 </style>
