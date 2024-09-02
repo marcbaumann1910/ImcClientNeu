@@ -137,6 +137,7 @@ async function register() {
     console.log('response', response.data);
     console.log(email.value, password.value);
     console.log('Neue ID: ', response.data.insertId)
+    errorMessageAusgabe.value = 'NeueID: ' +  response.data.insertId;
 
   }catch (err) {
     //console.log('CatchBlock in Register.vue', err); //Gibt das komplette Error-Objekt zurück
