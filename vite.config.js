@@ -1,19 +1,29 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from 'node:url';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import dotenv from 'dotenv';
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+export default defineConfig(({ mode }) => {
+  // Lade die entsprechende .env-Datei basierend auf dem Modus (development/production)
+  dotenv.config({
+    path: mode === 'production' ? '.env.production' : '.env',
+  });
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  server: {
-    port: 4000
-  },
-  plugins: [
-    vue(),
-  ],
-  resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
-})
+  return {
+    server: {
+      port: 4000,
+    },
+    plugins: [
+      vue(),
+    ],
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
+      },
+    },
+    define: {
+      // Leitet die Umgebungsvariable in den Client-Code weiter
+      'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL),
+    },
+  };
+});
