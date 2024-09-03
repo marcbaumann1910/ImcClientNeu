@@ -16,9 +16,9 @@ z.B. /var/www/backend/client gewechselt werden und npm install ausgeführt werde
 Pakete in der Entwicklung hinzugefügt werden und im Anschluss auf den Produktionsserver hochgeladen wurde.
 Auch müssen regelmäßig updates der npm Pakete druchgeführt werden
 
-
-
 !!!Funktionierende apache config inkl. Weiterleitung an das Backend!!!!!
+DOMAIN:
+### mbdevelop.de ###
 
 <VirtualHost *:443>
     ServerName mbdevelop.de
