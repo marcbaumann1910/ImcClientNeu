@@ -1,7 +1,24 @@
 client Statistik Server
 http://localhost:33345
 
-!!!Funktionierende apache config inkl. Weiterleitung an das Backende!!!!!
+Wichtige Befehle Frontend:
+$ npm run dev (starten  der Anwendung im Entwicklungsmodus)
+$ npm run build (bauen des Frontends für das Produktionssystem, liegt im /dist Ordner)
+$ rsync -avz ~/Documents/InventoryManagementSystem/client/ root@x.x.x.x:/var/www/frontend (das build auf den Produktionsserver hochladen)
+
+Wichtige Befehle für das Backend:
+$ npx nodemon ./src/app.js (starten des Backend im Entwicklermodus)
+$ sudo lsof -i :3000 (prüfen was auf Port 3000 läuft, wenn Backend nicht startet)
+$ sudo kill -9 XXXXX (den Prozess beenden, der auf 3000 läuft, XXXXXX durch die ProzessID ersetzen)
+$ rsync -avz ~/Documents/InventoryManagementSystem/server root@x.x.x.x:/var/www/backend (Upload des Backend auf das Produktionssystem)
+(wird das Backend zum erstmal hochgeladen, muss auf dem vServer (Produktionssystem) im entsprechenden Ordner
+z.B. /var/www/backend/client gewechselt werden und npm install ausgeführt werden. Dies muss auch dann getan werden, sollten neue
+Pakete in der Entwicklung hinzugefügt werden und im Anschluss auf den Produktionsserver hochgeladen wurde.
+Auch müssen regelmäßig updates der npm Pakete druchgeführt werden
+
+
+
+!!!Funktionierende apache config inkl. Weiterleitung an das Backend!!!!!
 
 <VirtualHost *:443>
     ServerName mbdevelop.de
