@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default axios.create({
+const api = axios.create({
     //baseURL: 'http://localhost:3000/', // Basis-URL des Backend-Servers
     baseURL: 'https://mbdevelop.de/api/',
     headers: {
@@ -8,3 +8,7 @@ export default axios.create({
     },
 
 });
+
+console.log('API Base URL:', api.defaults.baseURL);
+
+export default api;

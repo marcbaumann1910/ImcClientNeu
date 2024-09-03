@@ -1,0 +1,65 @@
+client Statistik Server
+http://localhost:33345
+
+!!!Funktionierende apache config inkl. Weiterleitung an das Backende!!!!!
+
+<VirtualHost *:443>
+    ServerName mbdevelop.de
+    DocumentRoot /var/www/html/mbdevelop
+
+    SSLEngine on
+    SSLCertificateFile /etc/letsencrypt/live/mbdevelop.de/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/mbdevelop.de/privkey.pem
+
+    # WebSocket Support für Vite HMR
+    RewriteEngine On
+    RewriteCond %{HTTP:Upgrade} =websocket [NC]
+    RewriteCond %{HTTP:Connection} upgrade [NC]
+    RewriteRule /ws/(.*) ws://localhost:4000/$1 [P,L]
+
+    # Backend für API-Anfragen
+    ProxyPreserveHost On
+    ProxyPass /api http://localhost:3000
+    ProxyPassReverse /api http://localhost:3000
+
+    # Frontend
+    ProxyPass / http://localhost:4000/
+    ProxyPassReverse / http://localhost:4000/
+
+    # Weiterleitung von HTTP zu HTTPS, aber nicht für Let's Encrypt
+    # RewriteEngine On
+    # RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
+    # RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R=301,L]
+
+    # Zusätzliche Sicherheitsoptionen
+    <IfModule mod_headers.c>
+        Header always set Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
+    </IfModule>
+
+    ErrorLog ${APACHE_LOG_DIR}/mbdevelop_error.log
+    CustomLog ${APACHE_LOG_DIR}/mbdevelop_access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName mbdevelop.de
+    ServerAlias www.mbdevelop.de
+
+    DocumentRoot /var/www/html
+
+    # Erlaube die Nutzung von .well-known für Let's Encrypt
+    Alias /.well-known/acme-challenge/ /var/www/html/.well-known/acme-challenge/
+    <Directory "/var/www/html/.well-known/acme-challenge/">
+        Options None
+        AllowOverride None
+        ForceType text/plain
+        Require all granted
+    </Directory>
+
+    # HTTP zu HTTPS umleiten, außer .well-known/acme-challenge
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/
+    RewriteRule ^(.*)$ https://mbdevelop.de$1 [R=301,L]
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>

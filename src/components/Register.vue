@@ -80,7 +80,6 @@ const passwordConfirmation = ref('');
 const id = ref('');
 const errorMessageAusgabe = ref('');
 
-
 async function register() {
 
   if(verein.value.length === 0)
@@ -137,7 +136,15 @@ async function register() {
     console.log('response', response.data);
     console.log(email.value, password.value);
     console.log('Neue ID: ', response.data.insertId)
-    errorMessageAusgabe.value = 'NeueID: ' +  response.data.insertId;
+    console.log(response.data.insertId);
+    if(!response.data.insertId)
+    {
+      errorMessageAusgabe.value = 'Keine neue ID generiert!';
+    }
+    else {
+      errorMessageAusgabe.value = 'NeueID: ' +  response.data.insertId;
+    }
+
 
   }catch (err) {
     //console.log('CatchBlock in Register.vue', err); //Gibt das komplette Error-Objekt zurück
@@ -192,6 +199,4 @@ a {
   color: red;
 
 }
-
-
 </style>
