@@ -1,24 +1,21 @@
 <template>
-  <div id="app">
-    <nav>
-      <router-link to="/">Home</router-link>
-      <br>
-      <router-link to="/register">Register</router-link>
-      <br>
-      <router-link to="/testing">Testing</router-link>
-    </nav>
-    <Header /> <!-- Header wird hier eingebunden -->
+  <v-app> <!-- Dies ist der Hauptcontainer von Vuetify -->
+    <!-- AppBar wird immer oben angezeigt -->
+    <AppBar />
 
-    <router-view></router-view> <!-- Hier werden die Routeninhalte dargestellt -->
+    <!-- Hauptinhalt der Seite (wird durch die Route geändert) -->
+    <v-main>
+      <router-view></router-view> <!-- Hier werden die Routeninhalte dargestellt -->
+    </v-main>
 
-    <Footer /> <!-- Footer wird hier eingebunden -->
-  </div>
+    <!-- Footer wird immer unten angezeigt -->
+    <Footer />
+  </v-app>
 </template>
 
 <script setup>
-import Header from './components/Header.vue'; // Importiere den Header
+import AppBar from './components/AppBar.vue';
 import Footer from './components/Footer.vue'; // Importiere den Footer
-
 </script>
 
 <style>

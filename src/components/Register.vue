@@ -4,10 +4,10 @@
       <v-col cols="12" sm="8" md="6" lg="4">
     <v-card class="pa-4">
       <v-toolbar flat dark style="background: linear-gradient(to right, #B71C1C, #D32F2F); color: white; font-weight: bold;">
-<!--      <v-btn icon>-->
-<!--        <v-icon>mdi-arrow-left</v-icon>-->
-<!--      </v-btn>-->
-      <v-card-title class="text-h6 font-weight-regular"> Registrieren </v-card-title>
+      <v-btn icon v-if="showCheckIcon">
+        <v-icon>mdi-check-bold</v-icon>
+      </v-btn>
+      <v-card-title class="text-h6 font-weight-regular"> {{titelForm}} </v-card-title>
       <v-spacer></v-spacer>
 <!--      <v-btn icon>-->
 <!--        <v-icon>mdi-magnify</v-icon>-->
@@ -77,40 +77,58 @@
         </template>
       </v-text-field>
 
-      <v-textarea
-          v-model="bio"
-          color="deep-purple"
-          label="Bio"
-          rows="1"
-          variant="filled"
-          auto-grow
-      ></v-textarea>
-      <v-checkbox
-          v-model="agreement"
-          :rules="rules.required"
-          color="deep-purple"
-      >
-        <template v-slot:label>
-          I agree to the&nbsp;
-          <a href="#" @click.stop.prevent="dialog = true">Terms of Service</a>
-          &nbsp;and&nbsp;
-          <a href="#" @click.stop.prevent="dialog = true">Privacy Policy</a>*
-        </template>
-      </v-checkbox>
+<!--      <v-textarea-->
+<!--          v-model="bio"-->
+<!--          color="deep-purple"-->
+<!--          label="Bio"-->
+<!--          rows="1"-->
+<!--          variant="filled"-->
+<!--          auto-grow-->
+<!--      ></v-textarea>-->
+<!--      <v-checkbox-->
+<!--          v-model="agreement"-->
+<!--          :rules="rules.required"-->
+<!--          color="deep-purple"-->
+<!--      >-->
+<!--        <template v-slot:label>-->
+<!--          I agree to the&nbsp;-->
+<!--          <a href="#" @click.stop.prevent="dialog = true">Terms of Service</a>-->
+<!--          &nbsp;and&nbsp;-->
+<!--          <a href="#" @click.stop.prevent="dialog = true">Privacy Policy</a>*-->
+<!--        </template>-->
+<!--      </v-checkbox>-->
     </v-form>
     <v-divider></v-divider>
     <v-card-actions>
-      <v-btn variant="text" @click="form.reset()"> zurücksetzen </v-btn>
+      <v-row justify="space-between" class="pa-1">
+      <v-col cols="12" sm="4">
+        <v-btn
+            block
+            variant="text"
+            style="background-color: #D32F2F; color: #FFEBEE; font-weight: bold;"
+            @click="form.reset()"
+            > zurücksetzen </v-btn>
+      </v-col>
+      <v-col cols="12" sm="4">
+        <v-btn
+            block
+            variant="text"
+            @click="autofill()"
+            style="background-color: #004D40; color:white; font-weight: bold;"
+        > Autofill </v-btn>
+      </v-col>
+      <v-col cols="12" sm="4">
+        <v-btn
+            block
+            :loading="isLoading"
+            style="background-color: #2E7D32; color: #FFEBEE; font-weight: bold;"
+            @click="register"
+        >
+          Registrieren
+        </v-btn>
+      </v-col>
       <v-spacer></v-spacer>
-      <v-btn variant="text" @click="autofill()"> Autofill </v-btn>
-      <v-spacer></v-spacer>
-      <v-btn
-          :loading="isLoading"
-          color="deep-purple-accent-4"
-          @click="register"
-      >
-        Registrieren
-      </v-btn>
+      </v-row>
     </v-card-actions>
     <v-dialog v-model="dialog" max-width="400" persistent>
       <v-card>
@@ -168,11 +186,21 @@ import { ref, watch, onMounted } from 'vue';
 import AuthenticationService from "@/services/AuthenticationService.js";
 
 const agreement = ref(false);
-const bio = ref('Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts');
+//const bio = ref('Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts');
 const dialog = ref(false);
 const isLoading = ref(false);
 const phone = ref(undefined);
 const emailExistsDialog = ref(false);
+const showCheckIcon = ref(false);
+const titelForm = ref('Registrieren');
+const verein = ref('');
+const vorname = ref('');
+const nachname = ref('');
+const email = ref('');
+const password = ref('');
+const passwordConfirmation = ref('');
+const id = ref('');
+const errorMessageAusgabe = ref('');
 
 // Rules as a reactive object
 const rules = {
@@ -193,20 +221,6 @@ const rules = {
     (v) => v === password.value || 'Passwörter stimmen nicht überein',
   ],
 };
-
-
-
-
-
-const verein = ref('');
-const vorname = ref('');
-const nachname = ref('');
-const email = ref('');
-const password = ref('');
-const passwordConfirmation = ref('');
-const id = ref('');
-const errorMessageAusgabe = ref('');
-
 
 async function register() {
   isLoading.value = true;
@@ -285,6 +299,8 @@ async function register() {
     }
     else {
       errorMessageAusgabe.value = 'NeueID: ' +  response.data.insertId;
+      showCheckIcon.value = true;
+      titelForm.value = 'Registrierung war erfolgreich! ID = ' + response.data.insertId;
     }
     isLoading.value = false;
 
@@ -315,6 +331,8 @@ async function autofill() {
   email.value = 'info@marc79.de';
   password.value = 'Hallo-2024!';
   passwordConfirmation.value = 'Hallo-2024!';
+  showCheckIcon.value = false;
+  titelForm.value = 'Registrieren';
 }
 
 watch(vorname, (newVal, oldVal) => {

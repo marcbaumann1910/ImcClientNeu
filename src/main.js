@@ -12,9 +12,10 @@ const vuetify = createVuetify({
     directives,
     // Hier kannst du deine Vuetify-Konfiguration hinzufügen
     theme: {
-        defaultTheme: 'myCustomTheme',
+        defaultTheme: 'ims',
         themes: {
-            myCustomTheme: {
+            ims: {
+                dark: false,
                 colors: {
                     primary: '#1976D2',
                     secondary: '#424242',
@@ -23,6 +24,7 @@ const vuetify = createVuetify({
                     info: '#2196F3',
                     success: '#4CAF50',
                     warning: '#FB8C00',
+                    background: '#F5F5F5',
                 },
             },
         },

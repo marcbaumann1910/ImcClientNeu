@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../components/Home.vue';
 import Register from '../components/Register.vue';
 import Testing from '../components/Testing.vue';
+import Apply from '../components/AppBar.vue';
 
 const routes = [
     {
@@ -18,7 +19,7 @@ const routes = [
         path: '/testing',
         name: 'testing',
         component: Testing
-    }
+    },
 ];
 
 const router = createRouter({
