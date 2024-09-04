@@ -79,7 +79,7 @@ onUnmounted(() => {
   bottom: 0;
   width: 100%;
   height: 40px; /* Minimal sichtbare Höhe */
-  background-color: #424242; /* Beispiel Farbe */
+  background-color: #757575; /* Beispiel Farbe */
   transition: min-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
   opacity: 0.7;
   overflow: hidden;
