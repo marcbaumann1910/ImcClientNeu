@@ -2,14 +2,13 @@
   <v-app> <!-- Dies ist der Hauptcontainer von Vuetify -->
     <!-- AppBar wird immer oben angezeigt -->
 <!--    <AppBar />-->
-    <Navigation />
+    <Navigation3 />
 <!--    <SideBarLeft />-->
 
     <!-- Hauptinhalt der Seite (wird durch die Route geändert) -->
-    <!-- !!!!DIE ROUTEN werden in Navigation.vue geroutet!!!!!-->
-<!--    <v-main>-->
-<!--      <router-view></router-view> &lt;!&ndash; Hier werden die Routeninhalte dargestellt &ndash;&gt;-->
-<!--    </v-main>-->
+    <v-main>
+      <router-view></router-view> <!-- Hier werden die Routeninhalte dargestellt -->
+    </v-main>
 
     <!-- Footer wird immer unten angezeigt -->
     <Footer />
@@ -22,6 +21,7 @@ import Footer from './components/Footer.vue'; // Importiere den Footer
 import SideBarLeft from './components/SideBarLeft.vue';
 import Navigation from './components/Navigation.vue';
 import Navigation2 from './components/Navigation2.vue';
+import Navigation3 from './components/Navigation3.vue';
 import Dashboard from "@/components/Dashboard.vue";
 import Abrechnung from "@/components/Abrechnung.vue";
 import Artikel from "@/components/Artikel.vue";
