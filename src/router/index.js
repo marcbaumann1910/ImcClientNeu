@@ -1,11 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../components/Home.vue';
-import Register from '../components/Register.vue';
-import Testing from '../components/Testing.vue';
-import Apply from '../components/AppBar.vue';
+import Home from '@/components/Home.vue';
+import Register from '@/components/Register.vue';
+import Testing from '@/components/Testing.vue';
+import Login from "@/components/Login.vue";
 import Dashboard from "@/components/Dashboard.vue";
 import Artikel from "@/components/Artikel.vue";
 import Abrechnung from "@/components/Abrechnung.vue";
+import Logout from "@/components/Logout.vue";
+import Profile from "@/components/Profile.vue";
 
 const routes = [
     {
@@ -37,6 +39,21 @@ const routes = [
         path: '/abrechnung',
         name: 'abrechnung',
         component: Abrechnung
+    },
+    {
+        path: '/login',
+        name: 'login',
+        component: Login
+    },
+    {
+        path: '/logout',
+        name: 'logout',
+        component: Logout
+    },
+    {
+        path: '/profile',
+        name: 'profile',
+        component: Profile
     },
 
 ];

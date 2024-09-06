@@ -14,7 +14,7 @@
     </v-main>
     <!-- Footer wird immer unten angezeigt -->
     <Footer />
-  </v-app>
+    </v-app>
 </template>
 
 <script setup>
@@ -23,11 +23,12 @@ import Footer from './components/Footer.vue'; // Importiere den Footer
 import SideBarLeft from './components/SideBarLeft.vue';
 import Navigation from './components/_Navigation.vue';
 import Navigation2 from './components/_Navigation2.vue';
-import Navigation3 from './components/Navigation3.vue';
+import Navigation3 from './components/_Navigation3.vue';
 import Navigation4 from './components/Navigation4.vue';
 import Dashboard from "@/components/Dashboard.vue";
 import Abrechnung from "@/components/Abrechnung.vue";
 import Artikel from "@/components/Artikel.vue";
+
 </script>
 
 <style>

@@ -11,7 +11,23 @@
       <v-btn icon="mdi-filter" variant="text"></v-btn>
     </template>
 
-    <v-btn icon="mdi-dots-vertical" variant="text"></v-btn>
+    <div class="text-center">
+      <!--Kebab-Menu-->
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item
+              v-for="(kebab, i) in kebabs"
+              :key="i"
+          >
+            <v-list-item-title>{{ kebab.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </div>
   </v-app-bar>
 
   <!-- Navigation Drawer -->
@@ -41,6 +57,11 @@ const items = [
   {title: 'Artikel', value: '/artikel', icon: 'mdi-file-document'},
   {title: 'Abrechnung', value: '/abrechnung', icon: 'mdi-currency-eur'},
   {title: 'Registrierung', value: '/register', icon: 'mdi-account-plus'}
+]
+
+const kebabs = [
+  {title: 'Mein Profil', value: '/profile', icon: 'mdi-account-plus'},
+  {title: 'Logout', value: '/logout', icon: 'mdi-account-plus'},
 ]
 
 const router = useRouter()
