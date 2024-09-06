@@ -19,11 +19,14 @@
         </template>
 
         <v-list>
-          <v-list-item
-              v-for="(kebab, i) in kebabs"
-              :key="i"
-          >
-            <v-list-item-title>{{ kebab.title }}</v-list-item-title>
+          <v-list-item v-for="kebab in kebabs" :key="kebab.title" @click="navigate(kebab.value)">
+            <!-- Verwende den gesamten v-list-item-Content Block -->
+            <v-list-item-content class="d-flex align-center">
+              <v-list-item-icon class="mr-2">
+                <v-icon>{{ kebab.icon }}</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>{{ kebab.title }}</v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -60,8 +63,8 @@ const items = [
 ]
 
 const kebabs = [
-  {title: 'Mein Profil', value: '/profile', icon: 'mdi-account-plus'},
-  {title: 'Logout', value: '/logout', icon: 'mdi-account-plus'},
+  {title: 'Mein Profil', value: '/profile', icon: 'mdi-account'},
+  {title: 'Logout', value: '/logout', icon: 'mdi-logout'},
 ]
 
 const router = useRouter()
