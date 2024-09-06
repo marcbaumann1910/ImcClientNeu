@@ -40,9 +40,9 @@
       </v-list>
     </v-navigation-drawer>
 
-<!--    <v-main>-->
-<!--      <router-view></router-view>-->
-<!--    </v-main>-->
+    <!--    <v-main>-->
+    <!--      <router-view></router-view>-->
+    <!--    </v-main>-->
   </div>
 </template>
 
@@ -51,9 +51,10 @@ export default {
   data: () => ({
     drawer: false,
     menuItems: [
-      { title: "Home", icon: "mdi-home", link: "/" },
-      { title: "About Us", icon: "mdi-information", link: "/about" },
-      { title: "Contact Us", icon: "mdi-email", link: "/contact" },
+      { title: "Dashboard", icon: "mdi-clipboard-list", link: "/dashboard" },
+      { title: "Produkte", icon: "mdi-clipboard-list", link: "/protukte" },
+      { title: "Abrechnung", icon: "mdi-cash-register", link: "/abrechnung" },
+      { title: "Registrierung", icon: "mdi-account-plus", link: "/register" },
     ],
     services: [
       { icon: "mdi-domain", title: "Media Monitoring", link: "/mmrservices" },

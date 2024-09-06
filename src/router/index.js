@@ -38,6 +38,7 @@ const routes = [
         name: 'abrechnung',
         component: Abrechnung
     },
+
 ];
 
 const router = createRouter({
