@@ -2,13 +2,14 @@
   <!-- App Bar -->
   <v-app-bar color="secondary" prominent>
     <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-    <v-toolbar-title>IMS Willstätter Hexen</v-toolbar-title>
+    <v-toolbar-title class="toolbarTitle">IMS Willstätter Hexen</v-toolbar-title>
 
     <v-spacer></v-spacer>
 
-    <template v-if="$vuetify.display.mdAndUp">
-      <v-btn icon="mdi-magnify" variant="text"></v-btn>
-      <v-btn icon="mdi-filter" variant="text"></v-btn>
+
+
+    <template v-if="$vuetify.display.smAndDown">
+      <v-btn icon="mdi-cart-outline" variant="text"></v-btn>
     </template>
 
     <div class="text-center">
@@ -64,6 +65,7 @@ const items = [
 
 const kebabs = [
   {title: 'Mein Profil', value: '/profile', icon: 'mdi-account'},
+  {title: 'Login', value: '/login', icon: 'mdi-login'},
   {title: 'Logout', value: '/logout', icon: 'mdi-logout'},
 ]
 
@@ -76,5 +78,27 @@ function navigate(route) {
 </script>
 
 <style scoped>
+
+.toolbarTitle{
+  font-size: 20px;
+}
+
+@media screen and (max-width: 350px) {
+  .toolbarTitle{
+    font-size: 9px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .toolbarTitle{
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .toolbarTitle{
+    font-size: 14px;
+  }
+}
 
 </style>

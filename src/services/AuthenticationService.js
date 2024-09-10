@@ -5,6 +5,10 @@ export default {
         console.log('credentials:', credentials);
         return Api.post('/register', credentials);
     },
+    login(credentials) {
+        console.log('login:', credentials);
+        return Api.post('/login', credentials);
+    },
     testing(id) {
         console.log('id: ', id);
         return Api.post('/testing', id);

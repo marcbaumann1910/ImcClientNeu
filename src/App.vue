@@ -2,7 +2,7 @@
   <v-app> <!-- Dies ist der Hauptcontainer von Vuetify -->
     <!-- AppBar wird immer oben angezeigt -->
 <!--    <AppBar />-->
-    <Navigation4 />
+    <Navigation />
 <!--    <SideBarLeft />-->
 
     <!-- Hauptinhalt der Seite (wird durch die Route geändert) -->
@@ -18,16 +18,9 @@
 </template>
 
 <script setup>
-import AppBar from './components/AppBar.vue';
 import Footer from './components/Footer.vue'; // Importiere den Footer
-import SideBarLeft from './components/SideBarLeft.vue';
-import Navigation from './components/_Navigation.vue';
-import Navigation2 from './components/_Navigation2.vue';
-import Navigation3 from './components/_Navigation3.vue';
-import Navigation4 from './components/Navigation4.vue';
-import Dashboard from "@/components/Dashboard.vue";
-import Abrechnung from "@/components/Abrechnung.vue";
-import Artikel from "@/components/Artikel.vue";
+import Navigation from './components/Navigation.vue';
+
 
 </script>
 
