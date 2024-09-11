@@ -71,6 +71,13 @@
           Login
         </v-btn>
 
+        <div class="hinweisTag">
+          <a class="text-red-accent-3 text-center"
+
+          >
+            {{hinweisText}}
+          </a>
+        </div>
 
 
         <v-card-text class="text-center">
@@ -99,10 +106,12 @@ const valid = ref(false);
 const passwortRules = [(v) => !!v || 'Passwort ist erforderlich'];
 const emailRules = [(v) => !!v || 'Email ist erforderlich'];
 const isLoading = ref(false);
+const hinweisText = ref('');
 
 
 async function login(){
   isLoading.value = true;
+  hinweisText.value = '';
   if(txtPasswort.value.length === 0) {
     isLoading.value = false;
     return;
@@ -112,7 +121,7 @@ async function login(){
     return;
   }
   try {
-//info@masrc79.net
+//infasdfo@maaasdfasdrc79.de
 // Hallo-2024!
     const response = await AuthenticationService.login(
         {
@@ -133,7 +142,7 @@ async function login(){
   } catch(err)
   {
     isLoading.value = false;
-    console.log('Email oder Passwort ist falsch!')
+    hinweisText.value = 'Email oder Passwort ist falsch!'
   }
 
 }
@@ -153,6 +162,12 @@ async function login(){
 .txtField {
   min-width: 100px; /* Mindestbreite */
   max-width: 100%; /* Verhindert, dass das Feld größer als der Container wird */
+}
+
+.hinweisTag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 </style>
