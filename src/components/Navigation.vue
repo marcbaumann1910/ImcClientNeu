@@ -8,7 +8,7 @@
 
 
 
-    <template v-if="$vuetify.display.smAndDown">
+    <template v-if="$vuetify.display.smAndUp">
       <v-btn icon="mdi-cart-outline" variant="text"></v-btn>
     </template>
 

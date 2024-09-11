@@ -1,8 +1,7 @@
 
 <template>
+   <div class="panel2 text-h5 pb-5"> <strong> Automarken </strong> </div>
   <div>
-    <v-card class="pa-10">
-      <div class="text-subtitle-2 mb-8" ><strong> Automarken </strong> </div>
     <v-expansion-panels v-model="panel" multiple>
       <v-expansion-panel class="mb-1" v-for="marke in katgorie" :key="marke">
         <template v-slot:title>
@@ -43,9 +42,7 @@
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
-    </v-card>
   </div>
-
 </template>
 
 <script setup>
@@ -73,4 +70,5 @@ function test() {
   background-color: #ebebeb;
   cursor: pointer;
 }
+
 </style>
