@@ -132,6 +132,17 @@ async function login(){
     //Speichern der des accessToken und des refreshToken
     localStorage.setItem('accessToken', response.data.accessToken);
     localStorage.setItem('refreshToken', response.data.refreshToken);
+
+    //Die von Backend erhaltenen User-Daten in den localStorage schreiben
+    for (const user in response.data.userResponse) {
+      if (response.data.userResponse.hasOwnProperty(user)) {
+        console.log('for user:', user, response.data.userResponse[user]);
+        localStorage.setItem(user, response.data.userResponse[user]);
+      }
+    }
+
+    console.log('localStorage', localStorage)
+
     console.log('accessToken', response.data.accessToken);
     console.log('refreshToken', response.data.refreshToken);
     console.log('user', response.data.userResponse.nachname);

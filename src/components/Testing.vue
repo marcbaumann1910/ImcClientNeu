@@ -87,6 +87,8 @@ async function token() {
     const result = await AuthenticationService.testing({
       id: "71"
     });
+
+    console.log('result',result)
   }catch(err)
   {
 
