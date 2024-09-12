@@ -1,10 +1,13 @@
 <template>
   <!-- App Bar -->
-  <v-app-bar color="secondary" prominent>
-    <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-    <v-toolbar-title class="toolbarTitle">IMS Willstätter Hexen</v-toolbar-title>
+  <v-app-bar class="mb-6" color="secondary" prominent>
 
-    <v-spacer></v-spacer>
+    <div class="nav-icon-wrapper d-flex flex-column align-items-center">
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+        <span class="span">Menü</span>
+    </div>
+      <v-toolbar-title class="toolbarTitle">IMS Willstätter Hexen</v-toolbar-title>
+      <v-spacer></v-spacer>
 
     <template v-if="$vuetify.display.smAndUp">
       <v-btn icon="mdi-cart-outline" variant="text"></v-btn>
@@ -69,6 +72,16 @@ function navigate(route) {
 </script>
 
 <style scoped>
+
+.nav-icon-wrapper {
+  align-items: center; /* Zentriert das Icon und das Span horizontal */
+}
+
+.span{
+  margin-top: -10px;
+  font-size: 9px;
+}
+
 
 .toolbarTitle{
   font-size: 20px;
