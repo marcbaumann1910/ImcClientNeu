@@ -133,6 +133,7 @@ async function login(){
     localStorage.setItem('refreshToken', response.data.refreshToken);
     console.log('accessToken', response.data.accessToken);
     console.log('refreshToken', response.data.refreshToken);
+    console.log('user', response.data.user[0].Nachname);
 
     isLoading.value = false;
 
