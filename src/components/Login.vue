@@ -1,4 +1,30 @@
 <template>
+
+  <div class="text-center ma-2">
+
+    <v-snackbar
+        v-model="snackbar"
+        location="top"
+        color="error"
+        timeout="5000"
+
+    >
+      {{ snackbarText }}
+
+      <template v-slot:actions >
+        <v-btn
+            color="black"
+            variant="text"
+            @click="snackbar = false"
+            style="background-color: white; text-transform: none;"
+
+        >
+          Schließen
+        </v-btn>
+      </template>
+    </v-snackbar>
+  </div>
+
   <v-form ref="formNames" v-model="valid" lazy-validation>
     <div>
       <!--    <v-img-->
@@ -97,6 +123,10 @@
 <script setup>
 import { ref } from 'vue';
 import AuthenticationService from "@/services/AuthenticationService.js";
+import router from "@/router/index.js";
+
+const snackbar = ref(false);
+const snackbarText = ref(`Email oder Passwort ist falsch!`);
 
 const visible = ref(false);
 const txtPasswort = ref('');
@@ -156,16 +186,17 @@ async function login(){
 
     console.log('response',response)
 
+    await router.push('/dashboard');
+
+
   } catch(err)
   {
     isLoading.value = false;
-    hinweisText.value = 'Email oder Passwort ist falsch!'
+    snackbar.value = true;
+    //hinweisText.value = 'Email oder Passwort ist falsch!'
   }
 
 }
-
-
-
 
 </script>
 

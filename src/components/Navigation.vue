@@ -67,6 +67,13 @@ const kebabs = [
 const router = useRouter()
 
 function navigate(route) {
+  if(route === '/logout') {
+    localStorage.clear();
+    router.push({ name: 'login' })
+  }
+  else{
+    router.push(route)
+  }
   router.push(route)
   drawer.value = false
 }

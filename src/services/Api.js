@@ -1,4 +1,5 @@
 import axios from 'axios';
+import router from "@/router/index.js";
 
 const api = axios.create({
     //baseURL: 'http://localhost:3000/', // Basis-URL des Backend-Servers
@@ -56,11 +57,14 @@ api.interceptors.response.use(
                     // Sende die ursprüngliche Anfrage erneut mit dem neuen Access Token
                     return api(originalRequest);
                 } catch (error) {
-                    console.error('Error refreshing token:', error);
-                    // Bei Fehlern kannst du den Benutzer z.B. abmelden
+                        console.error('Error refreshing token:', error);
+                        localStorage.removeItem('accessToken');
+                        localStorage.removeItem('refreshToken');
+                        await router.push('/login');
+                    }
+
                 }
             }
-        }
 
         return Promise.reject(error);
     }

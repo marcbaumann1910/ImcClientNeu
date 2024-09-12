@@ -13,7 +13,8 @@ const routes = [
     {
         path: '/',
         name: 'home',
-        component: Home
+        component: Home,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
     {
         path: '/register',
@@ -23,22 +24,26 @@ const routes = [
     {
         path: '/testing',
         name: 'testing',
-        component: Testing
+        component: Testing,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
     {
         path: '/dashboard',
         name: 'dashboard',
-        component: Dashboard
+        component: Dashboard,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
     {
         path: '/artikel',
         name: 'artikel',
-        component: Artikel
+        component: Artikel,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
     {
         path: '/abrechnung',
         name: 'abrechnung',
-        component: Abrechnung
+        component: Abrechnung,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
     {
         path: '/login',
@@ -48,12 +53,14 @@ const routes = [
     {
         path: '/logout',
         name: 'logout',
-        component: Logout
+        component: Logout,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
     {
         path: '/profile',
         name: 'profile',
-        component: Profile
+        component: Profile,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
 
 ];
@@ -62,5 +69,20 @@ const router = createRouter({
     history: createWebHistory(),
     routes
 });
+
+// Füge eine Navigation Guard hinzu
+router.beforeEach((to, from, next) => {
+    const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+    const accessToken = localStorage.getItem('accessToken');
+
+    if (requiresAuth && !accessToken) {
+        // Falls die Route eine Authentifizierung erfordert, aber kein Access Token vorhanden ist
+        next({ name: 'login' });
+    } else {
+        // Weiter zur gewünschten Route
+        next();
+    }
+});
+
 
 export default router;

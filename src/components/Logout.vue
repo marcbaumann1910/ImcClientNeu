@@ -1,5 +1,5 @@
 <template>
-  <h1>Logout</h1>
+  <h1>Sie wurden abgemeldet</h1>
 </template>
 
 <script setup>
