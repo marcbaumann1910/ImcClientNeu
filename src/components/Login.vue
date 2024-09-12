@@ -129,11 +129,12 @@ async function login(){
           password: txtPasswort.value
         }
     )
+    //Speichern der des accessToken und des refreshToken
     localStorage.setItem('accessToken', response.data.accessToken);
     localStorage.setItem('refreshToken', response.data.refreshToken);
     console.log('accessToken', response.data.accessToken);
     console.log('refreshToken', response.data.refreshToken);
-    console.log('user', response.data.user[0].Nachname);
+    console.log('user', response.data.userResponse.nachname);
 
     isLoading.value = false;
 

@@ -42,6 +42,10 @@
     <br>
     <br>
 
+    <v-btn class="mb-6" @click="token">
+      Token
+    </v-btn>
+
     <table>
       <thead>
       <tr>
@@ -77,6 +81,17 @@ const vorname = ref('');
 const nachname = ref('');
 const usersList = ref([]); // Array zum Speichern der Benutzerliste
 
+async function token() {
+  try
+  {
+    const result = await AuthenticationService.testing({
+      id: "71"
+    });
+  }catch(err)
+  {
+
+  }
+}
 
 async function register() {
   try {

@@ -1,6 +1,8 @@
 import Api from '@/services/Api.js';
+const accessToken = localStorage.getItem('accessToken');
 
 export default {
+
     register(credentials) {
         console.log('credentials:', credentials);
         return Api.post('/register', credentials);

@@ -54,7 +54,8 @@ const items = [
   {title: 'Dashboard', value: '/dashboard', icon: 'mdi-view-dashboard'},
   {title: 'Artikel', value: '/artikel', icon: 'mdi-file-document'},
   {title: 'Abrechnung', value: '/abrechnung', icon: 'mdi-currency-eur'},
-  {title: 'Registrierung', value: '/register', icon: 'mdi-account-plus'}
+  {title: 'Registrierung', value: '/register', icon: 'mdi-account-plus'},
+  {title: 'Testing', value: '/testing', icon: 'mdi-ab-testing'}
 ]
 
 const kebabs = [
