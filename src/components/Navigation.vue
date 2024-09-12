@@ -6,8 +6,6 @@
 
     <v-spacer></v-spacer>
 
-
-
     <template v-if="$vuetify.display.smAndUp">
       <v-btn icon="mdi-cart-outline" variant="text"></v-btn>
     </template>
@@ -21,13 +19,9 @@
 
         <v-list>
           <v-list-item v-for="kebab in kebabs" :key="kebab.title" @click="navigate(kebab.value)">
-            <!-- Verwende den gesamten v-list-item-Content Block -->
-            <v-list-item-content class="d-flex align-center">
-              <v-list-item-icon class="mr-2">
-                <v-icon>{{ kebab.icon }}</v-icon>
-              </v-list-item-icon>
-              <v-list-item-title>{{ kebab.title }}</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-title>
+                <v-icon left class="mr-2" >{{ kebab.icon }}</v-icon>
+              {{ kebab.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -38,14 +32,11 @@
   <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'top' : undefined" temporary>
     <v-list>
       <v-list-item v-for="item in items" :key="item.title" @click="navigate(item.value)">
-        <!-- Verwende den gesamten v-list-item-Content Block -->
-        <v-list-item-content class="d-flex align-center">
-          <v-list-item-icon class="mr-2">
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>{{ item.title }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
+          <v-list-item-title>
+            <v-icon class="mr-2">{{ item.icon }}</v-icon>
+            {{ item.title }}
+          </v-list-item-title>
+        </v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
