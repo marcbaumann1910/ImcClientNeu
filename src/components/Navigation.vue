@@ -4,14 +4,26 @@
 
     <div class="nav-icon-wrapper d-flex flex-column align-items-center">
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <span class="span">Menü</span>
+      <span class="span">Menü</span>
     </div>
       <v-toolbar-title class="toolbarTitle">IMS Willstätter Hexen</v-toolbar-title>
       <v-spacer></v-spacer>
 
-    <template v-if="$vuetify.display.smAndUp">
-      <v-btn icon="mdi-cart-outline" variant="text"></v-btn>
-    </template>
+    <!--Login-->
+    <v-btn v-if="!isUserLoggedIn" @click="goLogin()">
+      <div class="login">
+        Login
+      </div>
+      <v-icon icon="mdi-login" class="mr-1"></v-icon>
+    </v-btn>
+
+    <!--Warenkorb-->
+
+    <v-btn v-if="isUserLoggedIn" icon="mdi-cart-outline" variant="text"></v-btn>
+
+<!--    <template v-if="$vuetify.display.smAndUp">-->
+<!--      <v-btn icon="mdi-cart-outline" variant="text"></v-btn>-->
+<!--    </template>-->
 
     <div class="text-center">
       <!--Kebab-Menu-->
@@ -45,8 +57,11 @@
 </template>
 
 <script setup>
-import {ref} from 'vue'
-import {useRouter} from 'vue-router'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import AuthenticationService from "@/services/AuthenticationService.js";
+
+const isUserLoggedIn = ref(!!localStorage.getItem('accessToken'));
 
 const drawer = ref(false);
 
@@ -60,23 +75,47 @@ const items = [
 
 const kebabs = [
   {title: 'Mein Profil', value: '/profile', icon: 'mdi-account'},
-  {title: 'Login', value: '/login', icon: 'mdi-login'},
-  {title: 'Logout', value: '/logout', icon: 'mdi-logout'},
+  //{title: 'Login', value: '/login', icon: 'mdi-login'},
+  {title: 'Abmelden', value: '/logout', icon: 'mdi-logout'},
 ]
 
 const router = useRouter()
 
-function navigate(route) {
+async function navigate(route) {
+
+  //LOGOUT
   if(route === '/logout') {
+    //refreshToken in der Datenbank löschen
+    const refreshToken = localStorage.getItem('refreshToken')
+    if(!refreshToken){
+      console.log('Logout-->Kein refreshToken vorhanden', refreshToken)
+    }
+
+    try {
+
+      const response = await AuthenticationService.logout({
+        token: refreshToken
+      });
+
+      console.log('Logout-->response', response)
+
+    }catch(err) {
+      console.log(err)
+    }
     localStorage.clear();
-    router.push({ name: 'login' })
+    await router.push({name: 'login'})
   }
   else{
-    router.push(route)
+    await router.push(route)
   }
-  router.push(route)
+  await router.push(route)
   drawer.value = false
 }
+
+function goLogin() {
+  router.push({name: 'login'})
+}
+
 </script>
 
 <style scoped>
@@ -93,6 +132,11 @@ function navigate(route) {
 
 .toolbarTitle{
   font-size: 20px;
+}
+
+.login{
+  text-transform: none;
+  margin-right: 2px;
 }
 
 @media screen and (max-width: 350px) {

@@ -140,6 +140,7 @@ const hinweisText = ref('');
 
 
 async function login(){
+  localStorage.clear();
   isLoading.value = true;
   hinweisText.value = '';
   if(txtPasswort.value.length === 0) {

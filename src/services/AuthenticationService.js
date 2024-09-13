@@ -11,6 +11,10 @@ export default {
         console.log('login:', credentials);
         return Api.post('/login', credentials);
     },
+    logout(token) {
+        console.log('logout:', token);
+        return Api.post('/logout', token);
+    },
     testing(id) {
         console.log('id: ', id);
         return Api.post('/testing', id);

@@ -54,7 +54,7 @@ const routes = [
         path: '/logout',
         name: 'logout',
         component: Logout,
-        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
+
     },
     {
         path: '/profile',
