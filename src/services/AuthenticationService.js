@@ -1,5 +1,4 @@
 import Api from '@/services/Api.js';
-const accessToken = localStorage.getItem('accessToken');
 
 export default {
 

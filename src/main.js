@@ -8,8 +8,6 @@ import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import store from './store/store.js'; // Importiere den Store
 
-import { useAuth } from '@/services/auth.js';
-
 const vuetify = createVuetify({
     components,
     directives,
@@ -35,8 +33,6 @@ const vuetify = createVuetify({
 });
 
 const app = createApp(App);
-const { isUserLoggedIn } = useAuth();
-app.config.globalProperties.$isUserLoggedIn = isUserLoggedIn;
 
 app.use(router); // Verwende den Router
 app.use(vuetify);

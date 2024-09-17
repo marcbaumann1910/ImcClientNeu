@@ -1,7 +1,8 @@
-
-
 <template>
-  <v-app>
+  <v-app class="bg-blue-grey px-10 rounded">
+    <h1>Dashboard</h1>
+    <h5>Herzlich Willkommen</h5>
+
     <v-container>
       <v-stepper
           :next-text="nextName"

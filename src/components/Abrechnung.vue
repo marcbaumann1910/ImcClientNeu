@@ -1,7 +1,6 @@
 <template>
   <h1>Abrechnung</h1>
-  <a>{{$isUserLoggedIn()}}</a>
-</template>
+  </template>
 
 <script setup>
 

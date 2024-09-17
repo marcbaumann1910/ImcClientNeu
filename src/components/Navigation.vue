@@ -79,46 +79,46 @@ const kebabs = [
 ]
 
 const router = useRouter()
+//Prüft ob der User eingeloggt ist oder nicht
+const isUserLoggedIn = computed(() => store.getters.isUserLoggedIn);
 
+//Ist für die Navigation zuständig und ruft die entsprechende route auf, die durch das Click-Event ausgelöst wird
 async function navigate(route) {
 
   //LOGOUT
   if(route === '/logout') {
-    //refreshToken in der Datenbank löschen
-    const refreshToken = localStorage.getItem('refreshToken')
     //Vuex-Store logout und userResponse leeren
-    console.log('VuexStore',store.getters.getUserData.idBenutzer);
-    store.dispatch('logout', {})
+    console.log('VuexStore bevor dispatch',store.getters.getUserData.idBenutzer);
+    store.dispatch('logout')
+    console.log('VuexStore nach dispatch',store.getters.getUserData.idBenutzer);
     if(!refreshToken){
       console.log('Logout-->Kein refreshToken vorhanden', refreshToken)
     }
 
     try {
-
+      //refreshToken in der Datenbank als ungültig markieren
+      const refreshToken = localStorage.getItem('refreshToken')
       const response = await AuthenticationService.logout({
         token: refreshToken
       });
-
       console.log('Logout-->response', response)
 
     }catch(err) {
       console.log(err)
     }
     localStorage.clear();
-    await router.push({name: 'login'})
+    router.push({name: 'login'})
   }
   else{
-    await router.push(route)
+    router.push(route)
   }
-  await router.push(route)
+  router.push(route)
   drawer.value = false
 }
 
 function goLogin() {
   router.push({name: 'login'})
 }
-
-const isUserLoggedIn = computed(() => store.getters.isUserLoggedIn);
 
 </script>
 
