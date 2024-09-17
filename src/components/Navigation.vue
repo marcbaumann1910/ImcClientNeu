@@ -33,7 +33,7 @@
         </template>
 
         <v-list>
-          <v-list-item v-for="kebab in kebabs" :key="kebab.title" @click="navigate(kebab.value)">
+          <v-list-item v-for="kebab in kebabs" :key="kebab.title" @click="navigate(kebab.route)">
             <v-list-item-title>
                 <v-icon left class="mr-2" >{{ kebab.icon }}</v-icon>
               {{ kebab.title }}</v-list-item-title>
@@ -46,7 +46,7 @@
   <!-- Navigation Drawer -->
   <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'top' : undefined" temporary>
     <v-list>
-      <v-list-item v-for="item in items" :key="item.title" @click="navigate(item.value)">
+      <v-list-item v-for="item in items" :key="item.title" @click="navigate(item.route)">
           <v-list-item-title>
             <v-icon class="mr-2">{{ item.icon }}</v-icon>
             {{ item.title }}
@@ -65,17 +65,17 @@ import store from "@/store/store.js";
 const drawer = ref(false);
 
 const items = [
-  {title: 'Dashboard', value: '/dashboard', icon: 'mdi-view-dashboard'},
-  {title: 'Artikel', value: '/artikel', icon: 'mdi-file-document'},
-  {title: 'Abrechnung', value: '/abrechnung', icon: 'mdi-currency-eur'},
-  {title: 'Registrierung', value: '/register', icon: 'mdi-account-plus'},
-  {title: 'Testing', value: '/testing', icon: 'mdi-ab-testing'}
+  {title: 'Dashboard', route: '/dashboard', icon: 'mdi-view-dashboard'},
+  {title: 'Artikel', route: '/artikel', icon: 'mdi-file-document'},
+  {title: 'Abrechnung', route: '/abrechnung', icon: 'mdi-currency-eur'},
+  {title: 'Registrierung', route: '/register', icon: 'mdi-account-plus'},
+  {title: 'Testing', route: '/testing', icon: 'mdi-ab-testing'}
 ]
 
 const kebabs = [
-  {title: 'Mein Profil', value: '/profile', icon: 'mdi-account'},
-  //{title: 'Login', value: '/login', icon: 'mdi-login'},
-  {title: 'Abmelden', value: '/logout', icon: 'mdi-logout'},
+  {title: 'Mein Profil', route: '/profile', icon: 'mdi-account'},
+  //{title: 'Login', route: '/login', icon: 'mdi-login'},
+  {title: 'Abmelden', route: '/logout', icon: 'mdi-logout'},
 ]
 
 const router = useRouter()
