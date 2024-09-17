@@ -1,6 +1,84 @@
 <template>
   <div class="register">
     <h1>Testing</h1>
+
+    <v-card
+        align="center"
+        class="bg-grey-lighten-2"
+        justify="center"
+        style="height: 50px"
+        v-touch="{
+        left: () => swipe('Left'),
+        right: () => swipe('Right'),
+        up: () => swipe('Up'),
+        down: () => swipe('Down')
+    }"
+    >
+      <v-card-text class="text-center">
+        <div class="text-subtitle-2">Swipe Direction</div>
+        {{ swipeDirection }}
+      </v-card-text>
+    </v-card>
+
+    <br>
+
+    <v-row align="center" justify="center" style="height: 10vh">
+      <v-col>
+        <v-btn width="100%" class="vBtnTest d-flex justify-space-between align-center" @click="detectSide($event)">
+          <!-- Linker Bereich: Plus-Symbol -->
+          <v-icon>mdi-plus</v-icon>
+
+          <!-- Mittlerer Bereich: Text, zentriert -->
+          <span style="flex-grow: 1; text-align: center;">Text in der Mitte</span>
+
+          <!-- Rechter Bereich: Minus-Symbol -->
+          <v-icon>mdi-minus</v-icon>
+        </v-btn>
+        <p>Du hast auf die {{ side }} Seite des Buttons geklickt.</p>
+      </v-col>
+    </v-row>
+
+    <br>
+
+    <div class="d-flex align-center flex-column bg-grey-lighten-4 pa-6">
+      <v-btn-toggle
+          v-model="toggle"
+          divided
+      >
+        <v-btn icon="mdi-plus"></v-btn>
+        <v-btn> <span>Klick mich</span></v-btn>
+        <v-btn icon="mdi-minus"></v-btn>
+      </v-btn-toggle>
+    </div>
+
+    <br>
+
+    <div class="d-flex align-center flex-column bg-grey-lighten-4 pa-6">
+      <v-btn-toggle
+          class="toggleButton"
+          v-model="toggle"
+          divided
+      >
+        <!-- Linker Bereich: Plus-Symbol -->
+        <v-btn>
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+
+        <!-- Mittlerer Bereich: Text, zentriert -->
+        <v-btn>
+          <span>Text in der Mitte</span>
+        </v-btn>
+
+        <!-- Rechter Bereich: Minus-Symbol -->
+        <v-btn>
+          <v-icon>mdi-minus</v-icon>
+        </v-btn>
+      </v-btn-toggle>
+      <p>Du hast auf die {{ toggle }} Seite des Buttons geklickt.</p>
+    </div>
+
+    <br>
+
     <input
         type="email"
         placeholder="Email"
@@ -43,7 +121,7 @@
     <br>
 
     <v-btn class="mb-6" @click="token">
-      Token
+      Token V1
     </v-btn>
 
     <table>
@@ -80,6 +158,35 @@ const id = ref('');
 const vorname = ref('');
 const nachname = ref('');
 const usersList = ref([]); // Array zum Speichern der Benutzerliste
+const swipeDirection = ref('wisch mich')
+const side = ref('');
+
+
+
+
+function  swipe(direction) {
+    swipeDirection.value = direction
+    if(swipeDirection.value === 'Left')
+    {
+      swipeDirection.value = "Nach links gewischt"
+    }
+    else if (swipeDirection.value === 'Right'){
+      swipeDirection.value = "Nach rechts gewischt"
+    }
+}
+
+function detectSide(event) {
+  const clickPosition = ref(event.clientX);
+  const buttonRect = event.currentTarget.getBoundingClientRect(); // Ermittelt die Position und Breite des Buttons
+
+  // Prüfen, ob der Klick auf der linken oder rechten Seite war
+  if (clickPosition.value < buttonRect.left + buttonRect.width / 2) {
+    side.value = `linke`;
+  } else {
+    side.value = `rechte`;
+  }
+
+}
 
 async function token() {
   try
@@ -154,7 +261,15 @@ input {
   margin-left: 10px;
 }
 
-button {
-  margin-left: 10px;
+.vBtnTest {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
+.toggleButton{
+  min-width: 100%;
+}
+
+
 </style>
