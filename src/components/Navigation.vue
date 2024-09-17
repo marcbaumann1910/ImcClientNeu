@@ -20,7 +20,7 @@
     <!--Warenkorb-->
 
     <v-btn v-if="isUserLoggedIn" icon="mdi-cart-outline" variant="text"></v-btn>
-
+<!--Warenkorb nur auf kleinen AndUp anzeigen-->
 <!--    <template v-if="$vuetify.display.smAndUp">-->
 <!--      <v-btn icon="mdi-cart-outline" variant="text"></v-btn>-->
 <!--    </template>-->
@@ -57,11 +57,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthenticationService from "@/services/AuthenticationService.js";
-
-const isUserLoggedIn = ref(!!localStorage.getItem('accessToken'));
+import store from "@/store/store.js";
 
 const drawer = ref(false);
 
@@ -87,6 +86,9 @@ async function navigate(route) {
   if(route === '/logout') {
     //refreshToken in der Datenbank löschen
     const refreshToken = localStorage.getItem('refreshToken')
+    //Vuex-Store logout und userResponse leeren
+    console.log('VuexStore',store.getters.getUserData.idBenutzer);
+    store.dispatch('logout', {})
     if(!refreshToken){
       console.log('Logout-->Kein refreshToken vorhanden', refreshToken)
     }
@@ -115,6 +117,8 @@ async function navigate(route) {
 function goLogin() {
   router.push({name: 'login'})
 }
+
+const isUserLoggedIn = computed(() => store.getters.isUserLoggedIn);
 
 </script>
 

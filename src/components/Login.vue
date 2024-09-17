@@ -124,7 +124,9 @@
 import { ref } from 'vue';
 import AuthenticationService from "@/services/AuthenticationService.js";
 import router from "@/router/index.js";
+import { useStore } from "vuex";
 
+const store = useStore();
 const snackbar = ref(false);
 const snackbarText = ref(`Email oder Passwort ist falsch!`);
 
@@ -163,6 +165,9 @@ async function login(){
     //Speichern der des accessToken und des refreshToken
     localStorage.setItem('accessToken', response.data.accessToken);
     localStorage.setItem('refreshToken', response.data.refreshToken);
+
+    //Speichern der Benutzerdaten und des accessToken im Vuex-Store
+    store.dispatch('login', response.data.userResponse);
 
     //Die von Backend erhaltenen User-Daten in den localStorage schreiben
     for (const user in response.data.userResponse) {
