@@ -91,9 +91,6 @@ async function navigate(route) {
     console.log('VuexStore bevor dispatch',store.getters.getUserData.idBenutzer);
     store.dispatch('logout')
     console.log('VuexStore nach dispatch',store.getters.getUserData.idBenutzer);
-    if(!refreshToken){
-      console.log('Logout-->Kein refreshToken vorhanden', refreshToken)
-    }
 
     try {
       //refreshToken in der Datenbank als ungültig markieren

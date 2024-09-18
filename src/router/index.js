@@ -8,6 +8,7 @@ import Artikel from "@/components/Artikel.vue";
 import Abrechnung from "@/components/Abrechnung.vue";
 import Logout from "@/components/Logout.vue";
 import Profile from "@/components/Profile.vue";
+import ResetPassword from "@/components/ResetPassword.vue";
 
 const routes = [
     {
@@ -61,6 +62,12 @@ const routes = [
         name: 'profile',
         component: Profile,
         meta: { requiresAuth: true }, // Markiere diese Route als geschützt
+    },
+    {
+        path: '/reset-password',
+        name: 'reset-password',
+        component: ResetPassword,
+
     },
 
 ];
