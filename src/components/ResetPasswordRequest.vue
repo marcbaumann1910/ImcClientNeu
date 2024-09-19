@@ -11,7 +11,6 @@ const snackbar = ref(false);
 const snackbarText = ref('')
 const snackbarColor = ref('error')
 
-
 async function resetPassword() {
 
   if (txtEmail.value === '' || txtEmail.value.length === 0) {
