@@ -28,16 +28,11 @@ async function resetPassword() {
 
     console.log('response in try',response);
 
-    if(response.status === 200){
-      snackbarText.value = 'Wenn die angegebene E-Mail-Adresse in unserem System vorhanden ist,\nhaben wir Ihnen eine E-Mail mit weiteren Anweisungen zum Zurücksetzen des Passworts gesendet.';
-      snackbarColor.value = "success"
-      snackbar.value = true;
-      //router.push('/login');
-    }
-
   }catch (err){
-
   }
+    snackbarText.value = 'Wenn die angegebene E-Mail-Adresse in unserem System vorhanden ist,\nhaben wir Ihnen eine E-Mail mit weiteren Anweisungen zum Zurücksetzen des Passworts gesendet.';
+    snackbarColor.value = "success"
+    snackbar.value = true;
 
 }
 </script>

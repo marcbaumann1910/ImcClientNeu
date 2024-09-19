@@ -48,6 +48,14 @@ async function resetPassword() {
 
     console.log('response in try',response);
 
+    if(response.status !== 200){
+      if(response.data.message === ''){
+        snackbarText.value = 'Passwort wurde erfolgreich geändert\nSie werden weitergeleitet';
+        snackbarColor.value = "error"
+        snackbar.value = true;
+      }
+    }
+
     if(response.status === 200){
       snackbarText.value = 'Passwort wurde erfolgreich geändert\nSie werden weitergeleitet';
       snackbarColor.value = "success"
