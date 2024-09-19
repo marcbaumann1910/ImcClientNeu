@@ -49,15 +49,18 @@ async function resetPassword() {
     console.log('response in try',response);
 
     if(response.status === 200){
-      snackbarText.value = 'Passwort wurde erfolgreich geändert';
+      snackbarText.value = 'Passwort wurde erfolgreich geändert\nSie werden weitergeleitet';
       snackbarColor.value = "success"
       snackbar.value = true;
+      //sleep
+      await new Promise(resolve => setTimeout(resolve, 3000));
       router.push('/login');
     }
 
   }catch(err){
     snackbarText.value = 'Passwort konnte nicht geändert werden';
     snackbarColor.value = "error"
+    snackbar.value = true;
     console.log(err);
   }
 
@@ -134,7 +137,7 @@ async function resetPassword() {
          block
          :loading="isLoading"
      >
-       Login
+       Passwort ändern
      </v-btn>
 
   </v-card>

@@ -81,7 +81,7 @@
           <v-card-text class="text-center">
             <router-link
                 class="text-blue text-decoration-none"
-                :to="{ name: 'register' }"
+                :to="{ name: 'reset-password-request' }"
             >
               Passwort vergessen ?
             </router-link>

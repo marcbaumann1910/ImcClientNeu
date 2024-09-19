@@ -21,6 +21,10 @@ export default {
     resetPassword(credentials) {
         console.log('reset-password: ', credentials);
         return Api.post('/reset-password', credentials);
+    },
+    resetPasswordRequest(email) {
+        console.log('reset-password-request: ', email);
+        return Api.post('/reset-password-request', email);
     }
 
 };

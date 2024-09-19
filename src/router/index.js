@@ -9,6 +9,7 @@ import Abrechnung from "@/components/Abrechnung.vue";
 import Logout from "@/components/Logout.vue";
 import Profile from "@/components/Profile.vue";
 import ResetPassword from "@/components/ResetPassword.vue";
+import ResetPasswordRequest from "@/components/ResetPasswordRequest.vue";
 
 const routes = [
     {
@@ -67,6 +68,12 @@ const routes = [
         path: '/reset-password',
         name: 'reset-password',
         component: ResetPassword,
+
+    },
+    {
+        path: '/reset-password-request',
+        name: 'reset-password-request',
+        component: ResetPasswordRequest,
 
     },
 
