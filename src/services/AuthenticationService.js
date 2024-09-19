@@ -17,5 +17,10 @@ export default {
     testing(id) {
         console.log('id: ', id);
         return Api.post('/testing', id);
+    },
+    resetPassword(credentials) {
+        console.log('reset-password: ', credentials);
+        return Api.post('/reset-password', credentials);
     }
+
 };

@@ -84,20 +84,22 @@ const isUserLoggedIn = computed(() => store.getters.isUserLoggedIn);
 
 //Ist für die Navigation zuständig und ruft die entsprechende route auf, die durch das Click-Event ausgelöst wird
 async function navigate(route) {
-
   //LOGOUT
   if(route === '/logout') {
     //Vuex-Store logout und userResponse leeren
-    console.log('VuexStore bevor dispatch',store.getters.getUserData.idBenutzer);
-    store.dispatch('logout')
-    console.log('VuexStore nach dispatch',store.getters.getUserData.idBenutzer);
 
     try {
       //refreshToken in der Datenbank als ungültig markieren
+      console.log('localStorage', localStorage)
       const refreshToken = localStorage.getItem('refreshToken')
+      const accessToken = localStorage.getItem('accessToken')
       const response = await AuthenticationService.logout({
-        token: refreshToken
+        refreshToken: refreshToken,
+        accessToken: accessToken
       });
+      console.log('VuexStore bevor dispatch',store.getters.getUserData.idBenutzer);
+      store.dispatch('logout')
+      console.log('VuexStore nach dispatch',store.getters.getUserData.idBenutzer);
       console.log('Logout-->response', response)
 
     }catch(err) {

@@ -40,7 +40,9 @@
           rounded="lg"
 
       >
-        <div class="text-subtitle-1 text-medium-emphasis">Account</div>
+        <div class="text-subtitle-1 text-medium-emphasis mb-6">
+          Login
+        </div>
         <div class="text-field-container">
           <v-text-field
               class="txtField"
