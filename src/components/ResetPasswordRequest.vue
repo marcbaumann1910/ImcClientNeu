@@ -62,18 +62,19 @@ async function resetPassword() {
   </v-snackbar>
 
   <v-form ref="formNames" v-model="valid" lazy-validation>
-   <v-card class="mx-auto pa-12 pb-8 mt-16"
+
+    <v-row>
+
+    <v-card class="mx-auto pa-12 pb-8 mt-16"
            elevation="8"
-           max-width="600"
+           max-width="400"
            rounded="lg"
    >
-    <v-card-title>Passwort zurücksetzen</v-card-title>
-    <v-card-text>
-      Bitte Emailadresse angeben
-    </v-card-text>
+    <v-card-title class="textResponsiveTextField">Passwort zurücksetzen</v-card-title>
+    <v-card-text class="textResponsiveTextField" >Bitte Emailadresse angeben</v-card-text>
 
      <v-text-field
-         class="txtField"
+         class="textResponsiveButton text-tr"
          v-model="txtEmail"
          density="compact"
          placeholder="Email-Adresse"
@@ -84,7 +85,7 @@ async function resetPassword() {
 
      <v-btn
          @click="resetPassword()"
-         class="mb-8 mt-4"
+         class="textResponsiveButton mb-8 mt-4"
          color="primary"
          size="large"
          block
@@ -93,13 +94,58 @@ async function resetPassword() {
        Passwort zurücksetzen
      </v-btn>
 
-  </v-card>
-    </v-form>
-</v-app>/
+     </v-card>
+
+  </v-row>
+  </v-form>
+</v-app>
 
 
 </template>
 
 <style scoped>
+.viewport-text{
+  font-size: 5vw;
+}
+
+.textResponsiveButton{
+  text-transform: none;
+}
+
+@media (max-width: 350px) {
+  .textResponsiveTextField {
+    font-size: 85%;
+  }
+}
+
+@media (min-width: 200px) {
+  .textResponsiveButton {
+    font-size: 80%;
+  }
+}
+
+@media (min-width: 350px) {
+  .textResponsiveButton {
+    font-size: 90%;
+  }
+}
+
+@media (min-width: 600px) {
+  .textResponsiveButton {
+    font-size: 95%;
+  }
+}
+
+@media (min-width: 960px) {
+  .textResponsiveButton {
+    font-size: 100%;
+  }
+}
+
+@media (min-width: 1264px) {
+  .textResponsiveButton {
+    font-size: 110%;
+  }
+}
 
 </style>
