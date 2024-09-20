@@ -14,11 +14,22 @@ const snackbar = ref(false);
 const snackbarText = ref('')
 const snackbarColor = ref('error')
 
+const rules = {
+    password: [
+    (v) => (!!v && /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*(_|[^\w])).+$/.test(v)) ||
+        'Das Passwort muss mindestens einen Großbuchstaben, einen Kleinbuchstaben,\neine Zahl sowie ein Sonderzeichen enthalte und mindestens 8 Zeichen',
+    ],
+  length: (len) => [
+    (v) => (!!v && v.length >= len) || `Ungültige Passwortlänge, erforderlich sind ${len} Zeichen`,
+  ]};
+
+
 
 async function resetPassword() {
 
   //holt den Token aus der URL
   const token = route.query.token;
+
 
 
   if(!token)
@@ -110,7 +121,7 @@ async function resetPassword() {
     </v-card-text>
 
     <v-text-field
-        class="txtField"
+        class="txtField mb-5"
         v-model="txtPasswort"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         :type="visible ? 'text' : 'password'"
@@ -118,7 +129,7 @@ async function resetPassword() {
         placeholder="Passwort"
         prepend-inner-icon="mdi-lock-outline"
         variant="filled"
-        :rules="passwortRules"
+        :rules="[...rules.password, ...rules.length(8)]"
         @click:append-inner="visible = !visible"
     >
     </v-text-field>

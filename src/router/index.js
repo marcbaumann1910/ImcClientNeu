@@ -10,6 +10,7 @@ import Logout from "@/components/Logout.vue";
 import Profile from "@/components/Profile.vue";
 import ResetPassword from "@/components/ResetPassword.vue";
 import ResetPasswordRequest from "@/components/ResetPasswordRequest.vue";
+import FlextTest from "@/components/FlextTest.vue";
 
 const routes = [
     {
@@ -75,6 +76,12 @@ const routes = [
         name: 'reset-password-request',
         component: ResetPasswordRequest,
 
+    },
+    {
+        path: '/flextest',
+        name: 'flextest',
+        component: FlextTest,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
 
 ];

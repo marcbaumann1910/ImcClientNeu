@@ -119,7 +119,12 @@
 
     <br>
     <br>
+    <v-btn class="mb-6" href="/flextest">
+      Goto Flex-Test
+    </v-btn>
 
+    <br>
+    <br>
     <v-btn class="mb-6" @click="token">
       Token V1
     </v-btn>
@@ -160,6 +165,8 @@ const nachname = ref('');
 const usersList = ref([]); // Array zum Speichern der Benutzerliste
 const swipeDirection = ref('wisch mich')
 const side = ref('');
+const toggle = ref('');
+
 
 
 
