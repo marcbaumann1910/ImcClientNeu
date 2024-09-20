@@ -201,6 +201,9 @@ const password = ref('');
 const passwordConfirmation = ref('');
 const id = ref('');
 const errorMessageAusgabe = ref('');
+import { useRouter } from "vue-router";
+const router = useRouter();
+
 
 // Rules as a reactive object
 const rules = {
@@ -221,6 +224,10 @@ const rules = {
     (v) => v === password.value || 'Passwörter stimmen nicht überein',
   ],
 };
+
+function redirectToLogin(){
+  router.push("/login")
+}
 
 async function register() {
   isLoading.value = true;
@@ -293,32 +300,22 @@ async function register() {
       emailExistsDialog.value = true
     }
 
-    if(!response.data.insertId)
+    if(!response.data.idBenutzer)
     {
       errorMessageAusgabe.value = 'Keine neue ID generiert!';
-    }
+    }//ToDo: hier muss noch eine Snackbar hin!
     else {
-      errorMessageAusgabe.value = 'NeueID: ' +  response.data.insertId;
+      errorMessageAusgabe.value = 'NeueID: ' +  response.data.idBenutzer;
       showCheckIcon.value = true;
-      titelForm.value = 'Registrierung war erfolgreich! ID = ' + response.data.insertId;
+      titelForm.value = 'Registrierung war erfolgreich! ID = ' + response.data.idBenutzer;
     }
     isLoading.value = false;
 
   }catch (err) {
-    //console.log('CatchBlock in Register.vue', err); //Gibt das komplette Error-Objekt zurück
-    console.log('err.response.data: ', err.response.data);
-    //Field kommt vom Backend und wird von mir erzeugt und zurückgegeben
-    //Auf die Bezeichnung des Feldes kann somit zugegriffen werden, bei Bedarf
-    console.log('err.response.data.field: ', err.response.data.field);
-      if(err.response)
-      {
-        console.log(err.response.data.error);
-        errorMessageAusgabe.value = err.response.data.error;
 
-      }
-      else {
-        console.log('Ein unbekannter Fehler ist aufgetreten', err.message)
-      }
+
+    console.loge('Benutzer konnte nicht angelegt werden')
+    errorMessageAusgabe.value = 'Benutzer konnte nicht angelegt werden'; //ToDo: Muss durch Snackbar ersetzt werden
     isLoading.value = false;
     }
 
