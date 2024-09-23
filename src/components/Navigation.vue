@@ -20,7 +20,7 @@
     <!--Warenkorb-->
 
     <v-btn v-if="isUserLoggedIn" class="text-none" stacked>
-      <v-badge v-if="cartItemCount > 0" color="success" :content="cartItemCount">
+      <v-badge v-if="store.getters.getCartItemCount > 0" color="success" :content="store.getters.getCartItemCount">
       <v-icon>mdi-cart-outline</v-icon>
       </v-badge>
       <v-icon v-else >mdi-cart-outline</v-icon>
@@ -68,7 +68,28 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 import store from "@/store/store.js";
 
 const drawer = ref(false);
-const cartItemCount= ref(0);
+
+let cartItems = [{
+  artikelID: 1,
+  artikelBezeichnung: "Rock",
+  artikelGroesse: "L"
+}]
+console.log('cartItems', cartItems);
+
+store.dispatch('setCartItems', cartItems);
+console.log('store cartItems', store.getters.getCartItems)
+
+cartItems.push({
+  artikelID: 2,
+  artikelBezeichnung: "Bluse",
+  artikelGroesse: "M"
+})
+store.dispatch('setCartItems', cartItems);
+console.log('store cartItems', store.getters.getCartItems)
+
+
+store.dispatch('setCartItemCount', 0)
+console.log(store.getters.getCartItemCount)
 
 const items = [
   {title: 'Dashboard', route: '/dashboard', icon: 'mdi-view-dashboard'},

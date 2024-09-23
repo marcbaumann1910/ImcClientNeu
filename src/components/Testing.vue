@@ -112,11 +112,22 @@
     <br>
     <br>
     <input
+        class="mb-4"
         type="test"
         placeholder="nachname"
         v-model="nachname"
     />
 
+    <v-row>
+    <br>
+    <br>
+    <v-btn class="mb-6 mr-3" @click="cartItemAdd">
+      Cart Item Add
+    </v-btn>
+      <v-btn class="mb-6" @click="cartItemSub">
+        Cart Item Sub
+      </v-btn>
+    </v-row>
     <br>
     <br>
     <v-btn class="mb-6" href="/flextest">
@@ -156,6 +167,7 @@
 import { ref } from 'vue';
 import {watch, onMounted} from 'vue';
 import AuthenticationService from "@/services/AuthenticationService.js";
+import store from "@/store/store.js";
 
 const email = ref('');
 const password = ref('');
@@ -168,8 +180,13 @@ const side = ref('');
 const toggle = ref('');
 
 
+const cartItemAdd = async () =>{
+  store.dispatch('setCartItemCount', store.getters.getCartItemCount + 1);
+}
 
-
+const cartItemSub = async () =>{
+  store.dispatch('setCartItemCount', store.getters.getCartItemCount - 1);
+}
 
 function  swipe(direction) {
     swipeDirection.value = direction

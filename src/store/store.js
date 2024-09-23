@@ -4,6 +4,8 @@ const store = createStore({
     state: {
         isUserLoggedIn: !!localStorage.getItem('accessToken'), // initialer Zustand basierend auf localStorage
         userData: {}, // Hier kannst du die Benutzerdaten speichern
+        cartItemCount: 0, //Warenkorb Anzahl Einträge
+        cartItems: [], //Warenkorb-Einträge
     },
     mutations: {
         setUserLoggedIn(state, status) {
@@ -18,6 +20,12 @@ const store = createStore({
             localStorage.removeItem('accessToken');
             localStorage.removeItem('refreshToken');
         },
+        setCartItemCount(state, cartItemCount) {
+            state.cartItemCount = cartItemCount;
+        },
+        setCartItems(state, cartItems) {
+            state.cartItems = cartItems;
+        }
     },
     actions: {
         login({ commit }, userData) {
@@ -27,10 +35,18 @@ const store = createStore({
         logout({ commit }) {
             commit('logout');
         },
+        setCartItemCount({ commit }, count) {
+            commit('setCartItemCount', count);
+        },
+        setCartItems({ commit }, items) {
+            commit('setCartItems', items);
+        }
     },
     getters: {
         isUserLoggedIn: state => state.isUserLoggedIn,
         getUserData: state => state.userData,
+        getCartItemCount: state => state.cartItemCount,
+        getCartItems: state => state.cartItems,
     },
 });
 
