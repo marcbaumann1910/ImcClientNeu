@@ -74,7 +74,7 @@ async function resetPassword() {
     <v-card-text class="textResponsiveTextField" >Bitte Emailadresse angeben</v-card-text>
 
      <v-text-field
-         class="textResponsiveButton text-tr"
+         class="text-tr"
          v-model="txtEmail"
          density="compact"
          placeholder="Email-Adresse"
@@ -114,37 +114,37 @@ async function resetPassword() {
 
 @media (max-width: 350px) {
   .textResponsiveTextField {
-    font-size: 85%;
+    font-size: 0.84em;
   }
 }
 
 @media (min-width: 200px) {
   .textResponsiveButton {
-    font-size: 80%;
+    font-size: 0.87em;
   }
 }
 
 @media (min-width: 350px) {
   .textResponsiveButton {
-    font-size: 90%;
+    font-size: 0.9em;
   }
 }
 
 @media (min-width: 600px) {
   .textResponsiveButton {
-    font-size: 95%;
+    font-size: 0.95em;
   }
 }
 
 @media (min-width: 960px) {
   .textResponsiveButton {
-    font-size: 100%;
+    font-size: 1em;
   }
 }
 
 @media (min-width: 1264px) {
   .textResponsiveButton {
-    font-size: 110%;
+    font-size: 1.1em;
   }
 }
 

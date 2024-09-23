@@ -19,7 +19,12 @@
 
     <!--Warenkorb-->
 
-    <v-btn v-if="isUserLoggedIn" icon="mdi-cart-outline" variant="text"></v-btn>
+    <v-btn v-if="isUserLoggedIn" class="text-none" stacked>
+      <v-badge v-if="cartItemCount > 0" color="success" :content="cartItemCount">
+      <v-icon>mdi-cart-outline</v-icon>
+      </v-badge>
+      <v-icon v-else >mdi-cart-outline</v-icon>
+    </v-btn>
 <!--Warenkorb nur auf kleinen AndUp anzeigen-->
 <!--    <template v-if="$vuetify.display.smAndUp">-->
 <!--      <v-btn icon="mdi-cart-outline" variant="text"></v-btn>-->
@@ -63,6 +68,7 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 import store from "@/store/store.js";
 
 const drawer = ref(false);
+const cartItemCount= ref(0);
 
 const items = [
   {title: 'Dashboard', route: '/dashboard', icon: 'mdi-view-dashboard'},
