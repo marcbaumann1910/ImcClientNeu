@@ -83,7 +83,6 @@ const routes = [
         component: FlextTest,
         meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
-
 ];
 
 const router = createRouter({

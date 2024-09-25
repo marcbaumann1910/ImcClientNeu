@@ -4,6 +4,8 @@
     <h5>Herzlich Willkommen</h5>
 
     <v-container>
+      <Artikel/>
+      <v-spacer></v-spacer>/
       <v-stepper
           :next-text="nextName"
           :items="['Step 1', 'Step 2', 'Step 3']"
@@ -44,6 +46,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+import Artikel from '../components/Artikel.vue';
 const btnTest = ref('')
 const nextName = ref('')
 const currentStep = ref('')
