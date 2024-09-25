@@ -1,7 +1,7 @@
 <template>
 
   <v-row justify="center">
-    <v-col cols="12" md="8" lg="6">
+    <v-col cols="12" md="8" lg="8">
 
   <v-card class="vcard" flat>
     <v-card-title class="d-flex align-center pe-2">
@@ -21,7 +21,7 @@
           single-line
       ></v-text-field>
     </v-card-title>
-    <v-card  elevation="2" class="mb-1 mt-1" flat>
+    <v-card  elevation="2" class="mb-1 mt-1 pt-1" flat>
       <v-card-subtitle>Filtern nach Kategorie</v-card-subtitle>
       <v-chip
           color="secondary"
@@ -93,7 +93,7 @@
 
       <!-- Preis mit Währungssymbol -->
       <template v-slot:item.Preis="{ item }">
-        {{ item.Preis }} €
+        <span>{{ parseFloat(item.Preis).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} €</span>
       </template>
 <!--Slots für weitere spalten wir auf Lager-->
 <!--      <template v-slot:item.rating="{ item }">-->
@@ -119,8 +119,21 @@
 <!--      </template>-->
       <template v-slot:item.Bestand="{ item }">
         <div class="text-start">
-          <v-icon v-if="item.Bestand > 0" icon="mdi-check-bold" color="success"></v-icon>
-          <v-icon v-else icon="mdi-close-circle-outline" color="error"></v-icon>
+          <v-chip
+              v-tooltip="`Bestand ${Math.floor(item.Bestand)}`"
+              v-if="item.Bestand > 0"
+              color="success"
+              class="my-3 ml-2"
+          >
+            {{ Math.round(item.Bestand) }} verfügbar
+          </v-chip>
+          <v-chip
+              v-else
+              color="error"
+              class="my-3 ml-2 text-start"
+          >
+            {{ Math.round(item.Bestand) }} verfügbar
+          </v-chip>
         </div>
       </template>
     </v-data-table>
@@ -143,6 +156,7 @@ const search = ref('');
 onMounted(async () => {
   const response = await AuthenticationService.artikel()
   items.value = response.data
+
 })
 
 //hier die verfügbaren props für das headers Object: https://vuetifyjs.com/en/api/v-data-table/
@@ -152,7 +166,8 @@ const headers = ref([
   {
     title: 'Bild',
     value: 'Bildpfad',
-    sortable: false
+    sortable: false,
+    minWidth: '80px'
   },
   {
     title: 'Artikel',
@@ -175,7 +190,7 @@ const headers = ref([
     sortable: true
   },
   {
-    title: 'verfügbar',
+    title: 'Lager',
     value: 'Bestand',
     sortable: true,
     align: 'start'
@@ -188,9 +203,5 @@ console.log('items: ', items);
 
 <style scoped>
 
-.vcard{
-  max-width: 1400px;
-
-}
 
 </style>
