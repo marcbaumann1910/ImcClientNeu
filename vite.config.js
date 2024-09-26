@@ -12,6 +12,10 @@ export default defineConfig(({ mode }) => {
   return {
     server: {
       port: 4000,
+      sourcemap: false, // Deaktiviert Source Maps auf dem Entwicklungsserver
+    },
+    build: {
+      sourcemap: false, // Deaktiviert Source Maps im Build-Prozess
     },
     plugins: [
       vue(),
