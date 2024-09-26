@@ -89,11 +89,17 @@
       <!-- Spalte Farbe -->
       <!-- Steuerung der Spaltenbeschriftung. Auf kleinen mobilen Geräten werden Symbole verwendet sonst Text     -->
       <template #header.Farbe="{ column }">
-        <span class="d-none d-sm-inline">Farbe</span>
-        <v-icon class="d-inline d-sm-none">mdi-palette</v-icon>
+        <span class="desktop-label">Farbe</span> <!-- Text auf großen Geräten -->
+        <v-icon class="mobile-label">mdi-palette</v-icon> <!-- Icon auf mobilen Geräten -->
       </template>
+
+      <!-- Zeileninhalt für 'Farbe', mit Text auf großen Geräten und farbigem Punkt auf mobilen Geräten -->
       <template #item.Farbe="{ item }">
-        {{ item.Farbe }}
+        <span class="desktop-label">{{ item.Farbe }}</span> <!-- Text auf großen Geräten -->
+        <div
+            class="color-circle mobile-label"
+            :style="{ backgroundColor: germanColorToHex(item.Farbe) }"
+        ></div> <!-- Farbpunkt auf mobilen Geräten -->
       </template>
 
       <!-- Spalte Artikel -->
@@ -143,7 +149,7 @@
         </v-chip>
       </template>
 
-
+      <!--Bilder werden auf kleinen mobilen Geräten ausgeblendet, erfolgt über das Array headers[]-->
       <template v-slot:item.Bildpfad="{ item }">
         <v-card class="my-2" elevation="2" rounded>
           <v-img
@@ -238,8 +244,8 @@ const headers = ref([
   {
     title: 'Artikel',
     value: 'ArtikelBezeichnung',
-    sortable: true,
-    maxWidth: '80px'
+    sortable: true
+
   },
   {
     title: 'Größe',
@@ -279,6 +285,46 @@ console.log('germanColorToHex', germanColorToHex('grün'))
   border-radius: 50%; /* Runde Form */
   background: conic-gradient(red, orange, yellow, green, blue, indigo, violet);
 
+}
+
+.color-circle {
+  width: 18px; /* Größe des Punktes */
+  height: 18px;
+  border-radius: 50%; /* Runde Form */
+  display: inline-block; /* Stellt den Punkt inline dar */
+  border: 2px solid transparent; /* Standard ist kein sichtbarer Rand */
+}
+
+/* Zeige diese Elemente nur auf mobilen Geräten (max-width: 600px) */
+.mobile-label {
+  display: none;
+}
+
+/* Zeige diese Elemente nur auf großen Geräten (größer als 600px) */
+.desktop-label {
+  display: inline;
+}
+
+/* Ab 600px Bildschirmbreite aufwärts */
+@media (max-width: 600px) {
+  .mobile-label {
+    display: inline-block; /* Zeigt den Punkt auf mobilen Geräten */
+  }
+  .desktop-label {
+    display: none; /* Versteckt den Text auf mobilen Geräten */
+  }
+}
+
+/* Generelle Schriftgröße für die v-data-table */
+.v-data-table {
+  font-size: 16px; /* Standard-Schriftgröße */
+}
+
+/* Verkleinere die Schriftgröße auf mobilen Geräten (kleiner als 600px) */
+@media (max-width: 600px) {
+  .v-data-table {
+    font-size: 11px; /* Kleinere Schriftgröße auf mobilen Geräten */
+  }
 }
 
 </style>

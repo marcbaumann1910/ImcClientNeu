@@ -9,6 +9,7 @@ const germanToEnglishColors = {
     gelb: 'yellow',
     schwarz: 'black',
     weiß: 'white',
+    weiss: 'white',
     grau: 'gray',
     violett: 'purple',
     orange: 'orange',
