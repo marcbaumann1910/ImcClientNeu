@@ -4,14 +4,19 @@
     <v-col cols="12" md="8" lg="8">
 
   <v-card class="vcard" flat>
-    <v-card-title class="d-flex align-center pe-2">
-      <v-icon icon="mdi-hanger"></v-icon> &nbsp;
-      Inventar
 
+    <v-card-title class="d-flex align-center pe-2">
+      <!-- Icon und Text in einer Zeile -->
+      <v-icon icon="mdi-wardrobe-outline" class="mr-2"></v-icon>
+      <span class="desktop-label d-none d-sm-inline">Inventar</span>
+
+      <!-- Spacer fügt Flex-Raum hinzu, damit das Suchfeld nach rechts ausgerichtet wird -->
       <v-spacer></v-spacer>
 
+      <!-- Suchfeld -->
       <v-text-field
           v-model="search"
+          class="search-field"
           density="compact"
           label="Suche"
           prepend-inner-icon="mdi-magnify"
@@ -21,6 +26,8 @@
           single-line
       ></v-text-field>
     </v-card-title>
+
+
     <v-card  elevation="2" class="mb-1 mt-1 pt-1" flat>
       <v-card-subtitle>Filtern nach Kategorie</v-card-subtitle>
       <v-chip
@@ -336,5 +343,32 @@ console.log('germanColorToHex', germanColorToHex('grün'))
   }
 }
 
+/* Standardbreite des Suchfelds */
+.search-field {
+  max-width: 300px;
+  width: 100%;
+}
+
+/* Auf mobilen Geräten (kleiner als 600px) soll das Suchfeld breiter werden */
+@media (max-width: 600px) {
+  .search-field {
+    max-width: none; /* Deaktiviert die feste Breite */
+    width: 100%; /* Das Suchfeld nimmt die volle Breite des Containers ein */
+  }
+}
+
+/* Zeige den Text "Inventar" nur auf größeren Geräten */
+@media (max-width: 600px) {
+  .desktop-label {
+    display: none;
+  }
+}
+
+/* Auf größeren Geräten bleibt der Text sichtbar */
+@media (min-width: 600px) {
+  .desktop-label {
+    display: inline;
+  }
+}
 
 </style>
