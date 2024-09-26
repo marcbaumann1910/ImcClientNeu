@@ -78,6 +78,8 @@
         :items="items"
         v-model:search="search"
         items-per-page="5"
+        items-per-page-text="Einträge je Seite"
+        :pageText="'{0}-{1} von {2}'"
 
     >
 
@@ -108,7 +110,7 @@
         <v-icon class="d-inline d-sm-none">mdi-tshirt-crew</v-icon>
       </template>
       <template #item.ArtikelBezeichnung="{ item }">
-        {{ item.ArtikelBezeichnung }}
+      <div class="artikel-column">  {{ item.ArtikelBezeichnung }} </div>
       </template>
 
       <!-- Spalte Konfektionsgroesse -->
@@ -237,7 +239,7 @@ const headers = ref([
     title: 'Bild',
     value: 'Bildpfad',
     sortable: false,
-    minWidth: '70px',
+    maxWidth: '60px',
     headerProps: { class: 'd-none d-sm-table-cell' }, // Nur ab sm sichtbar
     cellProps: { class: 'd-none d-sm-table-cell' }, // Nur ab sm sichtbar
   },
@@ -292,7 +294,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
   height: 18px;
   border-radius: 50%; /* Runde Form */
   display: inline-block; /* Stellt den Punkt inline dar */
-  border: 2px solid transparent; /* Standard ist kein sichtbarer Rand */
+  border: 1px solid; /* Standard ist kein sichtbarer Rand */
 }
 
 /* Zeige diese Elemente nur auf mobilen Geräten (max-width: 600px) */
@@ -326,5 +328,13 @@ console.log('germanColorToHex', germanColorToHex('grün'))
     font-size: 11px; /* Kleinere Schriftgröße auf mobilen Geräten */
   }
 }
+
+/* Breite der "Artikel"-Spalte auf mobilen Geräten */
+@media (max-width: 600px) {
+  .artikel-column {
+    max-width: 80px; /* Schmalere Breite auf mobilen Geräten */
+  }
+}
+
 
 </style>
