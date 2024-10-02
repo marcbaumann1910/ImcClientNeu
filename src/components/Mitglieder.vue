@@ -12,6 +12,7 @@ onMounted(async ()  => {
   {
     console.log('Fehler beim abrufen der Mitglieder', err)
   }
+  //neu
 
 })
 
