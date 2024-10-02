@@ -61,19 +61,26 @@
   </v-navigation-drawer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthenticationService from "@/services/AuthenticationService.js";
 import store from "@/store/store.js";
 
-const drawer = ref(false);
+const drawer = ref<boolean>(false);
 
-let cartItems = [{
+interface CartItem{
+  artikelID: number;
+  artikelBezeichnung: string;
+  artikelGroesse: string;
+}
+
+let cartItems: CartItem[] = [{
   artikelID: 1,
   artikelBezeichnung: "Rock",
   artikelGroesse: "L"
-}]
+}];
+
 console.log('cartItems', cartItems);
 
 store.dispatch('setCartItems', cartItems);
