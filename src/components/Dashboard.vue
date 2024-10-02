@@ -4,8 +4,7 @@
     <h5>Herzlich Willkommen</h5>
 
     <v-container>
-      <Artikel/>
-      <v-spacer></v-spacer>/
+      <v-spacer></v-spacer>
       <v-stepper
           :next-text="nextName"
           :items="['Step 1', 'Step 2', 'Step 3']"

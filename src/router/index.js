@@ -12,6 +12,7 @@ import Profile from "@/components/Profile.vue";
 import ResetPassword from "@/components/ResetPassword.vue";
 import ResetPasswordRequest from "@/components/ResetPasswordRequest.vue";
 import FlextTest from "@/components/FlextTest.vue";
+import Leihvorgang from "@/components/Leihvorgang.vue";
 
 const routes = [
     {
@@ -47,6 +48,12 @@ const routes = [
         path: '/mitglieder',
         name: 'mitglieder',
         component: Mitglieder,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
+    },
+    {
+        path: '/leihvorgang',
+        name: 'leihvorgang',
+        component: Leihvorgang,
         meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
     {

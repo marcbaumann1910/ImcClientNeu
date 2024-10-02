@@ -67,17 +67,19 @@
             Dicker Peter
           </v-chip>
         </v-card>
-        <v-card  elevation="2" class="mx-auto pa-1" flat>
-          <v-card-subtitle>Filtern nach Größe</v-card-subtitle>
-          <v-chip
-              color="secondary"
-              class="my-3 ml-2"
-              @click="search=''"
-              prepend-icon="mdi-close-circle-outline"
-          >
-            Filter löschen
-          </v-chip>
-        </v-card>
+
+<!--        <v-card  elevation="2" class="mx-auto pa-1" flat>-->
+<!--          <v-card-subtitle>Filtern nach Größe</v-card-subtitle>-->
+<!--          <v-chip-->
+<!--              color="secondary"-->
+<!--              class="my-3 ml-2"-->
+<!--              @click="search=''"-->
+<!--              prepend-icon="mdi-close-circle-outline"-->
+<!--          >-->
+<!--            Filter löschen-->
+<!--          </v-chip>-->
+<!--        </v-card>-->
+
         <v-divider></v-divider>
         <div style="overflow-x: auto;">
           <v-data-table

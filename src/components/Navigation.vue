@@ -100,6 +100,7 @@ console.log(store.getters.getCartItemCount)
 
 const items = [
   {title: 'Dashboard', route: '/dashboard', icon: 'mdi-view-dashboard'},
+  {title: 'Leihvorgang', route: '/leihvorgang', icon: 'mdi-handshake'},
   {title: 'Artikel', route: '/artikel', icon: 'mdi-file-document'},
   {title: 'Mitglieder', route: '/mitglieder', icon: 'mdi-account-multiple'},
   {title: 'Abrechnung', route: '/abrechnung', icon: 'mdi-currency-eur'},
