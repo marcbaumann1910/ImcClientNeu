@@ -29,6 +29,10 @@ export default {
     artikel() {
         console.log('artikel: ');
         return Api.get('/artikel');
+    },
+    mitglieder() {
+        console.log('mitglieder: ');
+        return Api.get('/mitglieder');
     }
 
 };

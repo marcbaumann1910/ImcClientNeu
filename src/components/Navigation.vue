@@ -94,6 +94,7 @@ console.log(store.getters.getCartItemCount)
 const items = [
   {title: 'Dashboard', route: '/dashboard', icon: 'mdi-view-dashboard'},
   {title: 'Artikel', route: '/artikel', icon: 'mdi-file-document'},
+  {title: 'Mitglieder', route: '/mitglieder', icon: 'mdi-account-multiple'},
   {title: 'Abrechnung', route: '/abrechnung', icon: 'mdi-currency-eur'},
   {title: 'Registrierung', route: '/register', icon: 'mdi-account-plus'},
   {title: 'Testing', route: '/testing', icon: 'mdi-ab-testing'}

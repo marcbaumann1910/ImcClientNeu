@@ -5,6 +5,7 @@ import Testing from '@/components/Testing.vue';
 import Login from "@/components/Login.vue";
 import Dashboard from "@/components/Dashboard.vue";
 import Artikel from "@/components/Artikel.vue";
+import Mitglieder from "@/components/Mitglieder.vue";
 import Abrechnung from "@/components/Abrechnung.vue";
 import Logout from "@/components/Logout.vue";
 import Profile from "@/components/Profile.vue";
@@ -40,6 +41,12 @@ const routes = [
         path: '/artikel',
         name: 'artikel',
         component: Artikel,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
+    },
+    {
+        path: '/mitglieder',
+        name: 'mitglieder',
+        component: Mitglieder,
         meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
     {
