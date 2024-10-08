@@ -66,6 +66,7 @@ const filteredMembers = computed(() => {
 
       <div v-for="member in filteredMembers" :key="member.id">
       <v-hover v-slot="{ isHovering, props }">
+        <!-- $emit('memberSelected', member)" ÜBERGIBT das Element an die übergeordnete Komponente, hier dem Leihvorgang-->
       <v-card
           class="mb-2"
           @click="$emit('memberSelected', member)"
