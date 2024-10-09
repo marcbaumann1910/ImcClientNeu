@@ -53,19 +53,17 @@ function deleteSelectedMember(){
 
             <v-card-title
                 class="text-center"
+                d-flex flex-column justify-center
             >
               <v-card-subtitle>ausgewählt:</v-card-subtitle>
+              <v-icon class="ml-2 mb-2" @click="deleteSelectedMember()">mdi-close-circle</v-icon>
              {{selectedMember.firstName}} {{selectedMember.familyName}}
 
             </v-card-title>
           <v-row no-gutters class="justify-start">
+
             <v-col>
-            <v-icon
-                class="ml-2 mb-2"
-                @click="deleteSelectedMember()"
-            >
-              mdi-close-circle
-            </v-icon>
+
             </v-col>
           </v-row>
           </v-card>
@@ -79,6 +77,7 @@ function deleteSelectedMember(){
             {{selectedMember.firstName}} {{selectedMember.familyName}}
           </v-chip>
           <!--hier wird die Auswahl aus Mitglieder empfangen und an handleMemberSelect übergeben -->
+          <!-- in v-if funktioniert isSelectedMember.value nicht  -->
           <Mitglieder v-if="!isSelectedMember"  @memberSelected="handleMemberSelect"/>
           <Artikel v-if="isSelectedMember"/>
         </v-card>
