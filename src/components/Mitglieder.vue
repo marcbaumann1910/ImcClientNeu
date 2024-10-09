@@ -59,6 +59,7 @@ const filteredMembers = computed(() => {
 </script>
 
 <template>
+
   <v-container>
     <v-row justify="center">
     <v-col cols="12" md="8" lg="8">

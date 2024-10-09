@@ -3,7 +3,13 @@ import { ref } from 'vue'
 import Mitglieder from "@/components/Mitglieder.vue";
 import store from "@/store/store.js"
 import Artikel from "../components/Artikel.vue";
-const selectedMember = ref([]);
+const selectedMember = ref(null);
+const isSelectedMember = ref(false);
+
+function nextPage(){
+  isSelectedMember.value = !!store.getters.getBorrowMember.firstName
+  console.log('isSelectedMember', isSelectedMember.value)
+}
 
 function handleMemberSelect(member) {
   selectedMember.value = member; // Speichert das ausgewählte Mitglied
@@ -32,6 +38,7 @@ function deleteSelectedMember(){
           <v-spacer></v-spacer>
           <v-btn
               color="primary"
+              @click="nextPage"
           >weiter</v-btn>
          </v-card>
 
@@ -72,8 +79,8 @@ function deleteSelectedMember(){
             {{selectedMember.firstName}} {{selectedMember.familyName}}
           </v-chip>
           <!--hier wird die Auswahl aus Mitglieder empfangen und an handleMemberSelect übergeben -->
-          <Mitglieder @memberSelected="handleMemberSelect"/>
-
+          <Mitglieder v-if="!isSelectedMember"  @memberSelected="handleMemberSelect"/>
+          <Artikel v-if="isSelectedMember"/>
         </v-card>
       </v-col>
     </v-row>
@@ -89,7 +96,7 @@ function deleteSelectedMember(){
   background-color: #BDBDBD;
 }
 .vCardTitle{
-  //min-height: 8vh;
+  min-height: 8vh;
 }
 
 </style>
