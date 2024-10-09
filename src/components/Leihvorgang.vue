@@ -57,8 +57,9 @@ function deleteSelectedMember(){
         </v-card>
 
         <v-card class="vCardMitgliedSuchen">
+          <!-- Anzeige ausgewähltes Mitglied auf Desktops -->
           <v-card
-              v-if="selectedMember && selectedMember.firstName"
+              v-if="selectedMember && selectedMember.firstName && $vuetify.display.desktop"
               class="d-flex align-center"
               flat
               height="75px"
@@ -79,11 +80,13 @@ function deleteSelectedMember(){
             <!-- Spacer rechts vom Titel -->
             <v-spacer></v-spacer>
           </v-card>
+          <!-- Anzeige ausgewähltes Mitglied auf mobilen Geräte -->
           <v-chip
               v-if="selectedMember && selectedMember.firstName && $vuetify.display.mobile"
-              class="mt-2 ml-2"
-              color="primary"
-              prepend-icon="mdi-close-circle-outline"
+              class="mt-2 ml-2 mb-2"
+              variant="flat"
+              color="green"
+              prepend-icon="mdi-close-circle-outline v-chip--active"
               @click="deleteSelectedMember"
           >
             {{selectedMember.firstName}} {{selectedMember.familyName}}
