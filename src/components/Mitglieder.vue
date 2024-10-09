@@ -97,6 +97,7 @@ const filteredMembers = computed(() => {
       </v-card>
       </v-hover>
       </div>
+    <!-- Nur wenn mobiles Gerät und paginatedMembers einen Inhalt hat, wird v-pagination angezeigt     -->
       <v-pagination
           v-if="$vuetify.display.mobile && paginatedMembers && paginatedMembers.length > 0"
           v-model="currentPage"

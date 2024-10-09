@@ -1,17 +1,22 @@
 <script setup>
 import { ref } from 'vue'
 import Mitglieder from "@/components/Mitglieder.vue";
+import store from "@/store/store.js"
 import Artikel from "../components/Artikel.vue";
 const selectedMember = ref([]);
 
 function handleMemberSelect(member) {
   selectedMember.value = member; // Speichert das ausgewählte Mitglied
+  store.dispatch('setBorrowMember', selectedMember);
   console.log('selectedMember', selectedMember);
   console.log('selectedMember', selectedMember.value.firstName);
+  console.log('store', store.getters.getBorrowMember.firstName);
 }
 
-function deleteChip(){
+function deleteSelectedMember(){
   selectedMember.value = null;
+  store.dispatch('setBorrowMember', []);
+  console.log('store', store.getters.getBorrowMember.firstName);
 }
 
 </script>
@@ -50,7 +55,7 @@ function deleteChip(){
             <v-col>
             <v-icon
                 class="ml-2 mb-2"
-                @click="deleteChip()"
+                @click="deleteSelectedMember()"
             >
               mdi-close-circle
             </v-icon>
@@ -62,7 +67,7 @@ function deleteChip(){
               class="mt-2 ml-2"
               color="primary"
               prepend-icon="mdi-close-circle-outline"
-              @click="deleteChip"
+              @click="deleteSelectedMember"
           >
             {{selectedMember.firstName}} {{selectedMember.familyName}}
           </v-chip>

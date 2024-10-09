@@ -3,9 +3,11 @@ import { createStore } from 'vuex';
 const store = createStore({
     state: {
         isUserLoggedIn: !!localStorage.getItem('accessToken'), // initialer Zustand basierend auf localStorage
-        userData: {}, // Hier kannst du die Benutzerdaten speichern
+        userData: {}, // Hier werden die Benutzerdaten gespeichert
         cartItemCount: 0, //Warenkorb Anzahl Einträge
         cartItems: [], //Warenkorb-Einträge
+        borrowMember: [], //Mitglied
+
     },
     mutations: {
         setUserLoggedIn(state, status) {
@@ -25,6 +27,9 @@ const store = createStore({
         },
         setCartItems(state, cartItems) {
             state.cartItems = cartItems;
+        },
+        setBorrowMember(state, memberValues) {
+            state.borrowMember = memberValues;
         }
     },
     actions: {
@@ -41,12 +46,17 @@ const store = createStore({
         setCartItems({ commit }, items) {
             commit('setCartItems', items);
         }
+        ,
+        setBorrowMember({ commit }, values) {
+            commit('setBorrowMember', values);
+        }
     },
     getters: {
         isUserLoggedIn: state => state.isUserLoggedIn,
         getUserData: state => state.userData,
         getCartItemCount: state => state.cartItemCount,
         getCartItems: state => state.cartItems,
+        getBorrowMember: state => state.borrowMember,
     },
 });
 
