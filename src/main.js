@@ -28,6 +28,7 @@ const vuetify = createVuetify({
                     warning: '#FB8C00',
                     background: '#F5F5F5',
                     background2: '#E0E0E0',
+                    grey: '#757575',
                     hover: '#BDBDBD',
                 },
             },

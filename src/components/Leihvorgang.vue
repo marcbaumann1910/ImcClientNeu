@@ -5,15 +5,26 @@ import store from "@/store/store.js"
 import Artikel from "../components/Artikel.vue";
 const selectedMember = ref(null);
 const isSelectedMember = ref(false);
+const currentPage = ref(0);
+
+const components = ['Mitglieder','Artikel']
+
+function previousPage(){
+  if(currentPage.value > 0){
+    currentPage.value--;
+  }
+}
 
 function nextPage(){
-  isSelectedMember.value = !!store.getters.getBorrowMember.firstName
-  console.log('isSelectedMember', isSelectedMember.value)
+  if (currentPage.value < components.length - 1) {
+    currentPage.value++;
+  }
 }
 
 function handleMemberSelect(member) {
   selectedMember.value = member; // Speichert das ausgewählte Mitglied
   store.dispatch('setBorrowMember', selectedMember);
+  isSelectedMember.value = !!store.getters.getBorrowMember.firstName
   console.log('selectedMember', selectedMember);
   console.log('selectedMember', selectedMember.value.firstName);
   console.log('store', store.getters.getBorrowMember.firstName);
@@ -22,6 +33,7 @@ function handleMemberSelect(member) {
 function deleteSelectedMember(){
   selectedMember.value = null;
   store.dispatch('setBorrowMember', []);
+  isSelectedMember.value = !!store.getters.getBorrowMember.firstName
   console.log('store', store.getters.getBorrowMember.firstName);
 }
 
@@ -36,36 +48,36 @@ function deleteSelectedMember(){
           <v-spacer></v-spacer>
           <v-card-title>Leihvorgang beginnen</v-card-title>
           <v-spacer></v-spacer>
-          <v-btn
-              color="primary"
-              @click="nextPage"
-          >weiter</v-btn>
          </v-card>
 
-        <v-card class="vCardMitgliedSuchen">
+        <v-card class="vCardButtons d-flex mb-2">
+          <v-btn color="grey" @click="previousPage" v-show="currentPage>0">zurück</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="nextPage" :disabled="!isSelectedMember">weiter</v-btn>
+        </v-card>
 
+        <v-card class="vCardMitgliedSuchen">
           <v-card
               v-if="selectedMember && selectedMember.firstName"
-              class="d-flex flex-column justify-center"
+              class="d-flex align-center"
               flat
+              height="75px"
               color="success"
           >
+            <!-- Icon links (Start) -->
+            <v-icon class="ml-2" @click="deleteSelectedMember()">mdi-close-circle</v-icon>
 
-            <v-card-title
-                class="text-center"
-                d-flex flex-column justify-center
-            >
+            <!-- Spacer zwischen Icon und Titel -->
+            <v-spacer></v-spacer>
+
+            <!-- Titel und Untertitel zentral -->
+            <div class="text-center">
               <v-card-subtitle>ausgewählt:</v-card-subtitle>
-              <v-icon class="ml-2 mb-2" @click="deleteSelectedMember()">mdi-close-circle</v-icon>
-             {{selectedMember.firstName}} {{selectedMember.familyName}}
+              {{ selectedMember.firstName }} {{ selectedMember.familyName }}
+            </div>
 
-            </v-card-title>
-          <v-row no-gutters class="justify-start">
-
-            <v-col>
-
-            </v-col>
-          </v-row>
+            <!-- Spacer rechts vom Titel -->
+            <v-spacer></v-spacer>
           </v-card>
           <v-chip
               v-if="selectedMember && selectedMember.firstName && $vuetify.display.mobile"
@@ -78,8 +90,8 @@ function deleteSelectedMember(){
           </v-chip>
           <!--hier wird die Auswahl aus Mitglieder empfangen und an handleMemberSelect übergeben -->
           <!-- in v-if funktioniert isSelectedMember.value nicht  -->
-          <Mitglieder v-if="!isSelectedMember"  @memberSelected="handleMemberSelect"/>
-          <Artikel v-if="isSelectedMember"/>
+          <Mitglieder v-if="currentPage===0"  @memberSelected="handleMemberSelect"/>
+          <Artikel v-if="currentPage===1"/>
         </v-card>
       </v-col>
     </v-row>
@@ -96,6 +108,12 @@ function deleteSelectedMember(){
 }
 .vCardTitle{
   min-height: 8vh;
+}
+
+.vCardButtons{
+  background-color: transparent;
+  border: none;
+  box-shadow: none
 }
 
 </style>
