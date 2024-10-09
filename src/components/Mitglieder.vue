@@ -3,6 +3,8 @@ import { ref, computed, onMounted } from 'vue'
 import AuthenticationService from "@/services/AuthenticationService.js";
 const search = ref('');
 const members = ref([]);
+const currentPage = ref(1);
+const itemsPerPage = ref(3);
 
 defineProps({
   member: Object,
@@ -17,6 +19,19 @@ onMounted(async ()  => {
     console.log('Fehler beim abrufen der Mitglieder', err)
   }
 })
+
+//Berechnen der paginierten Mitglieder
+const paginatedMembers = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return filteredMembers.value.slice(start, end); // Zeige nur die Mitglieder der aktuellen Seite
+});
+
+
+//Berechnen der Anzahl je Seite
+const totalPages = computed(() => {
+  return Math.ceil(filteredMembers.value.length / itemsPerPage.value);
+});
 
 const filteredMembers = computed(() => {
   if(search.value.length < 3){
@@ -36,6 +51,8 @@ const filteredMembers = computed(() => {
       }
       return a.firstName.localeCompare(b.firstName);
   });
+
+
 
 })
 
@@ -64,8 +81,9 @@ const filteredMembers = computed(() => {
       single-line
       ></v-text-field>
 
-      <div v-for="member in filteredMembers" :key="member.id">
-      <v-hover v-slot="{ isHovering, props }">
+      <div v-for="member in ($vuetify.display.mobile ? paginatedMembers : filteredMembers)" :key="member.id">
+
+        <v-hover v-slot="{ isHovering, props }">
         <!-- $emit('memberSelected', member)" ÜBERGIBT das Element an die übergeordnete Komponente, hier dem Leihvorgang-->
       <v-card
           class="mb-2"
@@ -79,10 +97,17 @@ const filteredMembers = computed(() => {
       </v-card>
       </v-hover>
       </div>
+      <v-pagination
+          v-if="$vuetify.display.mobile && paginatedMembers && paginatedMembers.length > 0"
+          v-model="currentPage"
+          :length="totalPages"
+          :total-visible="3"
+      >
+
+      </v-pagination>
     </v-col>
     </v-row>
-  </v-container>
-
+   </v-container>
 </template>
 
 <style scoped>

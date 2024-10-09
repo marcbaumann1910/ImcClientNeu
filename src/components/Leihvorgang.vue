@@ -68,7 +68,7 @@ function deleteChip(){
           </v-chip>
           <!--hier wird die Auswahl aus Mitglieder empfangen und an handleMemberSelect übergeben -->
           <Mitglieder @memberSelected="handleMemberSelect"/>
-          <v-pagination :length="3"></v-pagination>
+
         </v-card>
       </v-col>
     </v-row>
