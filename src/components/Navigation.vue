@@ -83,16 +83,16 @@ let cartItems: CartItem[] = [{
 
 console.log('cartItems', cartItems);
 
-store.dispatch('setCartItems', cartItems);
-console.log('store cartItems', store.getters.getCartItems)
+// store.dispatch('setCartItems', cartItems);
+// console.log('store cartItems', store.getters.getCartItems)
 
-cartItems.push({
-  artikelID: 2,
-  artikelBezeichnung: "Bluse",
-  artikelGroesse: "M"
-})
-store.dispatch('setCartItems', cartItems);
-console.log('store cartItems', store.getters.getCartItems)
+// cartItems.push({
+//   artikelID: 2,
+//   artikelBezeichnung: "Bluse",
+//   artikelGroesse: "M"
+// })
+// store.dispatch('setCartItems', cartItems);
+// console.log('store cartItems', store.getters.getCartItems)
 
 
 store.dispatch('setCartItemCount', 0)

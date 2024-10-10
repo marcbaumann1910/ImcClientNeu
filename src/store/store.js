@@ -23,10 +23,20 @@ const store = createStore({
             localStorage.removeItem('refreshToken');
         },
         setCartItemCount(state, cartItemCount) {
-            state.cartItemCount = cartItemCount;
+            state.cartItemCount = state.cartItemCount + cartItemCount;
         },
-        setCartItems(state, cartItems) {
-            state.cartItems = cartItems;
+        setCartItems(state, item) {
+            const existingItem = state.cartItems.find((cartItems) => cartItems.idInventarArtikel === item.idInventarArtikel);
+
+            if(existingItem) {
+                // Falls der Artikel bereits im Warenkorb ist, Menge aktualisieren
+                const newMenge = existingItem.menge += item.menge;
+                existingItem.menge = newMenge;
+
+            }else{
+                //sonst hinzufügen
+                state.cartItems.push(item);
+            }
         },
         setBorrowMember(state, memberValues) {
             state.borrowMember = memberValues;

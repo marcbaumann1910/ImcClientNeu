@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import AuthenticationService from "@/services/AuthenticationService.js";
-import { germanColorToHex } from '@/utils/colorConverter.js' //Wird benötigt um Farben (text) in RGB zu wandeln
+import { germanColorToHex } from '@/utils/colorConverter.js'
+import store from "@/store/store.js"; //Wird benötigt um Farben (text) in RGB zu wandeln
 
 const imageUrl = process.env.VITE_API_URL
 const items = ref([]);
@@ -13,6 +14,26 @@ onMounted(async () => {
   items.value = response.data
 
 })
+
+//Aktualisieren des Warenkorbs über vuex-Store
+function updateCart(item){
+  if(item.selectedQuantity > 0) {
+    const cartItem = {
+      idInventarArtikel: item.IDInventarArtikel, // Artikel-ID
+      artikelBezeichnung: item.ArtikelBezeichnung, // Artikelbezeichnung
+      konfektionsgroesse: item.Konfektionsgroesse, // Größe
+      farbe: item.Farbe, // Farbe
+      preis: item.Preis, // Preis
+      menge: item.selectedQuantity, // Menge
+    }
+    //Erhöht die Anzeige im Warenkorb, wird über den vuex-Store erledigt
+    store.dispatch('setCartItemCount', cartItem.menge)
+    //Fügt den ausgewählten Artikel in den vuex-Store
+    store.dispatch('setCartItems', cartItem)
+
+  }
+  console.log('vuex-store cartItems', store.getters.getCartItems)
+}
 
 // Diese Funktion erstellt eine Liste von Zahlen von 1 bis zum maximalen Bestand (Bestand des Artikels)
 function getAvailableQuantities(maxQuantity) {
@@ -255,9 +276,11 @@ console.log('germanColorToHex', germanColorToHex('grün'))
                 <v-col class="d-flex align-center" cols="12">
                  <v-select
                      :items="getAvailableQuantities(item.Bestand)"
+                     v-model="item.selectedQuantity"
                      dense
                      solo
                      hide-details
+                     @update:modelValue="updateCart(item)"
                  >
 
                  </v-select>
