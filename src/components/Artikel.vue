@@ -1,3 +1,77 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import AuthenticationService from "@/services/AuthenticationService.js";
+import { germanColorToHex } from '@/utils/colorConverter.js' //Wird benötigt um Farben (text) in RGB zu wandeln
+
+const imageUrl = process.env.VITE_API_URL
+const items = ref([]);
+const search = ref('');
+
+//Abrufen der Artikel-Daten vom Server
+onMounted(async () => {
+  const response = await AuthenticationService.artikel()
+  items.value = response.data
+
+})
+
+// Diese Funktion erstellt eine Liste von Zahlen von 1 bis zum maximalen Bestand (Bestand des Artikels)
+function getAvailableQuantities(maxQuantity) {
+  return Array.from({ length: maxQuantity }, (_, i) => i + 1);
+}
+
+//hier die verfügbaren props für das headers Object: https://vuetifyjs.com/en/api/v-data-table/
+//Hier können die Spaltenüberschriften festgelegt (title) und die aus der Datenbankanfrage (items) die
+//entsprechenden Spalten über (value) zugordnet werden.
+const headers = ref([
+  {
+    title: 'Bild',
+    value: 'Bildpfad',
+    sortable: false,
+    maxWidth: '60px',
+    headerProps: { class: 'd-none d-sm-table-cell' }, // Nur ab sm sichtbar
+    cellProps: { class: 'd-none d-sm-table-cell' }, // Nur ab sm sichtbar
+  },
+  {
+    title: 'Artikel',
+    value: 'ArtikelBezeichnung',
+    sortable: true
+
+  },
+  {
+    title: 'Größe',
+    value: 'Konfektionsgroesse',
+    sortable: true
+  },
+  {
+    title: 'Preis',
+    value: 'Preis',
+    sortable: true
+  },
+  {
+    title: 'Farbe',
+    value: 'Farbe',
+    sortable: true
+  },
+  {
+    title: 'Lager',
+    value: 'Bestand',
+    sortable: true,
+    align: 'start'
+  },
+  {
+    title: 'Menge',
+    value: 'Menge',
+    sortable: false,
+    align: 'start'
+  },
+
+]);
+console.log('items: ', items);
+console.log('germanColorToHex', germanColorToHex('rot'))
+console.log('germanColorToHex', germanColorToHex('grün'))
+
+</script>
+
 <template>
 
   <v-row justify="center">
@@ -171,6 +245,26 @@
               </v-card>
             </template>
 
+            <!-- Neue Spalte mit Menge -->
+            <template #header.Menge="{ column }">
+              <span class="d-none d-sm-inline">Menge</span>
+              <v-icon class="d-inline d-sm-none">mdi-numeric</v-icon>
+            </template>
+            <template v-slot:item.Menge="{ item }">
+              <v-row align="center">
+                <v-col class="d-flex align-center" cols="12">
+                 <v-select
+                     :items="getAvailableQuantities(item.Bestand)"
+                     dense
+                     solo
+                     hide-details
+                 >
+
+                 </v-select>
+                </v-col>
+              </v-row>
+            </template>
+
             <!-- Preis mit Währungssymbol -->
             <!--      <template v-slot:item.Preis="{ item }">-->
             <!--        <span>{{ parseFloat(item.Preis).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} €</span>-->
@@ -223,68 +317,6 @@
     </v-col>
   </v-row>
 </template>
-
-<script setup>
-import { ref, onMounted } from 'vue'
-import AuthenticationService from "@/services/AuthenticationService.js";
-import { germanColorToHex } from '@/utils/colorConverter.js' //Wird benötigt um Farben (text) in RGB zu wandeln
-
-const imageUrl = process.env.VITE_API_URL
-const items = ref([]);
-const search = ref('');
-
-//Abrufen der Artikel-Daten vom Server
-onMounted(async () => {
-  const response = await AuthenticationService.artikel()
-  items.value = response.data
-
-})
-
-//hier die verfügbaren props für das headers Object: https://vuetifyjs.com/en/api/v-data-table/
-//Hier können die Spaltenüberschriften festgelegt (title) und die aus der Datenbankanfrage (items) die
-//entsprechenden Spalten über (value) zugordnet werden.
-const headers = ref([
-  {
-    title: 'Bild',
-    value: 'Bildpfad',
-    sortable: false,
-    maxWidth: '60px',
-    headerProps: { class: 'd-none d-sm-table-cell' }, // Nur ab sm sichtbar
-    cellProps: { class: 'd-none d-sm-table-cell' }, // Nur ab sm sichtbar
-  },
-  {
-    title: 'Artikel',
-    value: 'ArtikelBezeichnung',
-    sortable: true
-
-  },
-  {
-    title: 'Größe',
-    value: 'Konfektionsgroesse',
-    sortable: true
-  },
-  {
-    title: 'Preis',
-    value: 'Preis',
-    sortable: true
-  },
-  {
-    title: 'Farbe',
-    value: 'Farbe',
-    sortable: true
-  },
-  {
-    title: 'Lager',
-    value: 'Bestand',
-    sortable: true,
-    align: 'start'
-  },
-]);
-console.log('items: ', items);
-console.log('germanColorToHex', germanColorToHex('rot'))
-console.log('germanColorToHex', germanColorToHex('grün'))
-
-</script>
 
 <style scoped>
 

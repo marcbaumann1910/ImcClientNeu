@@ -40,7 +40,6 @@ function deleteSelectedMember(){
 </script>
 
 <template>
-  <v-container>
     <v-row justify="center">
       <v-col cols="12" md="8" lg="8">
         <v-card class="d-flex align-center pe-2 mb-4">
@@ -59,7 +58,7 @@ function deleteSelectedMember(){
         <v-card class="vCardMitgliedSuchen">
           <!-- Anzeige ausgewähltes Mitglied auf Desktops -->
           <v-card
-              v-if="selectedMember && selectedMember.firstName && $vuetify.display.desktop"
+              v-if="selectedMember && selectedMember.firstName && $vuetify.display.mdAndUp"
               class="d-flex align-center"
               flat
               height="75px"
@@ -98,9 +97,6 @@ function deleteSelectedMember(){
         </v-card>
       </v-col>
     </v-row>
-  </v-container>
-
-
 </template>
 
 <style scoped>

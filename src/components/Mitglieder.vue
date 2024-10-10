@@ -63,12 +63,12 @@ const filteredMembers = computed(() => {
   <v-container>
     <v-row justify="center">
     <v-col cols="12" md="8" lg="8">
-      <v-card class="d-flex align-center pe-2 mb-6">
-        <v-icon class="ml-2">mdi-account-multiple</v-icon>
-        <v-card-title>Mitglied suchen</v-card-title>
-        <v-spacer></v-spacer>
+<!--      <v-card class="d-flex align-center pe-2 mb-6">-->
+<!--        <v-icon class="ml-2">mdi-account-multiple</v-icon>-->
+<!--        <v-card-title>Mitglied suchen</v-card-title>-->
+<!--        <v-spacer></v-spacer>-->
 
-    </v-card>
+<!--    </v-card>-->
       <!-- Suchfeld -->
       <v-text-field
           v-model="search"
