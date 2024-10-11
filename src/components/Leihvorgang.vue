@@ -43,9 +43,16 @@ function deleteSelectedMember(){
 </script>
 
 <template>
+  <v-container
+      fluid
+      :class="{
+      'pa-0 ma-0': $vuetify.display.mobile, // Klasse für mobile Geräte
+      'ma-auto': !$vuetify.display.mobile // Klasse für größere Bildschirme
+    }"
+  >
+    <WarenkorbDesktop v-if="$vuetify.display.mdAndUp"/>
 
-
-  <v-row justify="center">
+  <v-row justify="end">
     <v-col cols="12" md="8" lg="8">
       <v-card class="d-flex align-center pe-2 mb-4">
         <v-icon>mdi-handshake</v-icon>
@@ -59,6 +66,8 @@ function deleteSelectedMember(){
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="nextPage" :disabled="!isSelectedMember">weiter</v-btn>
       </v-card>
+
+
 
       <v-card class="vCardMitgliedSuchen">
         <!-- Anzeige ausgewähltes Mitglied auf Desktops -->
@@ -102,7 +111,7 @@ function deleteSelectedMember(){
       </v-card>
     </v-col>
   </v-row>
-
+  </v-container>
 
 </template>
 

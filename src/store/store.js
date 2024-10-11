@@ -39,7 +39,6 @@ const store = createStore({
 
             //Hier wird die im Array vorhandene Menge aller Artikel ermittelt und setCartItemCount übergeben
             //damit die Anzeige Anzahl Warenkorb aktualisiert wird!
-
             const sumMenge = state.cartItems.reduce((sum, cartItem) => sum + cartItem.menge, 0)
             store.dispatch('setCartItemCount', sumMenge);
 
