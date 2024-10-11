@@ -23,20 +23,26 @@ const store = createStore({
             localStorage.removeItem('refreshToken');
         },
         setCartItemCount(state, cartItemCount) {
-            state.cartItemCount = state.cartItemCount + cartItemCount;
+            state.cartItemCount = cartItemCount;
         },
         setCartItems(state, item) {
             const existingItem = state.cartItems.find((cartItems) => cartItems.idInventarArtikel === item.idInventarArtikel);
 
             if(existingItem) {
                 // Falls der Artikel bereits im Warenkorb ist, Menge aktualisieren
-                const newMenge = existingItem.menge += item.menge;
-                existingItem.menge = newMenge;
+                existingItem.menge = item.menge;
 
             }else{
                 //sonst hinzufügen
                 state.cartItems.push(item);
             }
+
+            //Hier wird die im Array vorhandene Menge aller Artikel ermittelt und setCartItemCount übergeben
+            //damit die Anzeige Anzahl Warenkorb aktualisiert wird!
+
+            const sumMenge = state.cartItems.reduce((sum, cartItem) => sum + cartItem.menge, 0)
+            store.dispatch('setCartItemCount', sumMenge);
+
         },
         setBorrowMember(state, memberValues) {
             state.borrowMember = memberValues;

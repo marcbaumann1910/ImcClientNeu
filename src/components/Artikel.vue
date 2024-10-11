@@ -17,6 +17,7 @@ onMounted(async () => {
 
 //Aktualisieren des Warenkorbs über vuex-Store
 function updateCart(item){
+  //Auswahl wird aufbereitet und an vuex-Store übergeben
   if(item.selectedQuantity > 0) {
     const cartItem = {
       idInventarArtikel: item.IDInventarArtikel, // Artikel-ID
@@ -27,7 +28,7 @@ function updateCart(item){
       menge: item.selectedQuantity, // Menge
     }
     //Erhöht die Anzeige im Warenkorb, wird über den vuex-Store erledigt
-    store.dispatch('setCartItemCount', cartItem.menge)
+    //store.dispatch('setCartItemCount', cartItem.menge)
     //Fügt den ausgewählten Artikel in den vuex-Store
     store.dispatch('setCartItems', cartItem)
 
