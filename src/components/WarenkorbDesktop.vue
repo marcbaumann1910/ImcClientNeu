@@ -40,14 +40,15 @@ function closeCart(){
               <v-img
                   :src="`${imageUrl}${item.Bildpfad}`"
                   alt="Artikelbild"
-                  min-height="40"
-                  min-width="40"
+                  min-height="50"
+                  min-width="50"
               ></v-img>
             </v-col>
 
             <!-- Spalte für den Text -->
             <v-col class="text-start">
               <v-list-item-title>{{ item.ArtikelBezeichnung }}</v-list-item-title>
+              <v-list-item-subtitle>Farbe: {{ item.Farbe }} €</v-list-item-subtitle>
               <v-list-item-subtitle>Preis: {{ item.Preis * item.Menge }} €</v-list-item-subtitle>
               <v-list-item-subtitle>Menge: {{ item.Menge }} Stück</v-list-item-subtitle>
               <v-list-item-subtitle>Größe: {{ item.Konfektionsgroesse }}</v-list-item-subtitle>
