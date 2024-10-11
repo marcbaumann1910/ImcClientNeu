@@ -26,11 +26,11 @@ const store = createStore({
             state.cartItemCount = cartItemCount;
         },
         setCartItems(state, item) {
-            const existingItem = state.cartItems.find((cartItems) => cartItems.idInventarArtikel === item.idInventarArtikel);
+            const existingItem = state.cartItems.find((cartItems) => cartItems.IDInventarArtikel === item.IDInventarArtikel);
 
             if(existingItem) {
                 // Falls der Artikel bereits im Warenkorb ist, Menge aktualisieren
-                existingItem.menge = item.menge;
+                existingItem.Menge = item.Menge;
 
             }else{
                 //sonst hinzufügen
@@ -39,7 +39,7 @@ const store = createStore({
 
             //Hier wird die im Array vorhandene Menge aller Artikel ermittelt und setCartItemCount übergeben
             //damit die Anzeige Anzahl Warenkorb aktualisiert wird!
-            const sumMenge = state.cartItems.reduce((sum, cartItem) => sum + cartItem.menge, 0)
+            const sumMenge = state.cartItems.reduce((sum, cartItem) => sum + cartItem.Menge, 0)
             store.dispatch('setCartItemCount', sumMenge);
 
         },

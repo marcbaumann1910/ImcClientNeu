@@ -20,12 +20,13 @@ function updateCart(item){
   //Auswahl wird aufbereitet und an vuex-Store übergeben
   if(item.selectedQuantity > 0) {
     const cartItem = {
-      idInventarArtikel: item.IDInventarArtikel, // Artikel-ID
-      artikelBezeichnung: item.ArtikelBezeichnung, // Artikelbezeichnung
-      konfektionsgroesse: item.Konfektionsgroesse, // Größe
-      farbe: item.Farbe, // Farbe
-      preis: item.Preis, // Preis
-      menge: item.selectedQuantity, // Menge
+      IDInventarArtikel: item.IDInventarArtikel, // Artikel-ID
+      ArtikelBezeichnung: item.ArtikelBezeichnung, // Artikelbezeichnung
+      Konfektionsgroesse: item.Konfektionsgroesse, // Größe
+      Farbe: item.Farbe, // Farbe
+      Preis: item.Preis, // Preis
+      Menge: item.selectedQuantity, // Menge
+      Bildpfad: item.Bildpfad
     }
     //Erhöht die Anzeige im Warenkorb, wird über den vuex-Store erledigt
     //store.dispatch('setCartItemCount', cartItem.menge)
