@@ -50,7 +50,7 @@ function deleteSelectedMember(){
       'ma-auto': !$vuetify.display.mobile // Klasse für größere Bildschirme
     }"
   >
-    <WarenkorbDesktop v-if="showCart" />
+    <WarenkorbDesktop v-if="showCart && $vuetify.display.mdAndUp"/>
   <!-- Da v-show nicht funktioniert und die v-card mit dem Hauptinhalt nach rechts rückt sobald WarenkorbDesktop mit v-if aus dem DOM
    verschwindet, verwende ich in Abhängigkeit von showCart end oder center bei v-row justify-->
   <v-row :justify="showCart ? 'end' : 'center'">

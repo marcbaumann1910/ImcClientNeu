@@ -3,6 +3,7 @@ import { ref, computed, watch } from 'vue';
 import store from '../store/store.js';
 
 const imageUrl = process.env.VITE_API_URL
+const IDInventarArtikel = ref(0);
 
 //Überwacht den vuex-Store und aktualisiert den Warenkorb
 const cartItems = computed(() => store.getters.getCartItems);
@@ -11,6 +12,10 @@ console.log('cartItems warenkorb', cartItems);
 
 function closeCart(){
     store.dispatch('setShowWarenkorbDesktop', false)
+}
+
+function deleteItemFromCart(id){
+    store.dispatch('deleteItemFromCart', id);
 }
 
 
@@ -50,9 +55,16 @@ function closeCart(){
               <v-list-item-title>{{ item.ArtikelBezeichnung }}</v-list-item-title>
               <v-list-item-subtitle>Farbe: {{ item.Farbe }} </v-list-item-subtitle>
               <v-list-item-subtitle>Preis: {{ item.Preis * item.Menge }} €</v-list-item-subtitle>
-              <v-list-item-subtitle>Menge: {{ item.Menge }} Stück</v-list-item-subtitle>
               <v-list-item-subtitle>Größe: {{ item.Konfektionsgroesse }}</v-list-item-subtitle>
+              <v-list-item-subtitle>Menge: {{ item.Menge }} Stück</v-list-item-subtitle>
             </v-col>
+
+            <v-avatar
+                icon="mdi-delete-outline"
+                @click="deleteItemFromCart(item.IDInventarArtikel)"
+                role="button"
+                class="clickable-avatar mr-4"
+            ></v-avatar>
           </v-row>
 
 
@@ -64,5 +76,13 @@ function closeCart(){
 </template>
 
 <style scoped>
+.clickable-avatar {
+  cursor: pointer;           /* Zeigt eine Hand an, wie bei einem Button */
+  transition: transform 0.2s ease; /* Optional: fügt eine kleine Animation hinzu */
+}
 
+.clickable-avatar:focus,
+.clickable-avatar:hover {
+  transform: scale(1.1);     /* Optional: Vergrößerung bei Fokus/Hover */
+}
 </style>

@@ -44,6 +44,12 @@ const store = createStore({
             store.dispatch('setCartItemCount', sumMenge);
 
         },
+        deleteItemFromCart(state, id) {
+            const index = state.cartItems.findIndex((cartItems) => cartItems.IDInventarArtikel === id);
+            if(index !==-1) {
+                state.cartItems.splice(index, 1);
+            }
+        },
         setBorrowMember(state, memberValues) {
             state.borrowMember = memberValues;
         },
@@ -71,6 +77,9 @@ const store = createStore({
         },
         setShowWarenkorbDesktop({ commit }, value) {
             commit('setShowWarenkorbDesktop', value);
+        },
+        deleteItemFromCart({ commit }, item){
+            commit('deleteItemFromCart', item);
         }
     },
     getters: {
