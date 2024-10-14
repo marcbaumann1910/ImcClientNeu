@@ -4,7 +4,6 @@ import store from '../store/store.js';
 import Leihvorgang from "@/components/Leihvorgang.vue";
 
 const imageUrl = process.env.VITE_API_URL
-const IDInventarArtikel = ref(0);
 
 //Überwacht den vuex-Store und aktualisiert den Warenkorb
 const cartItems = computed(() => store.getters.getCartItems);

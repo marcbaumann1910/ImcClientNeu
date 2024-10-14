@@ -16,8 +16,6 @@ defineProps({
   goToCheckout: Boolean,
 })
 
-
-
 const btnNextPageDisable = computed(()=>{
     if(currentPage.value === 0 && isSelectedMember.value)
     {
@@ -26,10 +24,10 @@ const btnNextPageDisable = computed(()=>{
     if(currentPage.value === 1 && store.getters.getCartItemCount > 0 && isSelectedMember.value){
       return true;
     }
+    if(currentPage.value === 2 && store.getters.getCartItemCount > 0 && isSelectedMember.value){
+      return true;
+    }
 });
-
-
-
 
 //Wird für das Navigieren innerhalb der v-card benötigt
 const components = ['Mitglieder','Artikel', 'Checkout']
@@ -47,6 +45,11 @@ function previousPage(){
   if(currentPage.value === 1){
     btnText.value = 'zur Kasse';
   }
+  //Checkout
+  if(currentPage.value === 2){
+    btnText.value = 'Vorgang buchen';
+  }
+  console.log('currentPage',currentPage.value);
 }
 
 //Eine Seite vor innerhalb der v-card und die Buttonbeschriftung anpassen
@@ -64,6 +67,10 @@ function nextPage(){
   //Artikel
   if(currentPage.value === 1){
     btnText.value = 'zur Kasse';
+  }
+  //Checkout
+  if(currentPage.value === 2){
+    btnText.value = 'Vorgang buchen';
   }
 }
 
