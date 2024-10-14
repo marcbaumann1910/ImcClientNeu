@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import store from '../store/store.js';
+import Leihvorgang from "@/components/Leihvorgang.vue";
 
 const imageUrl = process.env.VITE_API_URL
 const IDInventarArtikel = ref(0);
@@ -14,8 +15,9 @@ function closeCart(){
     store.dispatch('setShowWarenkorbDesktop', false)
 }
 
-function deleteItemFromCart(id){
-    store.dispatch('deleteItemFromCart', id);
+function deleteItemFromCart(id, itemCount){
+    store.dispatch('deleteItemFromCart', id); //löschen des Artikels aus vuex-Store
+    store.dispatch('setCartItemCount', store.getters.getCartItemCount - itemCount) //Anpassen der Anzeige Artikel im Warenkorb
 }
 
 
@@ -61,16 +63,18 @@ function deleteItemFromCart(id){
 
             <v-avatar
                 icon="mdi-delete-outline"
-                @click="deleteItemFromCart(item.IDInventarArtikel)"
+                @click="deleteItemFromCart(item.IDInventarArtikel, item.Menge)"
                 role="button"
                 class="clickable-avatar mr-4"
             ></v-avatar>
           </v-row>
       </v-list-item>
+      <!-- $emit übergibt an Leihvorgang true, damit Leihvorgang die Navigation auf die Checkoutseite durchführt-->
       <v-btn
           class="ma-2 "
           color="primary"
           v-if="cartItems.length > 0"
+          @click="$emit('goToCheckout', true)"
       >zur Kasse
       </v-btn>
     </v-list>

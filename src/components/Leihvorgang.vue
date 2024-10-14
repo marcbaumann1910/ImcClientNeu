@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref} from 'vue'
+import {computed, ref, onMounted} from 'vue'
 import Mitglieder from "@/components/Mitglieder.vue";
 import WarenkorbDesktop from "@/components/WarenkorbDesktop.vue";
 import store from "@/store/store.js"
@@ -11,15 +11,23 @@ const currentPage = ref(0);
 const btnText = ref('weiter');
 const showCart = computed(()=> store.getters.getShowWarenkorbDesktop);
 
+//WarenkorbDesktop btn "zur Kasse" liefert true wenn dieser geklickt wird
+defineProps({
+  goToCheckout: Boolean,
+})
+
+
+
 const btnNextPageDisable = computed(()=>{
     if(currentPage.value === 0 && isSelectedMember.value)
     {
       return true;
     }
-    if(currentPage.value === 1 && store.getters.getCartItemCount > 0){
+    if(currentPage.value === 1 && store.getters.getCartItemCount > 0 && isSelectedMember.value){
       return true;
     }
 });
+
 
 
 
@@ -85,7 +93,8 @@ function deleteSelectedMember(){
       'ma-auto': !$vuetify.display.mobile // Klasse für größere Bildschirme
     }"
   >
-    <WarenkorbDesktop v-if="showCart && $vuetify.display.mdAndUp"/>
+    <!-- @goToCheckout="nextPage" rufe die Funktion nextPage auf  -->
+    <WarenkorbDesktop v-if="showCart && $vuetify.display.mdAndUp" @goToCheckout="nextPage"/>
   <!-- Da v-show nicht funktioniert und die v-card mit dem Hauptinhalt nach rechts rückt sobald WarenkorbDesktop mit v-if aus dem DOM
    verschwindet, verwende ich in Abhängigkeit von showCart end oder center bei v-row justify-->
   <v-row :justify="showCart ? 'end' : 'center'">
@@ -105,7 +114,7 @@ function deleteSelectedMember(){
 
 
 
-      <v-card class="vCardMitgliedSuchen">
+      <v-card class="vCardMitgliedSuchen w-100">
         <!-- Anzeige ausgewähltes Mitglied auf Desktops -->
         <v-card
             v-if="selectedMember && selectedMember.firstName && $vuetify.display.mdAndUp"
@@ -142,9 +151,13 @@ function deleteSelectedMember(){
         </v-chip>
         <!--hier wird die Auswahl aus Mitglieder empfangen und an handleMemberSelect übergeben -->
         <!-- in v-if funktioniert isSelectedMember.value nicht  -->
-        <Mitglieder v-if="currentPage===0"  @memberSelected="handleMemberSelect"/>
-        <Artikel v-if="currentPage===1"/>
-        <Checkout v-if="currentPage===2"/>
+        <v-row>
+          <v-col cols="12">
+            <Mitglieder v-if="currentPage === 0" @memberSelected="handleMemberSelect" />
+            <Artikel v-if="currentPage === 1" />
+            <Checkout v-if="currentPage === 2" />
+          </v-col>
+        </v-row>
       </v-card>
     </v-col>
   </v-row>
@@ -157,6 +170,7 @@ function deleteSelectedMember(){
 .vCardMitgliedSuchen{
   min-height: 80vh;
   background-color: #BDBDBD;
+  with: 100%;
 }
 .vCardTitle{
   min-height: 8vh;

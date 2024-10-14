@@ -33,6 +33,7 @@ const store = createStore({
                 // Falls der Artikel bereits im Warenkorb ist, Menge aktualisieren
                 existingItem.Menge = item.Menge;
 
+
             }else{
                 //sonst hinzufügen
                 state.cartItems.push(item);
