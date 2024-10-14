@@ -1,81 +1,14 @@
-<template>
-  <!-- App Bar -->
-  <v-app-bar class="mb-6" color="secondary" prominent>
-
-    <div class="nav-icon-wrapper d-flex flex-column align-items-center">
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <span class="span">Menü</span>
-    </div>
-      <v-toolbar-title class="toolbarTitle">IMS Willstätter Hexen</v-toolbar-title>
-      <v-spacer></v-spacer>
-
-    <!--Login-->
-    <v-btn v-if="!isUserLoggedIn" @click="goLogin()">
-      <div class="login">
-        Login
-      </div>
-      <v-icon icon="mdi-login" class="mr-1"></v-icon>
-    </v-btn>
-
-    <!--Warenkorb-->
-
-    <v-btn v-if="isUserLoggedIn" class="text-none" stacked>
-      <v-badge v-if="store.getters.getCartItemCount > 0" color="success" :content="store.getters.getCartItemCount">
-      <v-icon>mdi-cart-outline</v-icon>
-      </v-badge>
-      <v-icon v-else >mdi-cart-outline</v-icon>
-    </v-btn>
-<!--Warenkorb nur auf kleinen AndUp anzeigen-->
-<!--    <template v-if="$vuetify.display.smAndUp">-->
-<!--      <v-btn icon="mdi-cart-outline" variant="text"></v-btn>-->
-<!--    </template>-->
-
-    <div class="text-center">
-      <!--Kebab-Menu-->
-      <v-menu>
-        <template v-slot:activator="{ props }">
-          <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
-        </template>
-
-        <v-list>
-          <v-list-item v-for="kebab in kebabs" :key="kebab.title" @click="navigate(kebab.route)">
-            <v-list-item-title>
-                <v-icon left class="mr-2" >{{ kebab.icon }}</v-icon>
-              {{ kebab.title }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </div>
-  </v-app-bar>
-
-  <!-- Navigation Drawer -->
-  <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'top' : undefined" temporary>
-    <v-list>
-      <v-list-item v-for="item in items" :key="item.title" @click="navigate(item.route)">
-          <v-list-item-title>
-            <v-icon class="mr-2">{{ item.icon }}</v-icon>
-            {{ item.title }}
-          </v-list-item-title>
-        </v-list-item>
-    </v-list>
-  </v-navigation-drawer>
-</template>
-
-<script setup lang="ts">
+<script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import AuthenticationService from "@/services/AuthenticationService.js";
 import store from "@/store/store.js";
 
-const drawer = ref<boolean>(false);
+const drawer = ref(false);
+const showCart = computed(()=> store.getters.getShowWarenkorbDesktop);
+console.log(store.getters.getShowWarenkorbDesktop);
 
-interface CartItem{
-  artikelID: number;
-  artikelBezeichnung: string;
-  artikelGroesse: string;
-}
-
-let cartItems: CartItem[] = [{
+let cartItems = [{
   artikelID: 1,
   artikelBezeichnung: "Rock",
   artikelGroesse: "L"
@@ -96,7 +29,7 @@ console.log('cartItems', cartItems);
 
 
 store.dispatch('setCartItemCount', 0)
-console.log(store.getters.getCartItemCount)
+
 
 const items = [
   {title: 'Dashboard', route: '/dashboard', icon: 'mdi-view-dashboard'},
@@ -155,7 +88,85 @@ function goLogin() {
   router.push({name: 'login'})
 }
 
+//Steuert über den vuex-Store die Anzeige des Warenkorbs in <Leihvorgang/>
+//da dieser über mehrere Komponenten gesteuert wird
+function showCartChange(){
+  store.dispatch("setShowWarenkorbDesktop", !store.getters.getShowWarenkorbDesktop);
+  console.log(store.getters.getShowWarenkorbDesktop)
+}
+
 </script>
+
+<template>
+  <!-- App Bar -->
+  <v-app-bar class="mb-6" color="secondary" prominent>
+
+    <div class="nav-icon-wrapper d-flex flex-column align-items-center">
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <span class="span">Menü</span>
+    </div>
+      <v-toolbar-title class="toolbarTitle">IMS Willstätter Hexen</v-toolbar-title>
+      <v-spacer></v-spacer>
+
+    <!--Login-->
+    <v-btn v-if="!isUserLoggedIn" @click="goLogin()">
+      <div class="login">
+        Login
+      </div>
+      <v-icon icon="mdi-login" class="mr-1"></v-icon>
+    </v-btn>
+
+    <!--Warenkorb-->
+
+    <v-btn v-if="isUserLoggedIn"
+           class="text-none" stacked
+           @click="showCartChange"
+    >
+      <v-badge
+          v-if="store.getters.getCartItemCount > 0"
+          color="success"
+          :content="store.getters.getCartItemCount"
+      >
+      <v-icon>mdi-cart-outline</v-icon>
+      </v-badge>
+      <v-icon v-else >mdi-cart-outline</v-icon>
+    </v-btn>
+<!--Warenkorb nur auf kleinen AndUp anzeigen-->
+<!--    <template v-if="$vuetify.display.smAndUp">-->
+<!--      <v-btn icon="mdi-cart-outline" variant="text"></v-btn>-->
+<!--    </template>-->
+
+    <div class="text-center">
+      <!--Kebab-Menu-->
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
+        </template>
+
+        <v-list>
+          <v-list-item v-for="kebab in kebabs" :key="kebab.title" @click="navigate(kebab.route)">
+            <v-list-item-title>
+                <v-icon left class="mr-2" >{{ kebab.icon }}</v-icon>
+              {{ kebab.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </div>
+  </v-app-bar>
+
+  <!-- Navigation Drawer -->
+  <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'top' : undefined" temporary>
+    <v-list>
+      <v-list-item v-for="item in items" :key="item.title" @click="navigate(item.route)">
+          <v-list-item-title>
+            <v-icon class="mr-2">{{ item.icon }}</v-icon>
+            {{ item.title }}
+          </v-list-item-title>
+        </v-list-item>
+    </v-list>
+  </v-navigation-drawer>
+</template>
+
 
 <style scoped>
 

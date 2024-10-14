@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import {computed, ref} from 'vue'
 import Mitglieder from "@/components/Mitglieder.vue";
 import WarenkorbDesktop from "@/components/WarenkorbDesktop.vue";
 import store from "@/store/store.js"
@@ -7,7 +7,7 @@ import Artikel from "../components/Artikel.vue";
 const selectedMember = ref(null);
 const isSelectedMember = ref(false);
 const currentPage = ref(0);
-const showCart = ref(true);
+const showCart = computed(()=> store.getters.getShowWarenkorbDesktop);
 
 
 const components = ['Mitglieder','Artikel']
@@ -50,9 +50,10 @@ function deleteSelectedMember(){
       'ma-auto': !$vuetify.display.mobile // Klasse für größere Bildschirme
     }"
   >
-    <WarenkorbDesktop v-if="$vuetify.display.mdAndUp"/>
-
-  <v-row justify="end">
+    <WarenkorbDesktop v-if="showCart" />
+  <!-- Da v-show nicht funktioniert und die v-card mit dem Hauptinhalt nach rechts rückt sobald WarenkorbDesktop mit v-if aus dem DOM
+   verschwindet, verwende ich in Abhängigkeit von showCart end oder center bei v-row justify-->
+  <v-row :justify="showCart ? 'end' : 'center'">
     <v-col cols="12" md="8" lg="8">
       <v-card class="d-flex align-center pe-2 mb-4">
         <v-icon>mdi-handshake</v-icon>

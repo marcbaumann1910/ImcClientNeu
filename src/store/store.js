@@ -7,6 +7,7 @@ const store = createStore({
         cartItemCount: 0, //Warenkorb Anzahl Einträge
         cartItems: [], //Warenkorb-Einträge
         borrowMember: [], //Mitglied
+        showWarenkorbDesktop: true, //Anzeigensteuerung des Warenkorbs
 
     },
     mutations: {
@@ -45,6 +46,9 @@ const store = createStore({
         },
         setBorrowMember(state, memberValues) {
             state.borrowMember = memberValues;
+        },
+        setShowWarenkorbDesktop(state, value){
+            state.showWarenkorbDesktop = value;
         }
     },
     actions: {
@@ -64,6 +68,9 @@ const store = createStore({
         ,
         setBorrowMember({ commit }, values) {
             commit('setBorrowMember', values);
+        },
+        setShowWarenkorbDesktop({ commit }, value) {
+            commit('setShowWarenkorbDesktop', value);
         }
     },
     getters: {
@@ -72,6 +79,7 @@ const store = createStore({
         getCartItemCount: state => state.cartItemCount,
         getCartItems: state => state.cartItems,
         getBorrowMember: state => state.borrowMember,
+        getShowWarenkorbDesktop: state => state.showWarenkorbDesktop,
     },
 });
 

@@ -10,7 +10,7 @@ const cartItems = computed(() => store.getters.getCartItems);
 console.log('cartItems warenkorb', cartItems);
 
 function closeCart(){
-
+    store.dispatch('setShowWarenkorbDesktop', false)
 }
 
 
