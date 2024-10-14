@@ -4,23 +4,58 @@ import Mitglieder from "@/components/Mitglieder.vue";
 import WarenkorbDesktop from "@/components/WarenkorbDesktop.vue";
 import store from "@/store/store.js"
 import Artikel from "../components/Artikel.vue";
+import Checkout from "@/components/Checkout.vue";
 const selectedMember = ref(null);
 const isSelectedMember = ref(false);
 const currentPage = ref(0);
+const btnText = ref('weiter');
 const showCart = computed(()=> store.getters.getShowWarenkorbDesktop);
 
+const btnNextPageDisable = computed(()=>{
+    if(currentPage.value === 0 && isSelectedMember.value)
+    {
+      return true;
+    }
+    if(currentPage.value === 1 && store.getters.getCartItemCount > 0){
+      return true;
+    }
+});
 
-const components = ['Mitglieder','Artikel']
 
+
+//Wird für das Navigieren innerhalb der v-card benötigt
+const components = ['Mitglieder','Artikel', 'Checkout']
+
+//Eine Seite zurück innerhalb der v-card
 function previousPage(){
   if(currentPage.value > 0){
     currentPage.value--;
   }
+  //Mitglieder
+  if(currentPage.value === 0){
+    btnText.value = 'weiter';
+  }
+  //Artikel
+  if(currentPage.value === 1){
+    btnText.value = 'zur Kasse';
+  }
 }
 
+//Eine Seite vor innerhalb der v-card und die Buttonbeschriftung anpassen
 function nextPage(){
   if (currentPage.value < components.length - 1) {
     currentPage.value++;
+  }
+  // <Mitglieder v-if="currentPage===0"
+  // <Artikel v-if="currentPage===1"/>
+
+  //Mitglieder
+  if(currentPage.value === 0){
+    btnText.value = 'weiter';
+  }
+  //Artikel
+  if(currentPage.value === 1){
+    btnText.value = 'zur Kasse';
   }
 }
 
@@ -65,7 +100,7 @@ function deleteSelectedMember(){
       <v-card class="vCardButtons d-flex mb-2">
         <v-btn color="grey" @click="previousPage" v-show="currentPage>0">zurück</v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="nextPage" :disabled="!isSelectedMember">weiter</v-btn>
+        <v-btn color="primary" @click="nextPage" :disabled="!btnNextPageDisable">{{ btnText }}</v-btn>
       </v-card>
 
 
@@ -109,6 +144,7 @@ function deleteSelectedMember(){
         <!-- in v-if funktioniert isSelectedMember.value nicht  -->
         <Mitglieder v-if="currentPage===0"  @memberSelected="handleMemberSelect"/>
         <Artikel v-if="currentPage===1"/>
+        <Checkout v-if="currentPage===2"/>
       </v-card>
     </v-col>
   </v-row>

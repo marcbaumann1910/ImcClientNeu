@@ -66,10 +66,15 @@ function deleteItemFromCart(id){
                 class="clickable-avatar mr-4"
             ></v-avatar>
           </v-row>
-
-
       </v-list-item>
+      <v-btn
+          class="ma-2 "
+          color="primary"
+          v-if="cartItems.length > 0"
+      >zur Kasse
+      </v-btn>
     </v-list>
+
 
 
   </v-navigation-drawer>
