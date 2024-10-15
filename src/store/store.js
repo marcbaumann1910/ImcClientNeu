@@ -1,4 +1,7 @@
 import {createStore} from 'vuex';
+//getters geben die Werte oder Object zurück
+//mutations: Hier lassen sich Änderungen an den Werten Objekten durchführen
+//actions: können von außerhalb aufgerufen werden umd Werte und Objekte zu ändern
 
 const store = createStore({
     state: {
@@ -6,6 +9,7 @@ const store = createStore({
         userData: {}, // Hier werden die Benutzerdaten gespeichert
         cartItemCount: 0, //Warenkorb Anzahl Einträge
         cartItems: [], //Warenkorb-Einträge
+        cartItemsAmount: 0, //Gesamtsumme aller Artikel
         borrowMember: [], //Mitglied
         showWarenkorbDesktop: true, //Anzeigensteuerung des Warenkorbs
 
@@ -40,10 +44,8 @@ const store = createStore({
                 state.cartItems.push(item);
             }
 
-            //Hier wird die im Array vorhandene Menge aller Artikel ermittelt und setCartItemCount übergeben
-            //damit die Anzeige Anzahl Warenkorb aktualisiert wird!
-            const sumMenge = state.cartItems.reduce((sum, cartItem) => sum + cartItem.Menge, 0)
-            store.dispatch('setCartItemCount', sumMenge);
+            store.dispatch('calculateNewItemsQuantity');
+            store.dispatch('calculateNewItemsAmount');
 
         },
         changeCartItemsQuantity(state, idAndChangeQuantity) {
@@ -51,13 +53,10 @@ const store = createStore({
             const existingItem = state.cartItems.find((cartItems) => cartItems.IDInventarArtikel === idAndChangeQuantity.id);
 
             if(existingItem) {
-                ////Für eventuelles Löschen der Artikel wenn Menge unter 1
-                // if(newQuantity < 1) {
-                //     this.deleteItemFromCart(existingItem.IDInventarArtikel);
-                // }
                 existingItem.Menge = existingItem.Menge + idAndChangeQuantity.changeQuantity;
             }
-
+            store.dispatch('calculateNewItemsQuantity');
+            store.dispatch('calculateNewItemsAmount');
         },
         deleteItemFromCart(state, id) {
             //löschte den Artikel vollständig aus dem Warenkorb
@@ -65,6 +64,8 @@ const store = createStore({
             if(index !==-1) {
                 state.cartItems.splice(index, 1);
             }
+            store.dispatch('calculateNewItemsQuantity');
+            store.dispatch('calculateNewItemsAmount');
         },
         setBorrowMember(state, memberValues) {
             //Speichert das Mitglied welches den/die Artikel ausleiht
@@ -73,6 +74,15 @@ const store = createStore({
         setShowWarenkorbDesktop(state, value){
             //Speichert die Artikel für den Warenkorb
             state.showWarenkorbDesktop = value;
+        },
+        calculateNewItemsAmount(state){
+            //Ermittelt den Gesamtpreis aller im Warenkorb befindlichen Artikel
+            state.cartItemsAmount = state.cartItems.reduce((sum, cartItem) => sum + (cartItem.Preis * cartItem.Menge), 0);
+        },
+        calculateNewItemsQuantity(state){
+            //Hier wird die im Array vorhandene Menge aller Artikel ermittelt und setCartItemCount übergeben
+            //damit die Anzeige Anzahl Warenkorb aktualisiert wird!
+            state.cartItemCount = state.cartItems.reduce((sum, cartItem) => sum + cartItem.Menge, 0)
         }
     },
     actions: {
@@ -91,8 +101,7 @@ const store = createStore({
         },
         changeCartItemsQuantity({ commit }, idAndChangeQuantity) {
             commit('changeCartItemsQuantity', idAndChangeQuantity);
-        }
-        ,
+        },
         setBorrowMember({ commit }, values) {
             commit('setBorrowMember', values);
         },
@@ -101,6 +110,12 @@ const store = createStore({
         },
         deleteItemFromCart({ commit }, item){
             commit('deleteItemFromCart', item);
+        },
+        calculateNewItemsAmount({ commit }){
+            commit('calculateNewItemsAmount')
+        },
+        calculateNewItemsQuantity({ commit }){
+            commit('calculateNewItemsQuantity')
         }
     },
     getters: {
@@ -110,6 +125,7 @@ const store = createStore({
         getCartItems: state => state.cartItems,
         getBorrowMember: state => state.borrowMember,
         getShowWarenkorbDesktop: state => state.showWarenkorbDesktop,
+        getCartItemsAmount: state => state.cartItemsAmount,
     },
 });
 

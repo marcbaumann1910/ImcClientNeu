@@ -3,6 +3,7 @@ import store from '../store/store.js';
 import {computed, onMounted} from "vue";
 const imageUrl = process.env.VITE_API_URL
 const cartItems = computed(()=>store.getters.getCartItems);
+const cartItemsAmount = computed(()=>store.getters.getCartItemsAmount);
 
 function handleMinusClick(itemID, currentQuantity){
   if(currentQuantity === 1)
@@ -19,6 +20,10 @@ function handlePlusClick(itemID, currentQuantity, maxQuantity){
     return;
   }
   store.dispatch('changeCartItemsQuantity', {id: itemID, changeQuantity: +1});
+}
+
+function deleteItem(id){
+  store.dispatch('deleteItemFromCart', id);
 }
 
 </script>
@@ -69,15 +74,15 @@ function handlePlusClick(itemID, currentQuantity, maxQuantity){
                 class="d-flex justify-space-between mb-2"
                 outlined
             >
-              <div @click="handleMinusClick(item.IDInventarArtikel, item.Menge)" class="vChipPlusMinus px-2">
+              <div @click="handleMinusClick(item.IDInventarArtikel, item.Menge)" class="hover px-2">
                 <v-icon>mdi-minus</v-icon>
               </div>
               <v-divider vertical></v-divider>
               <div class="mx-2">
-                <v-number-input>{{ item.Menge }}</v-number-input>
+                <span>{{ item.Menge }}</span>
               </div>
               <v-divider vertical></v-divider>
-              <div @click="handlePlusClick(item.IDInventarArtikel, item.Menge, item.Bestand)" class="vChipPlusMinus px-2">
+              <div @click="handlePlusClick(item.IDInventarArtikel, item.Menge, item.Bestand)" class="hover px-2">
                <v-icon>mdi-plus</v-icon>
               </div>
             </v-chip>
@@ -85,7 +90,10 @@ function handlePlusClick(itemID, currentQuantity, maxQuantity){
           </v-col>
 
           <v-col cols="4" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
-            <v-label>löschen</v-label>
+            <v-label @click="deleteItem(item.IDInventarArtikel)" class="hover"
+            >
+              Löschen
+            </v-label>
           </v-col>
 
           <v-col cols="1" class="d-flex justify-end align-end">
@@ -100,7 +108,7 @@ function handlePlusClick(itemID, currentQuantity, maxQuantity){
       <v-row>
         <v-col class="d-flex justify-end mr-0">
         <v-list-item-action class="mr-2">
-          <v-list-item-title><b>Gesamtpreis: xx,xx €</b></v-list-item-title>
+          <v-list-item-title><b>Gesamtpreis: {{ (Math.round(cartItemsAmount *100) /100).toFixed(2) }} €</b></v-list-item-title>
         </v-list-item-action>
         </v-col>
 
@@ -113,7 +121,7 @@ function handlePlusClick(itemID, currentQuantity, maxQuantity){
 
 <style scoped>
 
-.vChipPlusMinus:hover{
+.hover:hover{
   cursor: pointer;
   transform: scale(1.1);
 }
