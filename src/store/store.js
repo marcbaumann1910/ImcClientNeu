@@ -1,4 +1,4 @@
-import { createStore } from 'vuex';
+import {createStore} from 'vuex';
 
 const store = createStore({
     state: {
@@ -27,6 +27,7 @@ const store = createStore({
             state.cartItemCount = cartItemCount;
         },
         setCartItems(state, item) {
+            //Fügt einen neuen Artikel dem Warenkorb hinzu oder ändert die Menge, wenn Artikel vorhanden ist
             const existingItem = state.cartItems.find((cartItems) => cartItems.IDInventarArtikel === item.IDInventarArtikel);
 
             if(existingItem) {
@@ -45,16 +46,32 @@ const store = createStore({
             store.dispatch('setCartItemCount', sumMenge);
 
         },
+        changeCartItemsQuantity(state, idAndChangeQuantity) {
+            //Bei mehr als einem Übergabeparameter müssen die Paramter in einem Object übergeben werden!!!
+            const existingItem = state.cartItems.find((cartItems) => cartItems.IDInventarArtikel === idAndChangeQuantity.id);
+
+            if(existingItem) {
+                ////Für eventuelles Löschen der Artikel wenn Menge unter 1
+                // if(newQuantity < 1) {
+                //     this.deleteItemFromCart(existingItem.IDInventarArtikel);
+                // }
+                existingItem.Menge = existingItem.Menge + idAndChangeQuantity.changeQuantity;
+            }
+
+        },
         deleteItemFromCart(state, id) {
+            //löschte den Artikel vollständig aus dem Warenkorb
             const index = state.cartItems.findIndex((cartItems) => cartItems.IDInventarArtikel === id);
             if(index !==-1) {
                 state.cartItems.splice(index, 1);
             }
         },
         setBorrowMember(state, memberValues) {
+            //Speichert das Mitglied welches den/die Artikel ausleiht
             state.borrowMember = memberValues;
         },
         setShowWarenkorbDesktop(state, value){
+            //Speichert die Artikel für den Warenkorb
             state.showWarenkorbDesktop = value;
         }
     },
@@ -71,6 +88,9 @@ const store = createStore({
         },
         setCartItems({ commit }, items) {
             commit('setCartItems', items);
+        },
+        changeCartItemsQuantity({ commit }, idAndChangeQuantity) {
+            commit('changeCartItemsQuantity', idAndChangeQuantity);
         }
         ,
         setBorrowMember({ commit }, values) {

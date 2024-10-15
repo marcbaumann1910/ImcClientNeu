@@ -4,6 +4,23 @@ import {computed, onMounted} from "vue";
 const imageUrl = process.env.VITE_API_URL
 const cartItems = computed(()=>store.getters.getCartItems);
 
+function handleMinusClick(itemID, currentQuantity){
+  if(currentQuantity === 1)
+  {
+    return;
+  }
+  store.dispatch('changeCartItemsQuantity', {id: itemID, changeQuantity: -1});
+}
+
+function handlePlusClick(itemID, currentQuantity, maxQuantity){
+  console.log('current und max', currentQuantity, maxQuantity)
+  if(currentQuantity >= maxQuantity)
+  {
+    return;
+  }
+  store.dispatch('changeCartItemsQuantity', {id: itemID, changeQuantity: +1});
+}
+
 </script>
 
 <template>
@@ -47,11 +64,28 @@ const cartItems = computed(()=>store.getters.getCartItems);
           </v-col>
 
           <v-col cols="4" class="d-flex flex-column justify-end align-center align-self-stretch">
-            <v-list-item-title>Anzahl ändern</v-list-item-title>
+
+            <v-chip
+                class="d-flex justify-space-between mb-2"
+                outlined
+            >
+              <div @click="handleMinusClick(item.IDInventarArtikel, item.Menge)" class="vChipPlusMinus px-2">
+                <v-icon>mdi-minus</v-icon>
+              </div>
+              <v-divider vertical></v-divider>
+              <div class="mx-2">
+                <v-number-input>{{ item.Menge }}</v-number-input>
+              </div>
+              <v-divider vertical></v-divider>
+              <div @click="handlePlusClick(item.IDInventarArtikel, item.Menge, item.Bestand)" class="vChipPlusMinus px-2">
+               <v-icon>mdi-plus</v-icon>
+              </div>
+            </v-chip>
+
           </v-col>
 
-          <v-col cols="4" class="d-flex flex-column justify-end align-center align-self-stretch">
-            <v-list-item-title>löschen</v-list-item-title>
+          <v-col cols="4" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
+            <v-label>löschen</v-label>
           </v-col>
 
           <v-col cols="1" class="d-flex justify-end align-end">
@@ -78,5 +112,13 @@ const cartItems = computed(()=>store.getters.getCartItems);
 </template>
 
 <style scoped>
+
+.vChipPlusMinus:hover{
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
+
+
 
 </style>

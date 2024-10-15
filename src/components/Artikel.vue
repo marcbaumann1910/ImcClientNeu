@@ -26,7 +26,8 @@ function updateCart(item){
       Farbe: item.Farbe, // Farbe
       Preis: item.Preis, // Preis
       Menge: item.selectedQuantity, // Menge
-      Bildpfad: item.Bildpfad
+      Bildpfad: item.Bildpfad,
+      Bestand: item.Bestand,
     }
     //Erhöht die Anzeige im Warenkorb, wird über den vuex-Store erledigt
     //store.dispatch('setCartItemCount', cartItem.menge)
