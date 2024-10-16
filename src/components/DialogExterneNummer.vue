@@ -1,10 +1,12 @@
 <script setup>
-import {computed} from "vue";
+import {ref, computed} from "vue";
 import store from "@/store/store.js";
 
 //Zeigt den Dialog abhängig vom Wert im vuex-Store an. Ist ein Object!!!
 const showDialog = computed(()=> store.getters.getShowDialogExterneInventarNummer.showDialog)
 const dialogFormFields = computed(()=> store.getters.getShowDialogExterneInventarNummer.Menge)
+
+const textInventarNummern = ref(Array(dialogFormFields).fill('')); // Array mit der Anzahl der Felder initialisieren
 
 function dialogClose(){
   store.dispatch("setShowDialogExterneInventarNummer", {showDialog: false, Menge: 0})
@@ -12,6 +14,7 @@ function dialogClose(){
 
 function dialogSave(){
   store.dispatch("setShowDialogExterneInventarNummer", {showDialog: false, Menge: 0})
+  console.log('textInventarNummer', textInventarNummern)
 }
 
 </script>
@@ -31,6 +34,7 @@ function dialogSave(){
             <v-text-field
                 :label="'Inventar-Nummer ' + i"
                 v-for="i in dialogFormFields" :key="i"
+                v-model="textInventarNummern[i - 1]"
             >
             </v-text-field>
           </v-col>
