@@ -28,7 +28,7 @@ function deleteItem(id){
 }
 
 function showDialogForExterneID(menge){
-    store.dispatch('setShowDialogExterneNummer', {showDialog: true, Menge: menge});
+    store.dispatch('setShowDialogExterneInventarNummer', {showDialog: true, Menge: menge});
     console.log('menge',menge)
 }
 

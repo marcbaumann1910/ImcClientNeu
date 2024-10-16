@@ -3,15 +3,15 @@ import {computed} from "vue";
 import store from "@/store/store.js";
 
 //Zeigt den Dialog abhängig vom Wert im vuex-Store an. Ist ein Object!!!
-const showDialog = computed(()=> store.getters.getShowDialogExterneNummer.showDialog)
-const dialogFormFields = computed(()=> store.getters.getShowDialogExterneNummer.Menge)
+const showDialog = computed(()=> store.getters.getShowDialogExterneInventarNummer.showDialog)
+const dialogFormFields = computed(()=> store.getters.getShowDialogExterneInventarNummer.Menge)
 
 function dialogClose(){
-  store.dispatch("setShowDialogExterneNummer", {showDialog: false, Menge: 0})
+  store.dispatch("setShowDialogExterneInventarNummer", {showDialog: false, Menge: 0})
 }
 
 function dialogSave(){
-  store.dispatch("setShowDialogExterneNummer", {showDialog: false, Menge: 0})
+  store.dispatch("setShowDialogExterneInventarNummer", {showDialog: false, Menge: 0})
 }
 
 </script>

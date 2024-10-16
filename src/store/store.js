@@ -12,8 +12,7 @@ const store = createStore({
         cartItemsAmount: 0, //Gesamtsumme aller Artikel
         borrowMember: [], //Mitglied
         showWarenkorbDesktop: true, //Anzeigensteuerung des Warenkorbs
-        showDialogExterneNummer: {showDialog: false, Menge: 0}, //Zeigt den Dialog zur Erfassung der Externen Nummern an. {showDialog: boolean, Menge: int}
-
+        showDialogExterneInventarNummer: {showDialog: false, Menge: 0}, //Zeigt den Dialog zur Erfassung der Externen Nummern an. {showDialog: boolean, Menge: int}
     },
     mutations: {
         setUserLoggedIn(state, status) {
@@ -85,8 +84,8 @@ const store = createStore({
             //damit die Anzeige Anzahl Warenkorb aktualisiert wird!
             state.cartItemCount = state.cartItems.reduce((sum, cartItem) => sum + cartItem.Menge, 0)
         },
-        setShowDialogExterneNummer(state, value){
-            state.showDialogExterneNummer = value;
+        setShowDialogExterneInventarNummer(state, value){
+            state.showDialogExterneInventarNummer = value;
         }
     },
     actions: {
@@ -121,8 +120,8 @@ const store = createStore({
         calculateNewItemsQuantity({ commit }){
             commit('calculateNewItemsQuantity')
         },
-        setShowDialogExterneNummer({ commit }, value){
-            commit('setShowDialogExterneNummer', value)
+        setShowDialogExterneInventarNummer({ commit }, value){
+            commit('setShowDialogExterneInventarNummer', value)
         }
     },
     getters: {
@@ -133,7 +132,7 @@ const store = createStore({
         getBorrowMember: state => state.borrowMember,
         getShowWarenkorbDesktop: state => state.showWarenkorbDesktop,
         getCartItemsAmount: state => state.cartItemsAmount,
-        getShowDialogExterneNummer: state => state.showDialogExterneNummer
+        getShowDialogExterneInventarNummer: state => state.showDialogExterneInventarNummer
     },
 });
 
