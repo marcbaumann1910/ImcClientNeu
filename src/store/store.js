@@ -12,7 +12,7 @@ const store = createStore({
         cartItemsAmount: 0, //Gesamtsumme aller Artikel
         borrowMember: [], //Mitglied
         showWarenkorbDesktop: true, //Anzeigensteuerung des Warenkorbs
-        showDialogExterneInventarNummer: {showDialog: false, Menge: 0}, //Zeigt den Dialog zur Erfassung der Externen Nummern an. {showDialog: boolean, Menge: int}
+        showDialogExterneInventarNummer: {showDialog: false, Menge: 0, idArtikel: 0}, //Zeigt den Dialog zur Erfassung der Externen Nummern an. {showDialog: boolean, Menge: int}
     },
     mutations: {
         setUserLoggedIn(state, status) {
@@ -85,9 +85,25 @@ const store = createStore({
             state.cartItemCount = state.cartItems.reduce((sum, cartItem) => sum + cartItem.Menge, 0)
         },
         setShowDialogExterneInventarNummer(state, value){
-            state.showDialogExterneInventarNummer = value;
+            //Sollte ein Wert nicht übergeben werden können (wie z.B. idArtikel) wird diese nicht gelöscht,
+            //sondern die anderen Werte aktualisiert
+            state.showDialogExterneInventarNummer = {
+                ...state.showDialogExterneInventarNummer,
+                ...value,
+            };
+        },
+        setExterneInventarNummerToCartItem(state, value){
+            //Hier werden die Externen Inventar Nummern dem jeweiligen Artikel zugeordnet
+            const existingItem = state.cartItems.find((cartItems) => cartItems.IDInventarArtikel === value.idArtikel);
+
+            if(existingItem) {
+                console.log("match id in setExterneInventarNummerToCartItem")
+                existingItem.externeID.push(value.externeID);
+            }
+
+
         }
-    },
+                },
     actions: {
         login({ commit }, userData) {
             commit('setUserLoggedIn', true);
@@ -122,7 +138,11 @@ const store = createStore({
         },
         setShowDialogExterneInventarNummer({ commit }, value){
             commit('setShowDialogExterneInventarNummer', value)
+        },
+        setExterneInventarNummerToCartItem({ commit }, value){
+            commit('setExterneInventarNummerToCartItem', value)
         }
+
     },
     getters: {
         isUserLoggedIn: state => state.isUserLoggedIn,

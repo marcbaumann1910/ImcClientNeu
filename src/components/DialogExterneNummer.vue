@@ -6,6 +6,7 @@ import store from "@/store/store.js";
 const showDialog = computed(()=> store.getters.getShowDialogExterneInventarNummer.showDialog)
 const dialogFormFields = computed(()=> store.getters.getShowDialogExterneInventarNummer.Menge)
 
+
 const textInventarNummern = ref(Array(dialogFormFields).fill('')); // Array mit der Anzahl der Felder initialisieren
 
 function dialogClose(){
@@ -13,8 +14,13 @@ function dialogClose(){
 }
 
 function dialogSave(){
-  store.dispatch("setShowDialogExterneInventarNummer", {showDialog: false, Menge: 0})
-  console.log('textInventarNummer', textInventarNummern)
+    store.dispatch("setShowDialogExterneInventarNummer", {showDialog: false, Menge: 0})
+  const idArtikel = store.getters.getShowDialogExterneInventarNummer.idArtikel
+  //Speichern der erfassten Externen Inventar Nummern im vuex-Store
+  store.dispatch('setExterneInventarNummerToCartItem', {idArtikel: idArtikel, externeID: textInventarNummern});
+  console.log('getCartItems from vuex:', store.getters.getCartItems)
+  console.log('2 DialogExterneNummer from vuxe', store.getters.getShowDialogExterneInventarNummer.idArtikel);
+
 }
 
 </script>

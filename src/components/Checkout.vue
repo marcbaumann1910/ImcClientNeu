@@ -27,9 +27,11 @@ function deleteItem(id){
   store.dispatch('deleteItemFromCart', id);
 }
 
-function showDialogForExterneID(menge){
-    store.dispatch('setShowDialogExterneInventarNummer', {showDialog: true, Menge: menge});
+function showDialogForExterneID(menge, idArtikel){
+    store.dispatch('setShowDialogExterneInventarNummer', {showDialog: true, Menge: menge, idArtikel: idArtikel});
     console.log('menge',menge)
+    console.log('idArtikel', idArtikel)
+    console.log('idArtikel from vuxe', store.getters.getShowDialogExterneInventarNummer.idArtikel);
 }
 
 </script>
@@ -104,7 +106,7 @@ function showDialogForExterneID(menge){
           </v-col>
 
           <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
-            <v-label @click="showDialogForExterneID(item.Menge)" class="hover text-subtitle-2 text-blue-darken-4">
+            <v-label @click="showDialogForExterneID(item.Menge, item.IDInventarArtikel)" class="hover text-subtitle-2 text-blue-darken-4">
               Externe Nr. erfassen
             </v-label>
           </v-col>
