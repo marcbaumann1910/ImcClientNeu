@@ -1,0 +1,65 @@
+<script setup>
+import {computed} from "vue";
+import store from "@/store/store.js";
+
+//Zeigt den Dialog abhängig vom Wert im vuex-Store an. Ist ein Object!!!
+const showDialog = computed(()=> store.getters.getShowDialogExterneNummer.showDialog)
+const dialogFormFields = computed(()=> store.getters.getShowDialogExterneNummer.Menge)
+
+function dialogClose(){
+  store.dispatch("setShowDialogExterneNummer", {showDialog: false, Menge: 0})
+}
+
+function dialogSave(){
+  store.dispatch("setShowDialogExterneNummer", {showDialog: false, Menge: 0})
+}
+
+</script>
+
+<template>
+  <!-- Dialog -->
+  <v-dialog v-model="showDialog" max-width="500px">
+    <v-card
+        prepend-icon="mdi-account"
+        title="Externe Inventar-Nummer"
+    >
+      <v-card-text>
+        <v-row dense>
+          <v-col
+          >
+          <!--generiert die Textfelder abhängig von der gewählten Menge des jeweiligen Artikels. Menge wird auch über den vuex-Store übergeben-->
+            <v-text-field
+                :label="'Inventar-Nummer ' + i"
+                v-for="i in dialogFormFields" :key="i"
+            >
+            </v-text-field>
+          </v-col>
+        </v-row>
+
+      </v-card-text>
+      <v-divider></v-divider>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+
+        <v-btn
+            text="Close"
+            variant="plain"
+            @click="dialogClose"
+        ></v-btn>
+
+        <v-btn
+            color="primary"
+            text="Save"
+            variant="tonal"
+            @click="dialogSave"
+        ></v-btn>
+      </v-card-actions>
+
+    </v-card>
+  </v-dialog>
+</template>
+
+<style scoped>
+
+</style>

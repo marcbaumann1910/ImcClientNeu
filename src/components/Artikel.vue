@@ -28,6 +28,7 @@ function updateCart(item){
       Menge: item.selectedQuantity, // Menge
       Bildpfad: item.Bildpfad,
       Bestand: item.Bestand,
+      externeID: '',
     }
     //Erhöht die Anzeige im Warenkorb, wird über den vuex-Store erledigt
     //store.dispatch('setCartItemCount', cartItem.menge)

@@ -5,11 +5,13 @@ import WarenkorbDesktop from "@/components/WarenkorbDesktop.vue";
 import store from "@/store/store.js"
 import Artikel from "../components/Artikel.vue";
 import Checkout from "@/components/Checkout.vue";
+import DialogExterneNummer from "@/components/DialogExterneNummer.vue";
 const selectedMember = ref(null);
 const isSelectedMember = ref(false);
 const currentPage = ref(0);
 const btnText = ref('weiter');
 const showCart = computed(()=> store.getters.getShowWarenkorbDesktop);
+
 
 //WarenkorbDesktop btn "zur Kasse" liefert true wenn dieser geklickt wird
 defineProps({
@@ -100,6 +102,7 @@ function deleteSelectedMember(){
       'ma-auto': !$vuetify.display.mobile // Klasse für größere Bildschirme
     }"
   >
+    <DialogExterneNummer></DialogExterneNummer>
     <!-- @goToCheckout="nextPage" rufe die Funktion nextPage auf  -->
     <WarenkorbDesktop v-if="showCart && $vuetify.display.mdAndUp" @goToCheckout="nextPage"/>
   <!-- Da v-show nicht funktioniert und die v-card mit dem Hauptinhalt nach rechts rückt sobald WarenkorbDesktop mit v-if aus dem DOM
