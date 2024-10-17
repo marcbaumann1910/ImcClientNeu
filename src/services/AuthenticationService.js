@@ -33,6 +33,10 @@ export default {
     mitglieder() {
         console.log('mitglieder: ');
         return Api.get('/mitglieder');
+    },
+    leihvorgangBuchen(data) {
+        console.log('leihvorgang: ', data);
+        return Api.patch('/leihvorgang', data);
     }
 
 };

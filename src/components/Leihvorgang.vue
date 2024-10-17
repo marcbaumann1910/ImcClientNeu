@@ -6,11 +6,15 @@ import store from "@/store/store.js"
 import Artikel from "../components/Artikel.vue";
 import Checkout from "@/components/Checkout.vue";
 import DialogExterneNummer from "@/components/DialogExterneNummer.vue";
+import AuthenticationService from "@/services/AuthenticationService.js";
 const selectedMember = ref(null);
 const isSelectedMember = ref(false);
 const currentPage = ref(0);
 const btnText = ref('weiter');
 const showCart = computed(()=> store.getters.getShowWarenkorbDesktop);
+const cartItems = computed(()=> store.getters.getCartItems)
+const borrowMember = computed(()=> store.getters.getBorrowMember)
+const user = computed(()=> store.getters.getUserData)
 
 
 //WarenkorbDesktop btn "zur Kasse" liefert true wenn dieser geklickt wird
@@ -18,6 +22,7 @@ defineProps({
   goToCheckout: Boolean,
 })
 
+//Button aktivieren und deaktivieren
 const btnNextPageDisable = computed(()=>{
     if(currentPage.value === 0 && isSelectedMember.value)
     {
@@ -55,7 +60,7 @@ function previousPage(){
 }
 
 //Eine Seite vor innerhalb der v-card und die Buttonbeschriftung anpassen
-function nextPage(){
+async function nextPage(){
   if (currentPage.value < components.length - 1) {
     currentPage.value++;
   }
@@ -73,6 +78,22 @@ function nextPage(){
   //Checkout
   if(currentPage.value === 2){
     btnText.value = 'Vorgang buchen';
+    //Vorgang an das Backend senden
+    try{
+
+      console.log('currentPage vuex getCartItems', cartItems.value);
+      console.log('user:', user)
+
+      const response = await AuthenticationService.leihvorgangBuchen({
+        cartItems: cartItems.value,
+        IDMitglied: borrowMember.value.id,
+        IDBenutzer: user.idBenutzer,
+      });
+      console.log('Erfolg leihvorgangBuchen', response.data);
+    }catch(err){
+      console.log('Fehler leihvorgangBuchen', err)
+    }
+
   }
 }
 
@@ -116,6 +137,7 @@ function deleteSelectedMember(){
         <v-spacer></v-spacer>
       </v-card>
 
+      <!--Buttons zurück und Navigation vorwärts-->
       <v-card class="vCardButtons d-flex mb-2">
         <v-btn color="grey" @click="previousPage" v-show="currentPage>0">zurück</v-btn>
         <v-spacer></v-spacer>
