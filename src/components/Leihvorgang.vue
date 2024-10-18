@@ -45,15 +45,15 @@ function previousPage(){
   }
   //Mitglieder
   if(currentPage.value === 0){
-    btnText.value = 'weiter';
+    btnText.value = 'Artikel wählen >>';
   }
   //Artikel
   if(currentPage.value === 1){
-    btnText.value = 'zur Kasse';
+    btnText.value = 'zur Übersicht >>';
   }
   //Checkout
   if(currentPage.value === 2){
-    btnText.value = 'Vorgang buchen';
+    btnText.value = 'Vorgang buchen >>';
   }
   console.log('currentPage',currentPage.value);
 }
@@ -61,15 +61,15 @@ function previousPage(){
 const btnText = computed(()=>{
   //Mitglieder
   if(currentPage.value === 0){
-    return 'weiter';
+    return 'Artikel wählen >>';
   }
   //Artikel
   if(currentPage.value === 1){
-    return 'zur Kasse';
+    return 'zur Übersicht >>';
   }
   //Checkout
   if(currentPage.value === 2) {
-    return  'Vorgang buchen';
+    return  'Vorgang buchen >>';
   }
 });
 

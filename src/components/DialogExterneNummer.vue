@@ -1,13 +1,22 @@
 <script setup>
-import {ref, computed} from "vue";
+import {ref, computed, watch} from "vue";
 import store from "@/store/store.js";
 
 //Zeigt den Dialog abhängig vom Wert im vuex-Store an. Ist ein Object!!!
 const showDialog = computed(()=> store.getters.getShowDialogExterneInventarNummer.showDialog)
 const dialogFormFields = computed(()=> store.getters.getShowDialogExterneInventarNummer.Menge)
+const textInventarNummern = ref([]);
 
 
-const textInventarNummern = ref(Array(dialogFormFields).fill('')); // Array mit der Anzahl der Felder initialisieren
+watch(
+    dialogFormFields,
+    (newVal) => {
+      textInventarNummern.value = Array.from({ length: newVal }, () => '');
+    },
+    { immediate: true }
+);
+
+
 
 function dialogClose(){
   store.dispatch("setShowDialogExterneInventarNummer", {showDialog: false, Menge: 0})
