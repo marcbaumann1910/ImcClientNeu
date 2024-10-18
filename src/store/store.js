@@ -1,4 +1,6 @@
 import {createStore} from 'vuex';
+import createPersistedState from 'vuex-persistedstate';
+
 //getters geben die Werte oder Object zurück
 //mutations: Hier lassen sich Änderungen an den Werten Objekten durchführen
 //actions: können von außerhalb aufgerufen werden umd Werte und Objekte zu ändern
@@ -13,7 +15,13 @@ const store = createStore({
         borrowMember: [], //Mitglied
         showWarenkorbDesktop: true, //Anzeigensteuerung des Warenkorbs
         showDialogExterneInventarNummer: {showDialog: false, Menge: 0, idArtikel: 0}, //Zeigt den Dialog zur Erfassung der Externen Nummern an. {showDialog: boolean, Menge: int}
-    },
+    }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
+    plugins: [
+        createPersistedState({
+            paths: ['cartItems','userData'], // Nur 'cartItems' persistieren
+            storage: window.sessionStorage, // Verwendung von sessionStorage statt localStorage
+        }),
+    ],
     mutations: {
         setUserLoggedIn(state, status) {
             state.isUserLoggedIn = status;
