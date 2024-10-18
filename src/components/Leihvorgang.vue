@@ -10,7 +10,6 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 const selectedMember = ref(null);
 const isSelectedMember = ref(false);
 const currentPage = ref(0);
-const btnText = ref('weiter');
 const showCart = computed(()=> store.getters.getShowWarenkorbDesktop);
 const cartItems = computed(()=> store.getters.getCartItems)
 const borrowMember = computed(()=> store.getters.getBorrowMember)
@@ -59,41 +58,46 @@ function previousPage(){
   console.log('currentPage',currentPage.value);
 }
 
-//Eine Seite vor innerhalb der v-card und die Buttonbeschriftung anpassen
-async function nextPage(){
-  if (currentPage.value < components.length - 1) {
-    currentPage.value++;
-  }
-  // <Mitglieder v-if="currentPage===0"
-  // <Artikel v-if="currentPage===1"/>
-
+const btnText = computed(()=>{
   //Mitglieder
   if(currentPage.value === 0){
-    btnText.value = 'weiter';
+    return 'weiter';
   }
   //Artikel
   if(currentPage.value === 1){
-    btnText.value = 'zur Kasse';
+    return 'zur Kasse';
   }
   //Checkout
-  if(currentPage.value === 2){
-    btnText.value = 'Vorgang buchen';
-    //Vorgang an das Backend senden
-    try{
+  if(currentPage.value === 2) {
+    return  'Vorgang buchen';
+  }
+});
 
-      console.log('currentPage vuex getCartItems', cartItems.value);
-      console.log('user:', user)
+//Eine Seite vor innerhalb der v-card und die Buttonbeschriftung anpassen
+async function nextPage(){
+  if (currentPage.value === 2) {
+    await leihvorgangBuchen();
+  } else {
+    currentPage.value += 1;
+  }
+}
 
-      const response = await AuthenticationService.leihvorgangBuchen({
-        cartItems: cartItems.value,
-        IDMitglied: borrowMember.value.id,
-        IDBenutzer: user.idBenutzer,
-      });
-      console.log('Erfolg leihvorgangBuchen', response.data);
-    }catch(err){
-      console.log('Fehler leihvorgangBuchen', err)
-    }
+async function leihvorgangBuchen(){
+  let response = '';
+  try{
 
+    console.log('currentPage vuex getCartItems', cartItems.value);
+    console.log('user:', user)
+
+    response = await AuthenticationService.leihvorgangBuchen({
+      cartItems: cartItems.value,
+      IDMitglied: borrowMember.value.id,
+      IDBenutzer: localStorage.idBenutzer,
+    });
+    console.log('Erfolg leihvorgangBuchen', response.data);
+    store.dispatch('clearCartItems')
+  }catch(err){
+    console.log('Fehler leihvorgangBuchen', response.data, err)
   }
 }
 

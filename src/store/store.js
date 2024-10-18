@@ -18,7 +18,7 @@ const store = createStore({
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
         createPersistedState({
-            paths: ['cartItems','userData'], // Nur 'cartItems' persistieren
+            paths: ['cartItems','userData', 'cartItemCount'], // persistieren der gewünschten Objekten
             storage: window.sessionStorage, // Verwendung von sessionStorage statt localStorage
         }),
     ],
@@ -55,6 +55,11 @@ const store = createStore({
             store.dispatch('calculateNewItemsQuantity');
             store.dispatch('calculateNewItemsAmount');
 
+        },
+        clearCartItems(state){
+            sessionStorage.removeItem('cartItems');
+            state.cartItems = [];
+            state.cartItemCount = 0;
         },
         changeCartItemsQuantity(state, idAndChangeQuantity) {
             //Bei mehr als einem Übergabeparameter müssen die Paramter in einem Object übergeben werden!!!
@@ -105,8 +110,11 @@ const store = createStore({
             const existingItem = state.cartItems.find((cartItems) => cartItems.IDInventarArtikel === value.idArtikel);
 
             if(existingItem) {
-                console.log("match id in setExterneInventarNummerToCartItem")
-                existingItem.externeID.push(value.externeID);
+                console.log("match id in before push setExterneInventarNummerToCartItem")
+                //Wichtig! ...value.externeID.value (sonst ist es ein verschachteltes Array!!!!)
+                existingItem.externeID = [];
+                existingItem.externeID.push(...value.externeID.value);
+                console.log("after push id in setExterneInventarNummerToCartItem")
             }
 
 
@@ -149,6 +157,9 @@ const store = createStore({
         },
         setExterneInventarNummerToCartItem({ commit }, value){
             commit('setExterneInventarNummerToCartItem', value)
+        },
+        clearCartItems({ commit }){
+            commit('clearCartItems');
         }
 
     },

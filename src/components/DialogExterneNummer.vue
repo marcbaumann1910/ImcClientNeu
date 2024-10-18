@@ -14,7 +14,7 @@ function dialogClose(){
 }
 
 function dialogSave(){
-    store.dispatch("setShowDialogExterneInventarNummer", {showDialog: false, Menge: 0})
+  store.dispatch("setShowDialogExterneInventarNummer", {showDialog: false, Menge: 0})
   const idArtikel = store.getters.getShowDialogExterneInventarNummer.idArtikel
   //Speichern der erfassten Externen Inventar Nummern im vuex-Store
   store.dispatch('setExterneInventarNummerToCartItem', {idArtikel: idArtikel, externeID: textInventarNummern});
