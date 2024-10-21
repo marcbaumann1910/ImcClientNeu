@@ -16,6 +16,9 @@ const showCart = computed(()=> store.getters.getShowWarenkorbDesktop);
 const cartItems = computed(()=> store.getters.getCartItems)
 const borrowMember = computed(()=> store.getters.getBorrowMember)
 const user = computed(()=> store.getters.getUserData)
+const snackbar = ref(false);
+const snackbarText = ref('')
+const snackbarColor = ref('error')
 
 //WarenkorbDesktop btn "zur Kasse" liefert true wenn dieser geklickt wird
 defineProps({
@@ -97,9 +100,15 @@ async function leihvorgangBuchen(){
     });
     console.log('Erfolg leihvorgangBuchen', response.data);
     store.dispatch('clearCartItems')
+    snackbarText.value = 'Leihvorgang wurde erfolgreich gebucht';
+    snackbarColor.value = "success"
+    snackbar.value = true;
   }catch(err){
     isLoading.value = false;
     console.log('Fehler leihvorgangBuchen', response.data, err)
+    snackbarText.value = 'Leihvorgang konnte nicht gebucht werden!';
+    snackbarColor.value = "error"
+    snackbar.value = true;
   }
   isLoading.value = false;
 }
@@ -124,6 +133,28 @@ function deleteSelectedMember(){
 
 <template>
 
+  <v-snackbar
+      v-model="snackbar"
+      multi-line
+      location="top"
+      timeout="5000"
+      :color="snackbarColor"
+  >
+    {{ snackbarText }}
+
+    <template v-slot:actions >
+      <v-btn
+          color="black"
+          variant="text"
+          @click="snackbar = false"
+          style="background-color: white; text-transform: none;"
+      >
+        Schließen
+      </v-btn>
+    </template>
+
+  </v-snackbar>
+
   <v-container
       fluid
       :class="{
@@ -131,6 +162,8 @@ function deleteSelectedMember(){
       'ma-auto': !$vuetify.display.mobile // Klasse für größere Bildschirme
     }"
   >
+
+
     <OverlayWaiting v-if="isLoading"></OverlayWaiting>
     <DialogExterneNummer></DialogExterneNummer>
     <!-- @goToCheckout="nextPage" rufe die Funktion nextPage auf  -->
