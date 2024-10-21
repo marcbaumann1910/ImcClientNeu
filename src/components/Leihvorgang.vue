@@ -103,6 +103,7 @@ async function leihvorgangBuchen(){
     snackbarText.value = 'Leihvorgang wurde erfolgreich gebucht';
     snackbarColor.value = "success"
     snackbar.value = true;
+    currentPage.value = 0; //Navigiert zur MitgliederSeite und die Auswahl kann von vorne beginnen!
   }catch(err){
     isLoading.value = false;
     console.log('Fehler leihvorgangBuchen', response.data, err)

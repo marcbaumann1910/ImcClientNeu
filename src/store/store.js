@@ -57,9 +57,11 @@ const store = createStore({
 
         },
         clearCartItems(state){
+            //setzt nach erfolgreicher Buchung des Leihvorgangs alles auf Anfang
             sessionStorage.removeItem('cartItems');
             state.cartItems = [];
             state.cartItemCount = 0;
+            state.borrowMember = [];
         },
         changeCartItemsQuantity(state, idAndChangeQuantity) {
             //Bei mehr als einem Übergabeparameter müssen die Paramter in einem Object übergeben werden!!!
