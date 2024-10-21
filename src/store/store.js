@@ -171,7 +171,13 @@ const store = createStore({
         getBorrowMember: state => state.borrowMember,
         getShowWarenkorbDesktop: state => state.showWarenkorbDesktop,
         getCartItemsAmount: state => state.cartItemsAmount,
-        getShowDialogExterneInventarNummer: state => state.showDialogExterneInventarNummer
+        getShowDialogExterneInventarNummer: state => state.showDialogExterneInventarNummer,
+        getExterneNummernForArtikel: (state) => (idArtikel) => {
+            const existingItem = state.cartItems.find(
+                (cartItem) => cartItem.IDInventarArtikel === idArtikel
+            );
+            return existingItem ? existingItem.externeID || [] : [];
+        },
     },
 });
 
