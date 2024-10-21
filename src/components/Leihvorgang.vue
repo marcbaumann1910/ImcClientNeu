@@ -2,12 +2,13 @@
 import {computed, ref, inject, onMounted} from 'vue'
 import Mitglieder from "@/components/Mitglieder.vue";
 import WarenkorbDesktop from "@/components/WarenkorbDesktop.vue";
-import store from "@/store/store.js"
 import Artikel from "../components/Artikel.vue";
 import Checkout from "@/components/Checkout.vue";
 import DialogExterneNummer from "@/components/DialogExterneNummer.vue";
-import AuthenticationService from "@/services/AuthenticationService.js";
 import OverlayWaiting from "@/components/OverlayWaiting.vue";
+import store from "@/store/store.js"
+import AuthenticationService from "@/services/AuthenticationService.js";
+
 const isLoading = ref(false);
 const selectedMember = ref(null);
 const isSelectedMember = ref(false);
@@ -20,7 +21,7 @@ const snackbar = ref(false);
 const snackbarText = ref('')
 const snackbarColor = ref('error')
 
-//WarenkorbDesktop btn "zur Kasse" liefert true wenn dieser geklickt wird
+//WarenkorbDesktop btn "zur Kasse" liefert true, wenn dieser geklickt wird
 defineProps({
   goToCheckout: Boolean,
 })
@@ -38,9 +39,6 @@ const btnNextPageDisable = computed(()=>{
       return true;
     }
 });
-
-//Wird für das Navigieren innerhalb der v-card benötigt
-const components = ['Mitglieder','Artikel', 'Checkout']
 
 //Eine Seite zurück innerhalb der v-card
 function previousPage(){
@@ -62,6 +60,7 @@ function previousPage(){
   console.log('currentPage',currentPage.value);
 }
 
+//Gibt für die jeweilige Unterseite die Beschriftung für den Button zurück
 const btnText = computed(()=>{
   //Mitglieder
   if(currentPage.value === 0){
@@ -78,6 +77,7 @@ const btnText = computed(()=>{
 });
 
 //Eine Seite vor innerhalb der v-card und die Buttonbeschriftung anpassen
+//Nur wenn Unterseite = 2 ist, dann wir der leihvorgangBuchen() ausgeführt, sonst eine Seite nach vorne navigiert
 async function nextPage(){
   if (currentPage.value === 2) {
     await leihvorgangBuchen();
@@ -99,7 +99,7 @@ async function leihvorgangBuchen(){
       IDBenutzer: localStorage.idBenutzer,
     });
     console.log('Erfolg leihvorgangBuchen', response.data);
-    store.dispatch('clearCartItems')
+    store.dispatch('clearCartItems') //Setzt den vuex-Store für den Leihvorgang auf Anfang (null)
     snackbarText.value = 'Leihvorgang wurde erfolgreich gebucht';
     snackbarColor.value = "success"
     snackbar.value = true;
@@ -114,6 +114,7 @@ async function leihvorgangBuchen(){
   isLoading.value = false;
 }
 
+//Speichert das ausgewählte Mitglied im vuex-Store
 function handleMemberSelect(member) {
   selectedMember.value = member; // Speichert das ausgewählte Mitglied
   store.dispatch('setBorrowMember', selectedMember);
@@ -123,6 +124,7 @@ function handleMemberSelect(member) {
   console.log('store', store.getters.getBorrowMember.firstName);
 }
 
+//Löscht das aktuell ausgewählte Mitglied im vuex-Store
 function deleteSelectedMember(){
   selectedMember.value = null;
   store.dispatch('setBorrowMember', []);
