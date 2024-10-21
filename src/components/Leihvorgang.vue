@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, onMounted} from 'vue'
+import {computed, ref, inject, onMounted} from 'vue'
 import Mitglieder from "@/components/Mitglieder.vue";
 import WarenkorbDesktop from "@/components/WarenkorbDesktop.vue";
 import store from "@/store/store.js"
@@ -7,6 +7,8 @@ import Artikel from "../components/Artikel.vue";
 import Checkout from "@/components/Checkout.vue";
 import DialogExterneNummer from "@/components/DialogExterneNummer.vue";
 import AuthenticationService from "@/services/AuthenticationService.js";
+import OverlayWaiting from "@/components/OverlayWaiting.vue";
+const isLoading = ref(false);
 const selectedMember = ref(null);
 const isSelectedMember = ref(false);
 const currentPage = ref(0);
@@ -14,7 +16,6 @@ const showCart = computed(()=> store.getters.getShowWarenkorbDesktop);
 const cartItems = computed(()=> store.getters.getCartItems)
 const borrowMember = computed(()=> store.getters.getBorrowMember)
 const user = computed(()=> store.getters.getUserData)
-
 
 //WarenkorbDesktop btn "zur Kasse" liefert true wenn dieser geklickt wird
 defineProps({
@@ -85,7 +86,7 @@ async function nextPage(){
 async function leihvorgangBuchen(){
   let response = '';
   try{
-
+    isLoading.value = true;
     console.log('currentPage vuex getCartItems', cartItems.value);
     console.log('user:', user)
 
@@ -97,8 +98,10 @@ async function leihvorgangBuchen(){
     console.log('Erfolg leihvorgangBuchen', response.data);
     store.dispatch('clearCartItems')
   }catch(err){
+    isLoading.value = false;
     console.log('Fehler leihvorgangBuchen', response.data, err)
   }
+  isLoading.value = false;
 }
 
 function handleMemberSelect(member) {
@@ -120,6 +123,7 @@ function deleteSelectedMember(){
 </script>
 
 <template>
+
   <v-container
       fluid
       :class="{
@@ -127,9 +131,11 @@ function deleteSelectedMember(){
       'ma-auto': !$vuetify.display.mobile // Klasse für größere Bildschirme
     }"
   >
+    <OverlayWaiting v-if="isLoading"></OverlayWaiting>
     <DialogExterneNummer></DialogExterneNummer>
     <!-- @goToCheckout="nextPage" rufe die Funktion nextPage auf  -->
     <WarenkorbDesktop v-if="showCart && $vuetify.display.mdAndUp" @goToCheckout="nextPage"/>
+
   <!-- Da v-show nicht funktioniert und die v-card mit dem Hauptinhalt nach rechts rückt sobald WarenkorbDesktop mit v-if aus dem DOM
    verschwindet, verwende ich in Abhängigkeit von showCart end oder center bei v-row justify-->
   <v-row :justify="showCart ? 'end' : 'center'">
@@ -174,6 +180,7 @@ function deleteSelectedMember(){
           <!-- Spacer rechts vom Titel -->
           <v-spacer></v-spacer>
         </v-card>
+
         <!-- Anzeige ausgewähltes Mitglied auf mobilen Geräte -->
         <v-chip
             v-if="selectedMember && selectedMember.firstName && $vuetify.display.mobile"

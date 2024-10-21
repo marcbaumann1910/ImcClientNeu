@@ -5,27 +5,8 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 import store from "@/store/store.js";
 
 const drawer = ref(false);
-const showCart = computed(()=> store.getters.getShowWarenkorbDesktop);
 console.log(store.getters.getShowWarenkorbDesktop);
 
-let cartItems = [{
-  artikelID: 1,
-  artikelBezeichnung: "Rock",
-  artikelGroesse: "L"
-}];
-
-console.log('cartItems', cartItems);
-
-// store.dispatch('setCartItems', cartItems);
-// console.log('store cartItems', store.getters.getCartItems)
-
-// cartItems.push({
-//   artikelID: 2,
-//   artikelBezeichnung: "Bluse",
-//   artikelGroesse: "M"
-// })
-// store.dispatch('setCartItems', cartItems);
-// console.log('store cartItems', store.getters.getCartItems)
 
 
 store.dispatch('setCartItemCount', 0)

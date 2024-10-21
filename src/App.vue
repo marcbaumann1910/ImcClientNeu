@@ -2,6 +2,7 @@
   <v-app> <!-- Dies ist der Hauptcontainer von Vuetify -->
     <!-- AppBar wird immer oben angezeigt -->
 <!--    <AppBar />-->
+
     <Navigation />
 <!--    <SideBarLeft />-->
 
@@ -20,6 +21,7 @@
 <script setup>
 import Footer from './components/Footer.vue'; // Importiere den Footer
 import Navigation from './components/Navigation.vue';
+import SnackbarShow from "@/components/SnackbarShow.vue";
 
 
 </script>
