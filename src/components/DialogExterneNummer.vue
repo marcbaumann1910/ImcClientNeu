@@ -55,7 +55,7 @@ function dialogSave(){
   <!-- Dialog -->
   <v-dialog v-model="showDialog" max-width="500px">
     <v-card
-        prepend-icon="mdi-account"
+        prepend-icon="mdi-application-edit"
         title="Externe Inventar-Nummer"
     >
       <v-card-text>
