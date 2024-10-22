@@ -20,6 +20,12 @@ const user = computed(()=> store.getters.getUserData)
 const snackbar = ref(false);
 const snackbarText = ref('')
 const snackbarColor = ref('error')
+const vChipColors = ref(['success', 'primary', 'primary']) //Steuerung der vChip Farben Anzeigenschritte
+
+onMounted(()=> {
+  updateChipColors() //Steuerung der vChip Farben Anzeigenschritte
+})
+
 
 //WarenkorbDesktop btn "zur Kasse" liefert true, wenn dieser geklickt wird
 defineProps({
@@ -41,23 +47,11 @@ const btnNextPageDisable = computed(()=>{
 });
 
 //Eine Seite zurück innerhalb der v-card
-function previousPage(){
-  if(currentPage.value > 0){
+function previousPage() {
+  if (currentPage.value > 0) {
     currentPage.value--;
+    updateChipColors(); //Steuerung der vChip Farben Anzeigenschritte
   }
-  //Mitglieder
-  if(currentPage.value === 0){
-    btnText.value = 'Artikel wählen >>';
-  }
-  //Artikel
-  if(currentPage.value === 1){
-    btnText.value = 'zur Übersicht >>';
-  }
-  //Checkout
-  if(currentPage.value === 2){
-    btnText.value = 'Vorgang buchen >>';
-  }
-  console.log('currentPage',currentPage.value);
 }
 
 //Gibt für die jeweilige Unterseite die Beschriftung für den Button zurück
@@ -78,11 +72,12 @@ const btnText = computed(()=>{
 
 //Eine Seite vor innerhalb der v-card und die Buttonbeschriftung anpassen
 //Nur wenn Unterseite = 2 ist, dann wir der leihvorgangBuchen() ausgeführt, sonst eine Seite nach vorne navigiert
-async function nextPage(){
+async function nextPage() {
   if (currentPage.value === 2) {
     await leihvorgangBuchen();
   } else {
     currentPage.value += 1;
+    updateChipColors(); //Steuerung der vChip Farben Anzeigenschritte
   }
 }
 
@@ -132,6 +127,12 @@ function deleteSelectedMember(){
   console.log('store', store.getters.getBorrowMember.firstName);
 }
 
+//Steuerung der vChip Farben Anzeigenschritte
+function updateChipColors() {
+  vChipColors.value = ['primary', 'primary', 'primary'];
+  vChipColors.value[currentPage.value] = 'success';
+}
+
 </script>
 
 <template>
@@ -176,11 +177,28 @@ function deleteSelectedMember(){
    verschwindet, verwende ich in Abhängigkeit von showCart end oder center bei v-row justify-->
   <v-row :justify="showCart ? 'end' : 'center'">
     <v-col cols="12" md="8" lg="8">
-      <v-card class="d-flex align-center pe-2 mb-4">
-        <v-icon>mdi-handshake</v-icon>
-        <v-spacer></v-spacer>
-        <v-card-title>Leihvorgang beginnen</v-card-title>
-        <v-spacer></v-spacer>
+      <v-card class="d-flex mb-4 bg-transparent rounded-0">
+        <v-chip
+            class="flex-grow-1 vChipStep rounded-0 mr-1 justify-center text-h6"
+            :color="vChipColors[0]"
+        >
+          <v-icon icon="mdi-numeric-1-circle" start></v-icon>
+          Mitglied auswählen
+        </v-chip>
+        <v-chip
+            class="flex-grow-1 vChipStep rounded-0 mr-1 justify-center text-h6"
+            :color="vChipColors[1]"
+        >
+          <v-icon icon="mdi-numeric-2-circle" start></v-icon>
+          Artikel auswählen
+        </v-chip>
+        <v-chip
+            class="flex-grow-1 vChipStep rounded-0 justify-center text-h6"
+            :color="vChipColors[2]"
+        >
+          <v-icon icon="mdi-numeric-3-circle" start></v-icon>
+          Vorgang buchen
+        </v-chip>
       </v-card>
 
       <!--Buttons zurück und Navigation vorwärts-->
@@ -260,5 +278,11 @@ function deleteSelectedMember(){
   border: none;
   box-shadow: none
 }
+
+.vChipStep{
+  min-height: 40px;
+}
+
+
 
 </style>
