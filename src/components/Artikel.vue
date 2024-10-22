@@ -102,7 +102,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
   <v-row justify="center">
     <v-col cols="12" md="8" lg="8">
 
-      <v-card class="vcard" flat>
+      <v-card class="w-100" flat>
 
         <v-card-title class="d-flex align-center pe-2">
           <!-- Icon und Text in einer Zeile -->
