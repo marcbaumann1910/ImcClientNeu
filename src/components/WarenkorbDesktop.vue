@@ -69,13 +69,14 @@ function deleteItemFromCart(id, itemCount){
           </v-row>
       </v-list-item>
       <!-- $emit übergibt an Leihvorgang true, damit Leihvorgang die Navigation auf die Checkoutseite durchführt-->
-      <v-btn
-          class="ma-2 "
-          color="primary"
-          v-if="cartItems.length > 0"
-          @click="$emit('goToCheckout', true)"
-      >zur Kasse
-      </v-btn>
+      <!-- ToDo: Erstmal deaktiviert, da dieser Button auch den Vorgang bucht, wenn man sich auf der letzten Seite befinden     -->
+<!--      <v-btn-->
+<!--          class="ma-2 "-->
+<!--          color="primary"-->
+<!--          v-if="cartItems.length > 0"-->
+<!--          @click="$emit('goToCheckout', true)"-->
+<!--      >zur Übersicht-->
+<!--      </v-btn>-->
     </v-list>
 
 

@@ -79,14 +79,14 @@ function dialogSave(){
         <v-spacer></v-spacer>
 
         <v-btn
-            text="Close"
+            text="Schließen"
             variant="plain"
             @click="dialogClose"
         ></v-btn>
 
         <v-btn
             color="primary"
-            text="Save"
+            text="Speichern"
             variant="tonal"
             @click="dialogSave"
         ></v-btn>

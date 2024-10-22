@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, inject, onMounted} from 'vue'
+import {computed, ref, watch, onMounted} from 'vue'
 import Mitglieder from "@/components/Mitglieder.vue";
 import WarenkorbDesktop from "@/components/WarenkorbDesktop.vue";
 import Artikel from "../components/Artikel.vue";
@@ -25,6 +25,14 @@ const vChipColors = ref(['success', 'primary', 'primary']) //Steuerung der vChip
 onMounted(()=> {
   updateChipColors() //Steuerung der vChip Farben Anzeigenschritte
 })
+
+// watch(currentPage, (newVal) => {
+//   if(newVal === 0 && !store.getters.getBorrowMember || store.getters.getBorrowMember.length === 0){
+//     btnNextPageDisable.value = true;
+//     console.log('watch currentPager:', newVal)
+//     console.log('watch borrowMember:', store.getters.getBorrowMember)
+//   }
+// })
 
 
 //WarenkorbDesktop btn "zur Kasse" liefert true, wenn dieser geklickt wird
@@ -58,15 +66,15 @@ function previousPage() {
 const btnText = computed(()=>{
   //Mitglieder
   if(currentPage.value === 0){
-    return 'Artikel wählen >>';
+    return 'Artikel wählen';
   }
   //Artikel
   if(currentPage.value === 1){
-    return 'zur Übersicht >>';
+    return 'zur Übersicht';
   }
   //Checkout
   if(currentPage.value === 2) {
-    return  'Vorgang buchen >>';
+    return  'Vorgang buchen';
   }
 });
 
@@ -98,6 +106,7 @@ async function leihvorgangBuchen(){
     snackbarText.value = 'Leihvorgang wurde erfolgreich gebucht';
     snackbarColor.value = "success"
     snackbar.value = true;
+    isSelectedMember.value = false;
     currentPage.value = 0; //Navigiert zur MitgliederSeite und die Auswahl kann von vorne beginnen!
   }catch(err){
     isLoading.value = false;
@@ -177,6 +186,7 @@ function updateChipColors() {
    verschwindet, verwende ich in Abhängigkeit von showCart end oder center bei v-row justify-->
   <v-row :justify="showCart ? 'end' : 'center'">
     <v-col cols="12" md="8" lg="8">
+  <!--Anzeige der Schritte (Stepper)      -->
       <v-card class="d-flex mb-4 bg-transparent rounded-0">
         <v-chip
             class="flex-grow-1 vChipStep rounded-0 mr-1 justify-center text-h6"
@@ -203,9 +213,9 @@ function updateChipColors() {
 
       <!--Buttons zurück und Navigation vorwärts-->
       <v-card class="vCardButtons d-flex mb-2">
-        <v-btn color="grey" @click="previousPage" v-show="currentPage>0">zurück</v-btn>
+        <v-btn color="grey" @click="previousPage" v-show="currentPage>0" > <v-icon class="mr-2">mdi-arrow-left-circle</v-icon>zurück</v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="nextPage" :disabled="!btnNextPageDisable">{{ btnText }}</v-btn>
+        <v-btn color="red darken-2" @click="nextPage" :disabled="!btnNextPageDisable">{{ btnText }}<v-icon class="ml-2">mdi-arrow-right-circle</v-icon></v-btn>
       </v-card>
 
 
@@ -217,7 +227,7 @@ function updateChipColors() {
             class="d-flex align-center"
             flat
             height="75px"
-            color="success"
+            color="teal darken-4"
         >
           <!-- Icon links (Start) -->
           <v-icon class="ml-2" @click="deleteSelectedMember()">mdi-close-circle</v-icon>
@@ -226,8 +236,8 @@ function updateChipColors() {
           <v-spacer></v-spacer>
 
           <!-- Titel und Untertitel zentral -->
-          <div class="text-center">
-            <v-card-subtitle>ausgewählt:</v-card-subtitle>
+          <div class="text-center text-h5">
+            <v-card-subtitle class="text-h6">ausgewählt:</v-card-subtitle>
             {{ selectedMember.firstName }} {{ selectedMember.familyName }}
           </div>
 
@@ -266,8 +276,8 @@ function updateChipColors() {
 
 .vCardMitgliedSuchen{
   min-height: 80vh;
-  background-color: #BDBDBD;
-  with: 100%;
+  background-color: #FAFAFA;
+  width: 100%;
 }
 .vCardTitle{
   min-height: 8vh;
