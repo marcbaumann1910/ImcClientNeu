@@ -13,7 +13,7 @@ const api = axios.create({
 // Interceptor für das Hinzufügen des Access Tokens bei jeder Anfrage
 api.interceptors.request.use(
     (config) => {
-        if(config.url !== '/login' && config.url !== '/register'){
+        if(config.url !== '/login' && config.url !== '/register'){ //An diese Pfade werden Tokens gesendet!!!
             const accessToken = localStorage.getItem('accessToken');
             if(accessToken){
                 console.log('accessToken:', accessToken);

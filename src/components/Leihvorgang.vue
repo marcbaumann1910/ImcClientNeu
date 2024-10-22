@@ -108,6 +108,7 @@ async function leihvorgangBuchen(){
     snackbar.value = true;
     isSelectedMember.value = false;
     currentPage.value = 0; //Navigiert zur MitgliederSeite und die Auswahl kann von vorne beginnen!
+    updateChipColors()
   }catch(err){
     isLoading.value = false;
     console.log('Fehler leihvorgangBuchen', response.data, err)
@@ -184,8 +185,8 @@ function updateChipColors() {
 
   <!-- Da v-show nicht funktioniert und die v-card mit dem Hauptinhalt nach rechts rückt sobald WarenkorbDesktop mit v-if aus dem DOM
    verschwindet, verwende ich in Abhängigkeit von showCart end oder center bei v-row justify-->
-  <v-row :justify="showCart ? 'end' : 'center'">
-    <v-col cols="12" md="8" lg="8">
+  <v-row :justify="showCart ? 'end' : 'center'" class="no-gutters">
+    <v-col cols="12" lg="10" md="8" sm="6" >
   <!--Anzeige der Schritte (Stepper)      -->
       <v-card class="d-flex mb-4 bg-transparent rounded-0">
         <v-chip
@@ -220,7 +221,7 @@ function updateChipColors() {
 
 
 
-      <v-card class="vCardMitgliedSuchen w-100">
+      <v-card class="vCardMitgliedSuchen w-100 pa-0">
         <!-- Anzeige ausgewähltes Mitglied auf Desktops -->
         <v-card
             v-if="selectedMember && selectedMember.firstName && $vuetify.display.mdAndUp"
