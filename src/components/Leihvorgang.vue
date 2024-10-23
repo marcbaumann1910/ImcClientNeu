@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, watch, onMounted} from 'vue'
+import {computed, ref, watchEffect, onMounted} from 'vue'
 import Mitglieder from "@/components/Mitglieder.vue";
 import WarenkorbDesktop from "@/components/WarenkorbDesktop.vue";
 import Artikel from "../components/Artikel.vue";
@@ -21,6 +21,13 @@ const snackbar = ref(false);
 const snackbarText = ref('')
 const snackbarColor = ref('error')
 const vChipColors = ref(['success', 'primary', 'primary']) //Steuerung der vChip Farben Anzeigenschritte
+
+//Wenn das ausgewählte Mitglieder vom Benutzer entfernt wird, wird Komponente Mitglieder wieder geladen
+watchEffect(()=>{
+    if(!isSelectedMember.value){
+      currentPage.value = 0;
+    }
+});
 
 onMounted(()=> {
   updateChipColors() //Steuerung der vChip Farben Anzeigenschritte
