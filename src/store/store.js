@@ -180,7 +180,30 @@ const store = createStore({
             );
             return existingItem ? existingItem.externeID || [] : [];
         },
+        getExterneNummernCount: (state) => (idArtikel) => {
+            //SIEHE DOKU!!!
+            //Dient der Anzeige im Checkout wie viele ExterneIventarNummern erfasst wurden
+            //Filtert cartItems nach der übergebenen IDInventarArtikel
+            const existingItems = state.cartItems.filter((cartItem) =>
+                cartItem.IDInventarArtikel === idArtikel);
+
+            //Wenn die IDInventarArtikel nicht gefunden wird, geben wir 0 zurück
+            if(existingItems.length === 0){
+                return 0;
+            }
+
+            // Wir nehmen das erste gefundene Item, da IDInventarArtikel eindeutig sein sollte
+            const existingItem = existingItems[0];
+
+            // Bereinigen des externeID-Arrays, um leere Werte zu entfernen
+            const cleanedExterneID = existingItem.externeID.filter(
+                (externeID) => externeID !== '' && externeID !== null && externeID !== undefined
+            );
+            console.log('cleanedExterneID.length',cleanedExterneID.length )
+            return cleanedExterneID.length;
+        },
     },
+
 });
 
 export default store;

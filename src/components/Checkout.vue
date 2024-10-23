@@ -1,10 +1,14 @@
 <script setup>
 import store from '../store/store.js';
-import {computed, onMounted} from "vue";
+import {computed, onMounted, watch} from "vue";
 import DialogExterneNummer from "@/components/DialogExterneNummer.vue";
 const imageUrl = process.env.VITE_API_URL
 const cartItems = computed(()=>store.getters.getCartItems);
 const cartItemsAmount = computed(()=>store.getters.getCartItemsAmount);
+
+watch(
+    []
+)
 
 function handleMinusClick(itemID, currentQuantity){
   if(currentQuantity === 1)
@@ -106,7 +110,25 @@ function showDialogForExterneID(menge, idArtikel){
           </v-col>
 
           <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
-            <v-label @click="showDialogForExterneID(item.Menge, item.IDInventarArtikel)" class="hover text-subtitle-2 text-blue-darken-4">
+            <v-badge
+                v-if="store.getters.getExterneNummernCount(item.IDInventarArtikel) > 0"
+                color="green"
+                :content="store.getters.getExterneNummernCount(item.IDInventarArtikel)"
+            >
+              <!-- Der Label wird innerhalb des Badges angezeigt -->
+              <v-label
+                  @click="showDialogForExterneID(item.Menge, item.IDInventarArtikel)"
+                  class="hover text-subtitle-2 text-blue-darken-4 mt-2"
+              >
+                Externe Nr. erfassen
+              </v-label>
+            </v-badge>
+            <!-- Label, das immer angezeigt wird (falls Badge nicht gerendert wird) -->
+            <v-label
+                v-else
+                @click="showDialogForExterneID(item.Menge, item.IDInventarArtikel)"
+                class="hover text-subtitle-2 text-blue-darken-4 mt-2"
+            >
               Externe Nr. erfassen
             </v-label>
           </v-col>
