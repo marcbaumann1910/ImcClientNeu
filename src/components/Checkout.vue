@@ -1,14 +1,25 @@
 <script setup>
 import store from '../store/store.js';
-import {computed, onMounted, watch} from "vue";
+import {computed, onMounted, watchEffect} from "vue";
 import DialogExterneNummer from "@/components/DialogExterneNummer.vue";
 const imageUrl = process.env.VITE_API_URL
 const cartItems = computed(()=>store.getters.getCartItems);
 const cartItemsAmount = computed(()=>store.getters.getCartItemsAmount);
 
-watch(
-    []
-)
+watchEffect(() => {
+  cartItems.value.forEach(item => {
+    const menge = item.Menge
+    const externeIDCount = store.getters.getExterneNummernCount(item.IDInventarArtikel);
+
+    if(menge < externeIDCount){
+      console.log('menge < externeIDCount', menge, externeIDCount);
+      store.dispatch('setExterneInventarNummerToCartItem', {idArtikel: item.IDInventarArtikel, correctionInventarNummerCount: item.Menge})
+    }
+
+  })
+})
+
+
 
 function handleMinusClick(itemID, currentQuantity){
   if(currentQuantity === 1)

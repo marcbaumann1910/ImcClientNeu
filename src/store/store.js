@@ -108,8 +108,32 @@ const store = createStore({
             };
         },
         setExterneInventarNummerToCartItem(state, value){
+            //Siehe Doku!!!
+            //Folgende Parameter werden aktuell als Objekt übergeben:
+            //correctionInventarNummerCount --> dient zur Korrektur der Werte in cartItems.externeID und entspricht der Anzahl der Textfelder die max. zur Verfügung stehen
+            //idAritkel
+            //externeID
+
             //Hier werden die Externen Inventar Nummern dem jeweiligen Artikel zugeordnet
             const existingItem = state.cartItems.find((cartItems) => cartItems.IDInventarArtikel === value.idArtikel);
+
+            //Wenn die Menge der Artikel im Checkout kleiner ist, als die erfassten ExternenInventarNummern
+            //wird hier die Korrektur der externeID durchgeführt, das bestehende Array externeID in cartItems
+            //geleert und nur die Einträge der ersten Einträge (correctionInventarNummerCount = entspricht den Textfeldern)
+            //zur Erfassung der ExternenInventarNummern.
+            //Beispiel: Menge Artikel = 2, erfasste ExternenInventarNummern = 3 (weil die Menge nach dem Erfassen im Checkout) reduziert wird.
+            //Die Anzeige der ExternenInventarNummern stimmt dann nicht mit der Menge im Checkout überein. Deshalb müssen die Einträge in
+            //cartItems.externeID korrigiert werden. Im Prinzip werden die letzte(n) Einträge entfernt!
+            if (existingItem && value.correctionInventarNummerCount !== undefined && value.correctionInventarNummerCount !== '') {
+                const correctionCartItems = [];
+                //Array existingItem.externeID kopieren und existingItem.externeID im Anschluss löschen
+                correctionCartItems.push(...existingItem.externeID);
+                existingItem.externeID = [];
+                for(let i = 0; i < value.correctionInventarNummerCount; i++){
+                    existingItem.externeID.push(correctionCartItems[i]);
+                }
+                return;
+            }
 
             if(existingItem) {
                 console.log("match id in before push setExterneInventarNummerToCartItem")
@@ -120,8 +144,8 @@ const store = createStore({
             }
 
 
-        }
-                },
+            }
+        },
     actions: {
         login({ commit }, userData) {
             commit('setUserLoggedIn', true);
