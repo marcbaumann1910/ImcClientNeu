@@ -12,7 +12,8 @@ import Profile from "@/components/Profile.vue";
 import ResetPassword from "@/components/ResetPassword.vue";
 import ResetPasswordRequest from "@/components/ResetPasswordRequest.vue";
 import FlextTest from "@/components/FlextTest.vue";
-import Leihvorgang from "@/components/Leihvorgang.vue";
+import Leihvorgang from "@/components/Leihvorgang/Leihvorgang.vue";
+import LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten.vue";
 
 const routes = [
     {
@@ -95,6 +96,12 @@ const routes = [
         path: '/flextest',
         name: 'flextest',
         component: FlextTest,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
+    },
+    {
+        path: '/leihvorgangverwalten',
+        name: 'leihvorgangverwalten',
+        component: LeihvorgangVerwalten,
         meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
 ];

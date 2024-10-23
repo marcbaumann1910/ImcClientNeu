@@ -13,13 +13,16 @@ store.dispatch('setCartItemCount', 0)
 
 
 const items = [
-  {title: 'Dashboard', route: '/dashboard', icon: 'mdi-view-dashboard'},
-  {title: 'Leihvorgang', route: '/leihvorgang', icon: 'mdi-handshake'},
-  {title: 'Artikel', route: '/artikel', icon: 'mdi-file-document'},
-  {title: 'Mitglieder', route: '/mitglieder', icon: 'mdi-account-multiple'},
-  {title: 'Abrechnung', route: '/abrechnung', icon: 'mdi-currency-eur'},
-  {title: 'Registrierung', route: '/register', icon: 'mdi-account-plus'},
-  {title: 'Testing', route: '/testing', icon: 'mdi-ab-testing'}
+  {title: 'Dashboard', subtitle: '', route: '/dashboard', icon: 'mdi-view-dashboard'},
+  {title: 'Leihvorgang', subtitle: '', route: '/leihvorgang', icon: 'mdi-handshake'},
+  {title: '', subtitle: 'buchen', route: '/leihvorgang', icon: 'mdi-handshake'},
+  {title: '', subtitle: 'verwalten', route: '/leihvorgangverwalten', icon: 'mdi-handshake'},
+  {title: 'Artikel', subtitle: '', route: '/artikel', icon: 'mdi-file-document'},
+  {title: 'Mitglieder', subtitle: '', route: '/mitglieder', icon: 'mdi-account-multiple'},
+  {title: 'Abrechnung', subtitle: '', route: '/abrechnung', icon: 'mdi-currency-eur'},
+  {title: 'Registrierung', subtitle: '', route: '/register', icon: 'mdi-account-plus'},
+  {title: 'Testing', subtitle: '', route: '/testing', icon: 'mdi-ab-testing'},
+
 ]
 
 const kebabs = [
@@ -135,15 +138,20 @@ function showCartChange(){
     </div>
   </v-app-bar>
 
-  <!-- Navigation Drawer -->
-  <v-navigation-drawer v-model="drawer" :location="$vuetify.display.mobile ? 'top' : undefined" temporary>
+  <!-- Navigation Drawer Einträge Menü-->
+<!--  image="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg"-->
+  <v-navigation-drawer
+      v-model="drawer"
+      :location="$vuetify.display.mobile ? 'top' : undefined" temporary
+  >
     <v-list>
-      <v-list-item v-for="item in items" :key="item.title" @click="navigate(item.route)">
-          <v-list-item-title>
+      <v-list-item dense v-for="item in items" :key="item.title" @click="navigate(item.route)">
+          <v-list-item-title class="mb-0" v-if="item.title">
             <v-icon class="mr-2">{{ item.icon }}</v-icon>
             {{ item.title }}
           </v-list-item-title>
-        </v-list-item>
+        <v-list-item-subtitle class="ml-9 mt-0" v-if="!item.title" @click="navigate(item.route)">{{item.subtitle}}</v-list-item-subtitle>
+      </v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>

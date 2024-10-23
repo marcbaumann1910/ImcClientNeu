@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
-import store from '../store/store.js';
-import Leihvorgang from "@/components/Leihvorgang.vue";
+import store from '../../store/store.js';
+import Leihvorgang from "@/components/Leihvorgang/Leihvorgang.vue";
 
 const imageUrl = process.env.VITE_API_URL
 

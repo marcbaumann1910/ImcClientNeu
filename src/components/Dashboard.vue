@@ -1,59 +1,51 @@
 <template>
-  <v-app class="bg-blue-grey px-10 rounded">
+  <div class="dashboard-background">
     <h1>Dashboard</h1>
     <h5>Herzlich Willkommen</h5>
-
     <v-container>
-      <v-spacer></v-spacer>
-      <v-stepper
-          :next-text="nextName"
-          :items="['Step 1', 'Step 2', 'Step 3']"
-          v-model="currentStep"
-      >
-        <template v-slot:item.1>
-          <v-card title="Step One" flat>
-            <v-text-field label="Label" v-model="textField"> </v-text-field>
-            <v-row>
-              <v-col cols="12" sm="6">
-                <v-btn
-                    style="
-                    background-color: green;
-                    position: absolute;
-                    top: 5px;
-                    right: 5px;
-                  "
-                    v-model="btnTest"
-                    @click="btnAction"
-                >
-                  TEST
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card>
-        </template>
-
-        <template v-slot:item.2>
-          <v-card title="Step Two" flat>...</v-card>
-        </template>
-
-        <template v-slot:item.3>
-          <v-card title="Step Three" flat> </v-card>
-        </template>
-      </v-stepper>
+      <!-- Dein Inhalt hier -->
     </v-container>
-  </v-app>
+  </div>
 </template>
-<script setup>
-import { ref } from 'vue'
-import Artikel from '../components/Artikel.vue';
-const btnTest = ref('')
-const nextName = ref('')
-const currentStep = ref('')
-const textField = ref('')
-function btnAction() {
-  nextName.value = 'huhu'
-  textField.value = currentStep.value
+
+<style scoped>
+.dashboard-background {
+  /* Hintergrundbild */
+  background-image: url('/background.jpg');
+
+  /* Größe und Position */
+  background-size: cover; /* Deckt den gesamten Container ab */
+  background-position: center; /* Zentriert das Bild */
+  background-repeat: no-repeat; /* Verhindert das Wiederholen des Bildes */
+
+  /* Höhe und Breite */
+  min-height: 100vh; /* Mindesthöhe auf 100% der Viewport-Höhe setzen */
+  width: 100%;
+
+  /* Optional: Textfarbe für bessere Lesbarkeit */
+  color: white;
+
+  /* Optional: Hintergrundüberlagerung für bessere Lesbarkeit des Textes */
+  position: relative;
 }
-</script>
-undefined
+
+.dashboard-background::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Dunkle Überlagerung */
+  z-index: 0;
+}
+
+.dashboard-background > * {
+  position: relative;
+  z-index: 1;
+}
+</style>
+
+
+
 

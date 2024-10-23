@@ -1,10 +1,10 @@
 <script setup>
 import {computed, ref, watchEffect, onMounted} from 'vue'
 import Mitglieder from "@/components/Mitglieder.vue";
-import WarenkorbDesktop from "@/components/WarenkorbDesktop.vue";
-import Artikel from "../components/Artikel.vue";
+import WarenkorbDesktop from "@/components/Leihvorgang/WarenkorbDesktop.vue";
+import Artikel from "../Artikel.vue";
 import Checkout from "@/components/Checkout.vue";
-import DialogExterneNummer from "@/components/DialogExterneNummer.vue";
+import DialogExterneNummer from "@/components/Leihvorgang/DialogExterneNummer.vue";
 import OverlayWaiting from "@/components/OverlayWaiting.vue";
 import store from "@/store/store.js"
 import AuthenticationService from "@/services/AuthenticationService.js";
