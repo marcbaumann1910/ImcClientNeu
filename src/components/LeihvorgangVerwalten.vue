@@ -6,6 +6,7 @@ let leihvorgaengeMitgliederAbrufen = ref([]);
 let leihvorgaengeBuchungen = ref([]);
 
 
+//Hier werden alle leihvoränge (invetarBuchungen) abgerufen
 onMounted(async () => {
   try{
     const response = await AuthenticationService.leihvorgangVerwalten()
@@ -16,7 +17,8 @@ onMounted(async () => {
   }
 })
 
-
+//Mit klick auf eines der Mitglieder, werden die Daten speziell für das Mitglied
+//zum Leihvorang (inventarBuchungen) abgerufen
 async function expansionForLeihvorgang(idMitglied){
   try{
     const response = await AuthenticationService.leihvorgangBuchungen(idMitglied)
