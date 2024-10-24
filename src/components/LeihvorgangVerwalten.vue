@@ -1,5 +1,32 @@
 <script setup>
+import { ref, onMounted} from "vue";
 import store from "@/store/store.js";
+import AuthenticationService from "@/services/AuthenticationService.js";
+let leihvorgaengeMitgliederAbrufen = ref([]);
+let leihvorgaengeBuchungen = ref([]);
+
+
+onMounted(async () => {
+  try{
+    const response = await AuthenticationService.leihvorgangVerwalten()
+    leihvorgaengeMitgliederAbrufen.value = response.data
+    console.log('leihvorgaengeMitgliederAbrufen erfolgreich', leihvorgaengeMitgliederAbrufen)
+  }catch(error){
+    console.log('Abruf der Daten leihvorgaengeMitgliederAbrufen fehlgeschlagen', error)
+  }
+})
+
+
+async function expansionForLeihvorgang(idMitglied){
+  try{
+    const response = await AuthenticationService.leihvorgangBuchungen(idMitglied)
+    leihvorgaengeBuchungen.value = response.data
+    console.log('leihvorgaengeBuchungen erfolgreich', leihvorgaengeBuchungen)
+  }catch(error){
+    console.log('Abruf der Daten leihvorgaengeBuchungen fehlgeschlagen', error)
+  }
+}
+
 
 const testItemsLadeMitglied = [
   {
@@ -448,8 +475,8 @@ const testItemsArtikel =[
     <div>
       <v-expansion-panels multiple>
         <!-- Erstes Level -->
-        <v-expansion-panel v-for="(item, index) in testItemsLadeMitglied" :key="index" class="mb-1">
-          <v-expansion-panel-title>
+        <v-expansion-panel v-for="(item) in leihvorgaengeMitgliederAbrufen" :key="item.easyVereinMitglied_id" class="mb-1">
+          <v-expansion-panel-title @click="expansionForLeihvorgang(item.easyVereinMitglied_id)">
             {{ item.easyVereinMitglied_firstName }} {{item.easyVereinMitglied_familyName}}
             <template v-slot:actions="{ expanded }">
               <v-icon :color="!expanded ? 'orange' : ''" :icon="expanded ? 'mdi-pencil' : 'mdi-progress-clock'"></v-icon>
@@ -458,7 +485,7 @@ const testItemsArtikel =[
           <v-expansion-panel-text>
             <!-- Zweite Ebene Leihvorgang -->
             <v-expansion-panels accordion>
-              <v-expansion-panel v-for="(subItem, subIndex) in testItemsLadeInventarBuchungen" :key="subIndex">
+              <v-expansion-panel v-for="(subItem) in leihvorgaengeBuchungen" :key="subItem.inventarBuchung_IDInventarBuchungen">
                 <v-expansion-panel-title>
                   Leihvorgang: {{ subItem.inventarBuchung_IDInventarBuchungen }}
                   <template v-slot:actions="{ expanded }">

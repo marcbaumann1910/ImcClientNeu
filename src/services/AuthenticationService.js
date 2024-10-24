@@ -37,6 +37,14 @@ export default {
     leihvorgangBuchen(data) {
         console.log('leihvorgang: ', data);
         return Api.patch('/leihvorgang', data);
+    },
+    leihvorgangVerwalten() {
+        console.log('leihvorgangverwalten: ',);
+        return Api.get(`/leihvorgangverwalten`);
+    },
+    leihvorgangBuchungen(idMitglied) {
+        console.log('leihvorgangverwalten idMitglied: ', idMitglied);
+        return Api.get(`/leihvorgangverwalten/${idMitglied}`);
     }
 
 };
