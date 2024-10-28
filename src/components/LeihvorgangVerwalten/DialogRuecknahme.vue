@@ -4,15 +4,27 @@ import store from "@/store/store.js";
 const showDialog = computed(()=> store.getters.getShowDialogRuecknahmeArtikel.showDialog);
 const IDinventarBuchungenPositionen = computed(() => store.getters.getShowDialogRuecknahmeArtikel.IDinventarBuchungenPositionen)
 const artikelDetails = computed(()=> store.getters.getShowDialogRuecknahmeArtikel.artikelDetails)
+const memberName = computed(()=> store.getters.getShowDialogRuecknahmeArtikel.memberName)
 const textBemerkung = ref('');
 
 function dialogClose(){
-  store.dispatch("setShowDialogRuecknahmeArtikel", {showDialog: false});
+  store.dispatch('setShowDialogRuecknahmeArtikel', {
+    showDialog: false,
+    IDinventarBuchungenPositionen: '',
+    bemerkung: '',
+    artikelDetails: {},
+    memberName: ''
+  });
 }
 
 function dialogSave(){
-  store.dispatch("setShowDialogRuecknahmeArtikel", {showDialog: false, Bemerkung: textBemerkung});
-
+  store.dispatch('setShowDialogRuecknahmeArtikel', {
+    showDialog: false,
+    IDinventarBuchungenPositionen: '',
+    bemerkung: textBemerkung.value,
+    artikelDetails: {},
+    memberName: ''
+  });
 }
 
 </script>
@@ -36,6 +48,7 @@ function dialogSave(){
       <v-card
           prepend-icon="mdi-arrow-down-thin-circle-outline"
           :title="`Rücknahme: ${artikelDetails.inventarArtikel_ArtikelBezeichnung} | ${artikelDetails.konfektionsGroesse_Konfektionsgroesse} | ${artikelDetails.farbe_Bezeichnung}`"
+          :subtitle="`${memberName}`"
       >
         <v-card-text>
          <v-text-field

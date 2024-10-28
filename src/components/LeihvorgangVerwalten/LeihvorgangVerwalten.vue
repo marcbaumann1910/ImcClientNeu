@@ -39,12 +39,16 @@ async function expansionForLeihvorgang(member) {
   }
 }
 
-function showDialogRuecknahme(artikelDetails){
+function showDialogRuecknahme(artikelDetails, member){
   store.dispatch('setShowDialogRuecknahmeArtikel', {
     showDialog: true,
     IDinventarBuchungenPositionen: artikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionen,
-    artikelDetails: artikelDetails
+    bemerkung: '',
+    artikelDetails: artikelDetails,
+    memberName: `${member.easyVereinMitglied_firstName} ${member.easyVereinMitglied_familyName}`
+
   });
+  console.log('showDialogRuecknahme artikelDetails', artikelDetails)
 }
 
 const testItemsLadeMitglied = [
@@ -544,7 +548,7 @@ const testItemsArtikel =[
 
                           <v-col cols="4" class="d-flex flex-column justify-end align-center align-self-stretch mb-2">
 
-                            <v-label @click="showDialogRuecknahme(itemArtikelDetails)" class="hover text-subtitle-2"
+                            <v-label @click="showDialogRuecknahme(itemArtikelDetails, item)" class="hover text-subtitle-2"
                             >
                               <v-icon class="mr-1">mdi-arrow-down-thin-circle-outline</v-icon>
                               Rücknahme

@@ -19,7 +19,8 @@ const store = createStore({
             showDialog: false,
             IDinventarBuchungenPositionen: 0,
             bemerkung: '',
-            artikelDetails: []
+            artikelDetails: [],
+            memberName: ''
         },
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
@@ -154,7 +155,22 @@ const store = createStore({
         setShowDialogRuecknahmeArtikel(state, value){
             //Wird ein Artikel zurückgegeben, wird dieser hier gespeichert
             //damit dieser im Hauptformular LeihvorgangVerwalten verarbeitet werden kann
-            state.showDialogRuecknahmeArtikel = value;
+
+            state.showDialogRuecknahmeArtikel.showDialog = value.showDialog
+
+            if(value.IDinventarBuchungenPositionen !== '' && value.IDinventarBuchungenPositionen > 0){
+                state.showDialogRuecknahmeArtikel.IDinventarBuchungenPositionen = value.IDinventarBuchungenPositionen;
+            }
+            if(value.bemerkung.length > 0 && value.bemerkung !== ''){
+               state.showDialogRuecknahmeArtikel.bemerkung = value.bemerkung;
+            }
+            if (value.artikelDetails && Object.keys(value.artikelDetails).length > 0) {
+                state.showDialogRuecknahmeArtikel.artikelDetails = value.artikelDetails;
+            }
+            if(value.memberName.length > 0 && value.memberName !== ''){
+                state.showDialogRuecknahmeArtikel.memberName = value.memberName;
+            }
+
         },
         },
     actions: {
