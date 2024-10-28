@@ -1,31 +1,35 @@
 <script setup>
-import { ref, onMounted} from "vue";
-import store from "@/store/store.js";
+import { ref, onMounted } from "vue";
 import AuthenticationService from "@/services/AuthenticationService.js";
+
 let leihvorgaengeMitgliederAbrufen = ref([]);
-let leihvorgaengeBuchungen = ref([]);
 
-
-//Hier werden alle leihvoränge (invetarBuchungen) abgerufen
+// Hier werden alle Mitglieder abgerufen
 onMounted(async () => {
-  try{
-    const response = await AuthenticationService.leihvorgangVerwalten()
-    leihvorgaengeMitgliederAbrufen.value = response.data
-    console.log('leihvorgaengeMitgliederAbrufen erfolgreich', leihvorgaengeMitgliederAbrufen)
-  }catch(error){
-    console.log('Abruf der Daten leihvorgaengeMitgliederAbrufen fehlgeschlagen', error)
+  try {
+    const response = await AuthenticationService.leihvorgangVerwalten();
+    leihvorgaengeMitgliederAbrufen.value = response.data.map(member => ({
+      ...member,
+      leihvorgaengeBuchungen: [],
+      dataLoaded: false,
+    }));
+    console.log('leihvorgaengeMitgliederAbrufen erfolgreich', leihvorgaengeMitgliederAbrufen.value);
+  } catch (error) {
+    console.log('Abruf der Daten leihvorgaengeMitgliederAbrufen fehlgeschlagen', error);
   }
-})
+});
 
-//Mit klick auf eines der Mitglieder, werden die Daten speziell für das Mitglied
-//zum Leihvorang (inventarBuchungen) abgerufen
-async function expansionForLeihvorgang(idMitglied){
-  try{
-    const response = await AuthenticationService.leihvorgangBuchungen(idMitglied)
-    leihvorgaengeBuchungen.value = response.data
-    console.log('leihvorgaengeBuchungen erfolgreich', leihvorgaengeBuchungen)
-  }catch(error){
-    console.log('Abruf der Daten leihvorgaengeBuchungen fehlgeschlagen', error)
+// Mit Klick auf eines der Mitglieder werden die Leihvorgänge abgerufen
+async function expansionForLeihvorgang(member) {
+  if (!member.dataLoaded) {
+    try {
+      const response = await AuthenticationService.leihvorgangBuchungen(member.easyVereinMitglied_id);
+      member.leihvorgaengeBuchungen = response.data;
+      member.dataLoaded = true;
+      console.log(`Leihvorgänge für Mitglied ${member.easyVereinMitglied_id} erfolgreich`, member.leihvorgaengeBuchungen);
+    } catch (error) {
+      console.log(`Abruf der Daten für Mitglied ${member.easyVereinMitglied_id} fehlgeschlagen`, error);
+    }
   }
 }
 
@@ -478,7 +482,7 @@ const testItemsArtikel =[
       <v-expansion-panels multiple>
         <!-- Erstes Level -->
         <v-expansion-panel v-for="(item) in leihvorgaengeMitgliederAbrufen" :key="item.easyVereinMitglied_id" class="mb-1">
-          <v-expansion-panel-title @click="expansionForLeihvorgang(item.easyVereinMitglied_id)">
+          <v-expansion-panel-title @click="expansionForLeihvorgang(item)">
             {{ item.easyVereinMitglied_firstName }} {{item.easyVereinMitglied_familyName}}
             <template v-slot:actions="{ expanded }">
               <v-icon :color="!expanded ? 'orange' : ''" :icon="expanded ? 'mdi-pencil' : 'mdi-progress-clock'"></v-icon>
@@ -487,7 +491,7 @@ const testItemsArtikel =[
           <v-expansion-panel-text>
             <!-- Zweite Ebene Leihvorgang -->
             <v-expansion-panels accordion>
-              <v-expansion-panel v-for="(subItem) in leihvorgaengeBuchungen" :key="subItem.inventarBuchung_IDInventarBuchungen">
+              <v-expansion-panel v-for="(subItem) in item.leihvorgaengeBuchungen" :key="subItem.inventarBuchung_IDInventarBuchungen">
                 <v-expansion-panel-title>
                   Leihvorgang: {{ subItem.inventarBuchung_IDInventarBuchungen }}
                   <template v-slot:actions="{ expanded }">

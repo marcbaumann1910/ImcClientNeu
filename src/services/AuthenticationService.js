@@ -45,6 +45,11 @@ export default {
     leihvorgangBuchungen(idMitglied) {
         console.log('leihvorgangverwalten idMitglied: ', idMitglied);
         return Api.get(`/leihvorgangverwalten/${idMitglied}`);
+    },
+    leihvorgangArtikel(idInventarBuchungen) {
+        console.log('leihvorgangverwalten idMitglied: ', idInventarBuchungen);
+        return Api.get(`/leihvorgangverwalten/${idInventarBuchungen}`);
     }
+
 
 };
