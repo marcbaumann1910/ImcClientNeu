@@ -42,14 +42,19 @@ export default {
         console.log('leihvorgangverwalten: ',);
         return Api.get(`/leihvorgangverwalten`);
     },
-    leihvorgangBuchungen(idMitglied) {
+    ////Wird aktuell nicht genutzt, da die Anzeige ohne Gruppierung nach Leihvorgang gewünscht ist
+
+    // leihvorgangBuchungen(idMitglied) {
+    //     console.log('leihvorgangverwalten idMitglied: ', idMitglied);
+    //     return Api.get(`/leihvorgangverwalten/${idMitglied}`);
+    // },
+    leihvorgangArtikel(idMitglied) {
         console.log('leihvorgangverwalten idMitglied: ', idMitglied);
         return Api.get(`/leihvorgangverwalten/${idMitglied}`);
     },
-    leihvorgangArtikel(idInventarBuchungen) {
-        console.log('leihvorgangverwalten idMitglied: ', idInventarBuchungen);
-        return Api.get(`/leihvorgangverwalten/${idInventarBuchungen}`);
+    leihvorgangArtikelRuecknahme(idInventarBuchungenPositionen) {
+        console.log('leihvorgangverwalten idInventarBuchungenPositionen: ', idInventarBuchungenPositionen);
+        return Api.get(`/leihvorgangverwalten/${idInventarBuchungenPositionen}`);
     }
-
 
 };

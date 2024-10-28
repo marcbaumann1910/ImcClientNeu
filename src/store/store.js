@@ -15,6 +15,12 @@ const store = createStore({
         borrowMember: [], //Mitglied
         showWarenkorbDesktop: true, //Anzeigensteuerung des Warenkorbs
         showDialogExterneInventarNummer: {showDialog: false, Menge: 0, idArtikel: 0}, //Zeigt den Dialog zur Erfassung der Externen Nummern an. {showDialog: boolean, Menge: int}
+        showDialogRuecknahmeArtikel: {
+            showDialog: false,
+            IDinventarBuchungenPositionen: 0,
+            bemerkung: '',
+            artikelDetails: []
+        },
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
         createPersistedState({
@@ -144,7 +150,12 @@ const store = createStore({
             }
 
 
-            }
+            },
+        setShowDialogRuecknahmeArtikel(state, value){
+            //Wird ein Artikel zurückgegeben, wird dieser hier gespeichert
+            //damit dieser im Hauptformular LeihvorgangVerwalten verarbeitet werden kann
+            state.showDialogRuecknahmeArtikel = value;
+        },
         },
     actions: {
         login({ commit }, userData) {
@@ -186,6 +197,9 @@ const store = createStore({
         },
         clearCartItems({ commit }){
             commit('clearCartItems');
+        },
+        setShowDialogRuecknahmeArtikel({ commit }, value){
+            commit('setShowDialogRuecknahmeArtikel', value)
         }
 
     },
@@ -226,6 +240,7 @@ const store = createStore({
             console.log('cleanedExterneID.length',cleanedExterneID.length )
             return cleanedExterneID.length;
         },
+        getShowDialogRuecknahmeArtikel: (state) => state.showDialogRuecknahmeArtikel,
     },
 
 });

@@ -13,7 +13,7 @@ import ResetPassword from "@/components/ResetPassword.vue";
 import ResetPasswordRequest from "@/components/ResetPasswordRequest.vue";
 import FlextTest from "@/components/FlextTest.vue";
 import Leihvorgang from "@/components/Leihvorgang/Leihvorgang.vue";
-import LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten.vue";
+import LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/LeihvorgangVerwalten.vue";
 
 const routes = [
     {
