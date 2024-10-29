@@ -63,14 +63,19 @@ async function dialogSave(){
     memberName: ''
   });
 
-  const respone = await AuthenticationService.leihvorgangRuecknahmeArtikel({
-    IDinventarBuchungenPositionen: store.getters.getShowDialogRuecknahmeArtikel.IDinventarBuchungenPositionen,
-    bemerkung: store.getters.getShowDialogRuecknahmeArtikel.bemerkung,
-    artikelZustand: store.getters.getShowDialogRuecknahmeArtikel.artikelZustand,
-  })
-
+  //Die Rücknahme an das Backend übermitteln
+  try{
+    const respone = await AuthenticationService.leihvorgangRuecknahmeArtikel({
+      IDinventarBuchungenPositionen: store.getters.getShowDialogRuecknahmeArtikel.IDinventarBuchungenPositionen,
+      bemerkung: store.getters.getShowDialogRuecknahmeArtikel.bemerkung,
+      artikelZustand: store.getters.getShowDialogRuecknahmeArtikel.artikelZustand,
+    })
+    console.log('response von leihvorgangRuecknahmeArtikel: ',respone)
+  }catch(err){
+    console.log('Fehler in leihvorgangRuecknahmeArtikel', err)
+    alert('Fehler bei Rücknahme des Artikels')
+  }
   console.log('getShowDialogRuecknahmeArtikel', store.getters.getShowDialogRuecknahmeArtikel)
-  console.log('response von leihvorgangRuecknahmeArtikel: ',respone)
 
 }
 
