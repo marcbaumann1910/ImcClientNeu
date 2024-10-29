@@ -50,11 +50,11 @@ export default {
     // },
     leihvorgangArtikel(idMitglied) {
         console.log('leihvorgangverwalten idMitglied: ', idMitglied);
-        return Api.get(`/leihvorgangverwalten/${idMitglied}`);
+        return Api.get(`/leihvorgangverwalten/mitglied/${idMitglied}`);
     },
     leihvorgangArtikelRuecknahme(idInventarBuchungenPositionen) {
         console.log('leihvorgangverwalten idInventarBuchungenPositionen: ', idInventarBuchungenPositionen);
-        return Api.get(`/leihvorgangverwalten/${idInventarBuchungenPositionen}`);
+        return Api.get(`/leihvorgangverwalten/buchungspositionen/${idInventarBuchungenPositionen}`);
     }
 
 };
