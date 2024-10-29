@@ -55,6 +55,10 @@ export default {
     leihvorgangArtikelRuecknahme(idInventarBuchungenPositionen) {
         console.log('leihvorgangverwalten idInventarBuchungenPositionen: ', idInventarBuchungenPositionen);
         return Api.get(`/leihvorgangverwalten/buchungspositionen/${idInventarBuchungenPositionen}`);
+    },
+    leihvorgangArtikelZustand() {
+        console.log('leihvorgangverwalten/zustand:', );
+        return Api.get(`/leihvorgangverwalten/zustand`);
     }
 
 };
