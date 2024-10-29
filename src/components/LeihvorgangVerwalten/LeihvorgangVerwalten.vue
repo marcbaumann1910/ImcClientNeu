@@ -5,6 +5,11 @@ import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme
 import store from "@/store/store.js";
 const imageUrl = process.env.VITE_API_URL
 const search = ref(null);
+// Ref zur Verfolgung der erweiterten Panels
+const expandedPanels = ref([]);
+// Reaktives Objekt zur Verfolgung des Checkbox-Status
+const checkedItems = ref({}); // { [ID]: Boolean }
+const loading = ref(false);
 let leihvorgaengeMitgliederAbrufen = ref([]);
 
 // Hier werden alle Mitglieder abgerufen
@@ -21,6 +26,41 @@ onMounted(async () => {
     console.log('Abruf der Daten leihvorgaengeMitgliederAbrufen fehlgeschlagen', error);
   }
 });
+
+function handleCheckboxOffen(item) {
+  const isChecked = checkedItems.value[item.easyVereinMitglied_id];
+  console.log(`Checkbox für ID ${item.easyVereinMitglied_id} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
+
+  if(isChecked){
+    // Beispiel: Füge die ID zu einer Liste hinzu
+    // checkedIDs.value.push(item.easyVereinMitglied_id);
+    console.log('handleCheckboxOffen gecheckt')
+  } else{
+    // Beispiel: Entferne die ID aus einer Liste
+    // const index = checkedIDs.value.indexOf(item.easyVereinMitglied_id);
+    // if(index > -1) checkedIDs.value.splice(index, 1);
+    console.log('handleCheckboxOffen nicht gecheckt')
+  }
+
+}
+
+function handleCheckboxAbgeschlossen(item) {
+  const isChecked = checkedItems.value[item.easyVereinMitglied_id];
+  console.log(`Checkbox für ID ${item.easyVereinMitglied_id} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
+
+  if(isChecked){
+    // Beispiel: Füge die ID zu einer Liste hinzu
+    // checkedIDs.value.push(item.easyVereinMitglied_id);
+    console.log('handleCheckboxAbgeschlossen gecheckt')
+  } else{
+    // Beispiel: Entferne die ID aus einer Liste
+    // const index = checkedIDs.value.indexOf(item.easyVereinMitglied_id);
+    // if(index > -1) checkedIDs.value.splice(index, 1);
+    console.log('handleCheckboxAbgeschlossen nicht gecheckt')
+  }
+
+}
+
 
 
 // Mit Klick auf eines der Mitglieder werden die verliehene Artikel je Mitglied abgerufen
@@ -91,15 +131,60 @@ function showDialogRuecknahme(artikelDetails, member) {
 
 
     <div>
-      <v-expansion-panels multiple>
+      <v-expansion-panels v-model="expandedPanels" multiple>
         <!-- Erstes Level -->
-        <v-expansion-panel v-for="(item) in leihvorgaengeMitgliederAbrufen" :key="item.easyVereinMitglied_id" class="mb-1">
+        <v-expansion-panel
+            v-for="(item) in leihvorgaengeMitgliederAbrufen"
+            :key="item.easyVereinMitglied_id"
+            :value="item.easyVereinMitglied_id"
+            class="mb-1">
           <v-expansion-panel-title @click="expansionForLeihvorgang(item)">
             {{ item.easyVereinMitglied_firstName }} {{item.easyVereinMitglied_familyName}}
             <template v-slot:actions="{ expanded }">
               <v-icon :color="!expanded ? 'orange' : ''" :icon="expanded ? 'mdi-pencil' : 'mdi-progress-clock'"></v-icon>
             </template>
           </v-expansion-panel-title>
+      <v-divider></v-divider>
+      <div class="d-flex justify-start">
+        <!-- Checkbox wird nur angezeigt, wenn das Panel erweitert ist -->
+        <!-- Siehe ausführliche Beschreibung in der Doku -->
+        <v-checkbox
+            color="orange"
+            label="ausgeliehen"
+            value="orange"
+            hide-details
+            v-model="checkedItems[item.easyVereinMitglied_id]"
+            @change="handleCheckboxOffen(item)"
+            v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
+        ></v-checkbox>
+        <v-checkbox
+            color="green"
+            label="abgeschlossen"
+            value="green"
+            hide-details
+            v-model="checkedItems[item.easyVereinMitglied_id+2]"
+            @change="handleCheckboxAbgeschlossen(item)"
+            v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
+        ></v-checkbox>
+        <v-spacer></v-spacer>
+        <v-text-field
+            :loading="loading"
+            append-inner-icon="mdi-magnify"
+            density="compact"
+            label="Artikel suchen"
+            variant="solo"
+            hide-details
+            single-line
+            class="ma-2"
+            @click:append-inner="onClick"
+            v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
+        ></v-text-field>
+
+        <v-spacer></v-spacer>
+      </div>
+
+
+          <v-divider></v-divider>
           <v-expansion-panel-text>
                   <!-- ###################### Details ############################## -->
                   <div>
