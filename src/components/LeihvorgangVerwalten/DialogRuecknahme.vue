@@ -3,7 +3,6 @@ import {computed, ref, watch} from 'vue'
 import store from "@/store/store.js";
 import AuthenticationService from "@/services/AuthenticationService.js";
 const showDialog = computed(()=> store.getters.getShowDialogRuecknahmeArtikel.showDialog);
-const IDinventarBuchungenPositionen = computed(() => store.getters.getShowDialogRuecknahmeArtikel.IDinventarBuchungenPositionen)
 const artikelDetails = computed(()=> store.getters.getShowDialogRuecknahmeArtikel.artikelDetails)
 const memberName = computed(()=> store.getters.getShowDialogRuecknahmeArtikel.memberName)
 const textBemerkung = ref('');
@@ -28,24 +27,51 @@ async function fetchStateItems(){
   }
 }
 
+function handleSelectionChange(){
+    console.log('selectedItem',selectedItem.value);
+
+}
+
 function dialogClose(){
   store.dispatch('setShowDialogRuecknahmeArtikel', {
     showDialog: false,
     IDinventarBuchungenPositionen: '',
     bemerkung: '',
     artikelDetails: {},
+    artikelZustand: '',
     memberName: ''
   });
 }
 
-function dialogSave(){
+async function dialogSave(){
+
+  if(!selectedItem.value) {
+    console.log('selectedItem ist leer');
+    alert("Bitte einen Zustand auswählen")
+    return;
+  }
+  else{
+    console.log('selectedItem', selectedItem.value.IDInventarZustand);
+  }
+
   store.dispatch('setShowDialogRuecknahmeArtikel', {
     showDialog: false,
     IDinventarBuchungenPositionen: '',
     bemerkung: textBemerkung.value,
     artikelDetails: {},
+    artikelZustand: selectedItem.value.IDInventarZustand,
     memberName: ''
   });
+
+  const respone = await AuthenticationService.leihvorgangRuecknahmeArtikel({
+    IDinventarBuchungenPositionen: store.getters.getShowDialogRuecknahmeArtikel.IDinventarBuchungenPositionen,
+    bemerkung: store.getters.getShowDialogRuecknahmeArtikel.bemerkung,
+    artikelZustand: store.getters.getShowDialogRuecknahmeArtikel.artikelZustand,
+  })
+
+  console.log('getShowDialogRuecknahmeArtikel', store.getters.getShowDialogRuecknahmeArtikel)
+  console.log('response von leihvorgangRuecknahmeArtikel: ',respone)
+
 }
 
 </script>
@@ -56,15 +82,6 @@ function dialogSave(){
         v-model="showDialog"
         max-width="600"
     >
-      <template v-slot:activator="{ props: activatorProps }">
-        <v-btn
-            class="text-none font-weight-regular"
-            prepend-icon="mdi-account"
-            text="Edit Profil"
-            variant="tonal"
-            v-bind="activatorProps"
-        ></v-btn>
-      </template>
 
       <v-card
           prepend-icon="mdi-arrow-down-thin-circle-outline"
@@ -82,6 +99,7 @@ function dialogSave(){
               persistent-hint
               return-object
               single-line
+              @update:modelValue="handleSelectionChange"
           ></v-select>
 
 

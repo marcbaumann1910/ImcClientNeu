@@ -20,6 +20,7 @@ const store = createStore({
             IDinventarBuchungenPositionen: 0,
             bemerkung: '',
             artikelDetails: [],
+            artikelZustand: '',
             memberName: ''
         },
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
@@ -166,6 +167,9 @@ const store = createStore({
             }
             if (value.artikelDetails && Object.keys(value.artikelDetails).length > 0) {
                 state.showDialogRuecknahmeArtikel.artikelDetails = value.artikelDetails;
+            }
+            if(value.artikelZustand > 0 && value.artikelZustand !== ''){
+                state.showDialogRuecknahmeArtikel.artikelZustand = value.artikelZustand;
             }
             if(value.memberName.length > 0 && value.memberName !== ''){
                 state.showDialogRuecknahmeArtikel.memberName = value.memberName;

@@ -4,6 +4,7 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
 const imageUrl = process.env.VITE_API_URL
+const search = ref(null);
 let leihvorgaengeMitgliederAbrufen = ref([]);
 
 // Hier werden alle Mitglieder abgerufen
@@ -45,6 +46,7 @@ function showDialogRuecknahme(artikelDetails, member){
     IDinventarBuchungenPositionen: artikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionen,
     bemerkung: '',
     artikelDetails: artikelDetails,
+    artikelZustand: '',
     memberName: `${member.easyVereinMitglied_firstName} ${member.easyVereinMitglied_familyName}`
 
   });

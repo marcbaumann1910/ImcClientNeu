@@ -43,7 +43,6 @@ export default {
         return Api.get(`/leihvorgangverwalten`);
     },
     ////Wird aktuell nicht genutzt, da die Anzeige ohne Gruppierung nach Leihvorgang gewünscht ist
-
     // leihvorgangBuchungen(idMitglied) {
     //     console.log('leihvorgangverwalten idMitglied: ', idMitglied);
     //     return Api.get(`/leihvorgangverwalten/${idMitglied}`);
@@ -59,6 +58,11 @@ export default {
     leihvorgangArtikelZustand() {
         console.log('leihvorgangverwalten/zustand:', );
         return Api.get(`/leihvorgangverwalten/zustand`);
+    },
+    leihvorgangRuecknahmeArtikel(data){
+        console.log('leihvorgangverwalten/zustand:', data);
+        return Api.patch('/leihvorgangverwalten/ruecknahme', data);
     }
+
 
 };
