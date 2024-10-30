@@ -4,12 +4,12 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
 const imageUrl = process.env.VITE_API_URL
-const search = ref(null);
 // Ref zur Verfolgung der erweiterten Panels
 const expandedPanels = ref([]);
 // Reaktives Objekt zur Verfolgung des Checkbox-Status
 const checkedItems = reactive({});
 const loading = ref(false);
+const searchArtikels = ref({});
 let leihvorgaengeMitgliederAbrufen = ref([]);
 
 // Hier werden alle Mitglieder abgerufen
@@ -89,7 +89,7 @@ async function expansionForLeihvorgang(member, reload = false) {
       store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: member.easyVereinMitglied_id}) //Damit die Standardwerte gesetzt werden
 
       //Selektion-Kriterium ermitteln, anhand der Checkboxen
-      //Der jeweilige Status der Checkbox ist im vuex-Store gespeichert
+      //Der jeweilige Status der Checkbox ist im vuex-Store gespeichert und wird je idMitglied abgerufen
       //Standard im vuex-Store ist ausgeliehen = true, abgeschlossen = false
       const checkedAusgeliehen = store.getters.getShowAusgeliehenAbgeschlossen(member.easyVereinMitglied_id).checkedStateAusgeliehen
       const checkedAbgeschlossen = store.getters.getShowAusgeliehenAbgeschlossen(member.easyVereinMitglied_id).checkedStateAbgeschlossen
@@ -137,8 +137,28 @@ function showDialogRuecknahme(artikelDetails, member) {
 
   });
   console.log('showDialogRuecknahme artikelDetails', artikelDetails)
-
 }
+
+function filteredArtikelDetails(item) {
+  const searchTerm = this.searchArtikels[item.easyVereinMitglied_id] || '';
+  const lowerSearchTerm = searchTerm.toLowerCase();
+
+  if (!searchTerm) {
+    // Wenn kein Suchbegriff eingegeben wurde, alle Artikel zurückgeben
+    return item.leihvorgaengeArtikelDetails;
+  }
+
+  return item.leihvorgaengeArtikelDetails.filter((detail) => {
+    const artikelBezeichnung = detail.inventarArtikel_ArtikelBezeichnung.toLowerCase();
+    const konfektionsGroesse = detail.konfektionsGroesse_Konfektionsgroesse.toLowerCase();
+
+    return (
+        artikelBezeichnung.includes(lowerSearchTerm) ||
+        konfektionsGroesse.includes(lowerSearchTerm)
+    );
+  });
+}
+
 </script>
 
 <template>
@@ -161,7 +181,7 @@ function showDialogRuecknahme(artikelDetails, member) {
           label="Suche Mitglieder"
           prepend-inner-icon="mdi-magnify"
           clearable
-          @click:clear="search = ''"
+          @click:clear=""
           variant="solo-filled"
           hide-details
           single-line
@@ -214,15 +234,15 @@ function showDialogRuecknahme(artikelDetails, member) {
         ></v-checkbox>
         <v-spacer></v-spacer>
         <v-text-field
+            v-model="searchArtikels[item.easyVereinMitglied_id]"
             :loading="loading"
             append-inner-icon="mdi-magnify"
             density="compact"
             label="Artikel suchen"
             variant="solo"
-            hide-details
             single-line
             class="ma-2"
-            @click:append-inner="onClick"
+            clearable
             v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
         ></v-text-field>
 
@@ -248,7 +268,10 @@ function showDialogRuecknahme(artikelDetails, member) {
 
                       </v-row>
                       <v-divider></v-divider>
-                      <v-list-item v-for="(itemArtikelDetails) in item.leihvorgaengeArtikelDetails" :key="item.leihvorgaengeArtikelDetails.IDinventarBuchungenPositionen" class="mb-2 mt-2">
+                      <v-list-item
+                          v-for="(itemArtikelDetails) in filteredArtikelDetails(item)"
+                          :key="itemArtikelDetails.IDinventarBuchungenPositionen"
+                          class="mb-2 mt-2">
                         <v-row no-gutters align="start" class="w-100">
                           <v-col cols="1" class="d-flex align-center" > <!-- Flexibel halten und rechten Abstand hinzufügen -->
                             <v-img
