@@ -140,7 +140,7 @@ function showDialogRuecknahme(artikelDetails, member) {
 }
 
 function filteredArtikelDetails(item) {
-  const searchTerm = this.searchArtikels[item.easyVereinMitglied_id] || '';
+  const searchTerm = searchArtikels.value[item.easyVereinMitglied_id] || '';
   const lowerSearchTerm = searchTerm.toLowerCase();
 
   if (!searchTerm) {
