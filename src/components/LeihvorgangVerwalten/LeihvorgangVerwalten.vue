@@ -159,6 +159,12 @@ function filteredArtikelDetails(item) {
   });
 }
 
+function formatDate(dateString) {
+  if (!dateString) return '';
+  const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  return new Date(dateString).toLocaleDateString('de-DE', options);
+}
+
 </script>
 
 <template>
@@ -299,10 +305,21 @@ function filteredArtikelDetails(item) {
                                 {{ itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus === 1 ? 'mdi-share' : 'mdi-lock' }}
                               </v-icon>
                             </v-list-item-subtitle>
+                            <v-list-item-subtitle>Datum: {{formatDate(itemArtikelDetails.inventarBuchungenPositionen_StatusDatum) }}</v-list-item-subtitle>
+
+
 
                           </v-col>
 
                           <v-col cols="4" class="d-flex flex-column justify-end align-center align-self-stretch mb-2">
+
+                            <v-label class="mb-6">
+                              Zustand
+                            </v-label>
+
+                            <v-label class="mb-6">
+                              Bemerkung
+                            </v-label>
 
                             <v-label
                                 @click="showDialogRuecknahme(itemArtikelDetails, item)"
