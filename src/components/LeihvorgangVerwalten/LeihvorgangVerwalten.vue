@@ -29,6 +29,7 @@ onMounted(async () => {
 });
 
 // Funktion zur Initialisierung von checkedItems basierend auf leihvorgaengeMitgliederAbrufen
+//Siehe ausführliche Beschreibung in der Doku
 function initializeCheckedItems(){
   leihvorgaengeMitgliederAbrufen.value.forEach(item => {
     if (!(item.easyVereinMitglied_id in checkedItems)) {
@@ -43,46 +44,74 @@ function initializeCheckedItems(){
 }
 
 function handleCheckboxAusgeliehen(item) {
-  const isChecked = checkedItems[item.easyVereinMitglied_id.ausgeliehen];
+  //Wichtig: item entspricht member und wird vollständig benötigt, um die Funktion expansionForLeihvorgang()
+  //aufrufen zukönnen
+  const isChecked = checkedItems[item.easyVereinMitglied_id].ausgeliehen;
   console.log(`Checkbox für ID ${item.easyVereinMitglied_id.ausgeliehen} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
 
   if(isChecked){
-    // Beispiel: Füge die ID zu einer Liste hinzu
-    // checkedIDs.value.push(item.easyVereinMitglied_id);
-    console.log('handleCheckboxOffen gecheckt')
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {checkedStateAusgeliehen: true})
+    console.log('handleCheckboxAusgeliehen gecheckt')
   } else{
-    // Beispiel: Entferne die ID aus einer Liste
-    // const index = checkedIDs.value.indexOf(item.easyVereinMitglied_id);
-    // if(index > -1) checkedIDs.value.splice(index, 1);
-    console.log('handleCheckboxOffen nicht gecheckt')
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {checkedStateAusgeliehen: false})
+    console.log('handleCheckboxAusgeliehen nicht gecheckt')
   }
+  expansionForLeihvorgang(item,true)
+  console.log('getShowAusgeliehenAbgeschlossen', store.getters.getShowAusgeliehenAbgeschlossen)
 
 }
 
 function handleCheckboxAbgeschlossen(item) {
+  //Wichtig: item entspricht member und wird vollständig benötigt, um die Funktion expansionForLeihvorgang()
+  //aufrufen zukönnen
   const isChecked = checkedItems[item.easyVereinMitglied_id].abgeschlossen;
   console.log(`Checkbox für ID ${item.easyVereinMitglied_id.abgeschlossen} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
 
   if(isChecked){
-    // Beispiel: Füge die ID zu einer Liste hinzu
-    // checkedIDs.value.push(item.easyVereinMitglied_id);
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {checkedStateAbgeschlossen: true})
     console.log('handleCheckboxAbgeschlossen gecheckt')
   } else{
-    // Beispiel: Entferne die ID aus einer Liste
-    // const index = checkedIDs.value.indexOf(item.easyVereinMitglied_id);
-    // if(index > -1) checkedIDs.value.splice(index, 1);
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {checkedStateAbgeschlossen: false})
     console.log('handleCheckboxAbgeschlossen nicht gecheckt')
   }
 
+  expansionForLeihvorgang(item,true)
+  console.log('getShowAusgeliehenAbgeschlossen', store.getters.getShowAusgeliehenAbgeschlossen)
+
 }
 
-
-
 // Mit Klick auf eines der Mitglieder werden die verliehene Artikel je Mitglied abgerufen
-async function expansionForLeihvorgang(member) {
-  if (!member.dataLoaded) {
+async function expansionForLeihvorgang(member, reload = false) {
+  //reload ist true, wenn diese Funktion von einer anderen aufgerufen wird
+  //um ein erneutes Laden zu erzwingen
+  if (!member.dataLoaded || reload) {
     try {
-      const response = await AuthenticationService.leihvorgangArtikel(member.easyVereinMitglied_id);
+
+      //Selektion-Kriterium ermitteln, anhand der Checkboxen
+      //Der jeweilige Status der Checkbox ist im vuex-Store gespeichert
+      //Standard im vuex-Store ist ausgeliehen = true, abgeschlossen = false
+      const checkedAusgeliehen = store.getters.getShowAusgeliehenAbgeschlossen.checkedStateAusgeliehen
+      const checkedAbgeschlossen = store.getters.getShowAusgeliehenAbgeschlossen.checkedStateAbgeschlossen
+      //Beide Checkboxen gecheckt
+      let selektionKriterium = '';
+      if(checkedAusgeliehen && checkedAbgeschlossen){
+        selektionKriterium = '1,2' //Status 1 = ausgeliehene, Status 2 = abgeschlossen
+      }
+      //Checkbox ausgeliehen ist gecheckt, abgeschlossen nicht
+      if(checkedAusgeliehen && !checkedAbgeschlossen){
+        selektionKriterium = '1' //Status 1 = ausgeliehene
+      }
+      //Checkbox ausgeliehen ist nicht gecheckt, abgeschlossen ist gecheckt
+      if(!checkedAusgeliehen && checkedAbgeschlossen){
+        selektionKriterium = '2' //Status 2 = abgeschlossen
+      }
+      //Beide Checkboxen sind nicht gecheckt, alle Status werden gezeigt
+      //ToDo: Hier muss noch geprüft werden ob das evtl. über eine separate Checkbox geregelt werden muss
+      if(!checkedAusgeliehen && !checkedAbgeschlossen){
+        selektionKriterium = '' //
+      }
+
+      const response = await AuthenticationService.leihvorgangArtikel(member.easyVereinMitglied_id, {IDinventarBuchungenPositionenStatus: selektionKriterium});
       member.leihvorgaengeArtikelDetails = response.data;
       member.dataLoaded = true;
       //Der Gesamtpreis kommt auch über die Abfrage, wird aber in ein separates Element des Objekte member geschrieben

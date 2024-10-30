@@ -47,9 +47,12 @@ export default {
     //     console.log('leihvorgangverwalten idMitglied: ', idMitglied);
     //     return Api.get(`/leihvorgangverwalten/${idMitglied}`);
     // },
-    leihvorgangArtikel(idMitglied) {
+    //Hier werden zusätzlich Parameter für die Abfragebedingungen an das Backend übergeben!
+    leihvorgangArtikel(idMitglied, filters = {}) {
         console.log('leihvorgangverwalten idMitglied: ', idMitglied);
-        return Api.get(`/leihvorgangverwalten/mitglied/${idMitglied}`);
+        return Api.get(`/leihvorgangverwalten/mitglied/${idMitglied}`, {
+            params: filters
+        });
     },
     leihvorgangArtikelRuecknahme(idInventarBuchungenPositionen) {
         console.log('leihvorgangverwalten idInventarBuchungenPositionen: ', idInventarBuchungenPositionen);

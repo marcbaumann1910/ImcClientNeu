@@ -23,6 +23,10 @@ const store = createStore({
             artikelZustand: '',
             memberName: ''
         },
+        showAusgeliehenAbgeschlossen: {
+            checkedStateAusgeliehen: true,
+            checkedStateAbgeschlossen: false
+        },
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
         createPersistedState({
@@ -168,11 +172,20 @@ const store = createStore({
             if (value.artikelDetails && Object.keys(value.artikelDetails).length > 0) {
                 state.showDialogRuecknahmeArtikel.artikelDetails = value.artikelDetails;
             }
-            if(value.artikelZustand > 0 && value.artikelZustand !== ''){
-                state.showDialogRuecknahmeArtikel.artikelZustand = value.artikelZustand;
+            if(value.artikelZustand.length > 0 && value.artikelZustand !== ''){
+                state.showDialogRuecknahmeArtikel.artikelZustand = value.bemerkung;
             }
             if(value.memberName.length > 0 && value.memberName !== ''){
                 state.showDialogRuecknahmeArtikel.memberName = value.memberName;
+            }
+            },
+        setShowAusgeliehenAbgeschlossen(state, value){
+
+            if(value.checkedStateAusgeliehen !== undefined){
+                state.showAusgeliehenAbgeschlossen.checkedStateAusgeliehen = value.checkedStateAusgeliehen
+            }
+            if(value.checkedStateAbgeschlossen !== undefined){
+                state.showAusgeliehenAbgeschlossen.checkedStateAbgeschlossen =  value.checkedStateAbgeschlossen
             }
 
         },
@@ -220,6 +233,9 @@ const store = createStore({
         },
         setShowDialogRuecknahmeArtikel({ commit }, value){
             commit('setShowDialogRuecknahmeArtikel', value)
+        },
+        setShowAusgeliehenAbgeschlossen( { commit }, value){
+            commit('setShowAusgeliehenAbgeschlossen', value)
         }
 
     },
@@ -261,6 +277,8 @@ const store = createStore({
             return cleanedExterneID.length;
         },
         getShowDialogRuecknahmeArtikel: (state) => state.showDialogRuecknahmeArtikel,
+        getShowAusgeliehenAbgeschlossen: (state) => state.showAusgeliehenAbgeschlossen,
+
     },
 
 });
