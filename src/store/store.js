@@ -169,8 +169,8 @@ const store = createStore({
             if (value.artikelDetails && Object.keys(value.artikelDetails).length > 0) {
                 state.showDialogRuecknahmeArtikel.artikelDetails = value.artikelDetails;
             }
-            if(value.artikelZustand.length > 0 && value.artikelZustand !== ''){
-                state.showDialogRuecknahmeArtikel.artikelZustand = value.bemerkung;
+            if(value.artikelZustand !== ''){
+                state.showDialogRuecknahmeArtikel.artikelZustand = value.artikelZustand;
             }
             if(value.memberName.length > 0 && value.memberName !== ''){
                 state.showDialogRuecknahmeArtikel.memberName = value.memberName;

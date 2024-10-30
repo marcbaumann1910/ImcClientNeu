@@ -29,7 +29,6 @@ async function fetchStateItems(){
 
 function handleSelectionChange(){
     console.log('selectedItem',selectedItem.value);
-
 }
 
 function dialogClose(){
@@ -71,6 +70,7 @@ async function dialogSave(){
       artikelZustand: store.getters.getShowDialogRuecknahmeArtikel.artikelZustand,
     })
     console.log('response von leihvorgangRuecknahmeArtikel: ',respone)
+    alert('Artikel-Rücknahme wurde gebucht')
   }catch(err){
     console.log('Fehler in leihvorgangRuecknahmeArtikel', err)
     alert('Fehler bei Rücknahme des Artikels')
