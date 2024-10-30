@@ -267,11 +267,23 @@ function showDialogRuecknahme(artikelDetails, member) {
                             <v-list-item-subtitle>Farbe: {{ itemArtikelDetails.farbe_Bezeichnung }} </v-list-item-subtitle>
                             <v-list-item-subtitle>Größe: {{ itemArtikelDetails.konfektionsGroesse_Konfektionsgroesse }}</v-list-item-subtitle>
                             <v-list-item-subtitle>Menge: {{ itemArtikelDetails.inventarBuchungenPositionen_Menge }} Stück</v-list-item-subtitle>
+                            <v-list-item-subtitle>
+                              Status: {{itemArtikelDetails.inventarBuchungenPositionenStatus_Bezeichnung}}
+                              <v-icon
+                                  :color="itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus === 1 ? 'orange' : 'green'"
+                              >
+                                {{ itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus === 1 ? 'mdi-share' : 'mdi-lock' }}
+                              </v-icon>
+                            </v-list-item-subtitle>
+
                           </v-col>
 
                           <v-col cols="4" class="d-flex flex-column justify-end align-center align-self-stretch mb-2">
 
-                            <v-label @click="showDialogRuecknahme(itemArtikelDetails, item)" class="hover text-subtitle-2"
+                            <v-label
+                                @click="showDialogRuecknahme(itemArtikelDetails, item)"
+                                class="hover text-subtitle-2"
+                                v-if="itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus === 1"
                             >
                               <v-icon class="mr-1">mdi-arrow-down-thin-circle-outline</v-icon>
                               Rücknahme
@@ -280,7 +292,10 @@ function showDialogRuecknahme(artikelDetails, member) {
                           </v-col>
 
                           <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
-                            <v-label @click="deleteItem(itemArtikelDetails.IDInventarArtikel)" class="hover text-subtitle-2"
+                            <v-label
+                                @click="deleteItem(itemArtikelDetails.IDInventarArtikel)"
+                                class="hover text-subtitle-2"
+                                v-if="itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus === 1"
                             >
                               <v-icon class="mr-1">mdi-pencil-outline</v-icon>
                               Nummer ändern
@@ -291,6 +306,7 @@ function showDialogRuecknahme(artikelDetails, member) {
                             <v-label
                                 @click="showDialogForExterneID(itemArtikelDetails.Menge, itemArtikelDetails.IDInventarArtikel)"
                                 class="hover text-subtitle-2 text-blue-darken-4 mt-2"
+                                v-if="itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus === 1"
                             >
                               <v-icon class="mr-1">mdi-sync</v-icon>
                               Artikel austauschen
