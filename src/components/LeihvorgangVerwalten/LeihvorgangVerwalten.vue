@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, computed} from "vue";
+import {ref, reactive, onMounted, computed} from "vue";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
@@ -8,7 +8,7 @@ const search = ref(null);
 // Ref zur Verfolgung der erweiterten Panels
 const expandedPanels = ref([]);
 // Reaktives Objekt zur Verfolgung des Checkbox-Status
-const checkedItems = ref({}); // { [ID]: Boolean }
+const checkedItems = reactive({});
 const loading = ref(false);
 let leihvorgaengeMitgliederAbrufen = ref([]);
 
@@ -25,11 +25,26 @@ onMounted(async () => {
   } catch (error) {
     console.log('Abruf der Daten leihvorgaengeMitgliederAbrufen fehlgeschlagen', error);
   }
+  initializeCheckedItems() //checkt die Checkbox ausgeliehen standardmäßig
 });
 
-function handleCheckboxOffen(item) {
-  const isChecked = checkedItems.value[item.easyVereinMitglied_id];
-  console.log(`Checkbox für ID ${item.easyVereinMitglied_id} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
+// Funktion zur Initialisierung von checkedItems basierend auf leihvorgaengeMitgliederAbrufen
+function initializeCheckedItems(){
+  leihvorgaengeMitgliederAbrufen.value.forEach(item => {
+    if (!(item.easyVereinMitglied_id in checkedItems)) {
+      checkedItems[item.easyVereinMitglied_id] = {
+        ausgeliehen: true,    // Standardmäßig gecheckt
+        abgeschlossen: false // Standardmäßig nicht gecheckt
+      };
+      console.log(`Checkboxen für ID ${item.easyVereinMitglied_id.ausgeliehen} initialisiert`);
+    }
+  });
+  console.log('checkedItems nach Initialisierung:', checkedItems);
+}
+
+function handleCheckboxAusgeliehen(item) {
+  const isChecked = checkedItems[item.easyVereinMitglied_id.ausgeliehen];
+  console.log(`Checkbox für ID ${item.easyVereinMitglied_id.ausgeliehen} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
 
   if(isChecked){
     // Beispiel: Füge die ID zu einer Liste hinzu
@@ -45,8 +60,8 @@ function handleCheckboxOffen(item) {
 }
 
 function handleCheckboxAbgeschlossen(item) {
-  const isChecked = checkedItems.value[item.easyVereinMitglied_id];
-  console.log(`Checkbox für ID ${item.easyVereinMitglied_id} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
+  const isChecked = checkedItems[item.easyVereinMitglied_id].abgeschlossen;
+  console.log(`Checkbox für ID ${item.easyVereinMitglied_id.abgeschlossen} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
 
   if(isChecked){
     // Beispiel: Füge die ID zu einer Liste hinzu
@@ -73,6 +88,7 @@ async function expansionForLeihvorgang(member) {
       //Der Gesamtpreis kommt auch über die Abfrage, wird aber in ein separates Element des Objekte member geschrieben
       member.gesamtPreis = member.leihvorgaengeArtikelDetails[0].inventarBuchungenPositionen_GesamtPreis
       member.anzahlArtikel = member.leihvorgaengeArtikelDetails[0].inventarBuchungenPositionen_Count
+      initializeCheckedItems();
       console.log(`Leihvorgänge für Mitglied ${member.easyVereinMitglied_id} erfolgreich`, member.leihvorgaengeArtikelDetails);
     } catch (error) {
       console.log(`Abruf der Daten für Mitglied ${member.easyVereinMitglied_id} fehlgeschlagen`, error);
@@ -91,6 +107,7 @@ function showDialogRuecknahme(artikelDetails, member) {
 
   });
   console.log('showDialogRuecknahme artikelDetails', artikelDetails)
+
 }
 </script>
 
@@ -149,20 +166,19 @@ function showDialogRuecknahme(artikelDetails, member) {
         <!-- Checkbox wird nur angezeigt, wenn das Panel erweitert ist -->
         <!-- Siehe ausführliche Beschreibung in der Doku -->
         <v-checkbox
+            class="ml-3"
             color="orange"
             label="ausgeliehen"
-            value="orange"
             hide-details
-            v-model="checkedItems[item.easyVereinMitglied_id]"
-            @change="handleCheckboxOffen(item)"
+            v-model="checkedItems[item.easyVereinMitglied_id].ausgeliehen"
+            @change="handleCheckboxAusgeliehen(item)"
             v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
         ></v-checkbox>
         <v-checkbox
             color="green"
             label="abgeschlossen"
-            value="green"
             hide-details
-            v-model="checkedItems[item.easyVereinMitglied_id+2]"
+            v-model="checkedItems[item.easyVereinMitglied_id].abgeschlossen"
             @change="handleCheckboxAbgeschlossen(item)"
             v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
         ></v-checkbox>
