@@ -23,10 +23,7 @@ const store = createStore({
             artikelZustand: '',
             memberName: ''
         },
-        showAusgeliehenAbgeschlossen: {
-            checkedStateAusgeliehen: true,
-            checkedStateAbgeschlossen: false
-        },
+        showAusgeliehenAbgeschlossen: [],
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
         createPersistedState({
@@ -179,17 +176,33 @@ const store = createStore({
                 state.showDialogRuecknahmeArtikel.memberName = value.memberName;
             }
             },
-        setShowAusgeliehenAbgeschlossen(state, value){
+        setShowAusgeliehenAbgeschlossen(state, value) {
+            const existingItem = state.showAusgeliehenAbgeschlossen.find(
+                (item) => item.idMitglied === value.idMitglied
+            );
 
-            if(value.checkedStateAusgeliehen !== undefined){
-                state.showAusgeliehenAbgeschlossen.checkedStateAusgeliehen = value.checkedStateAusgeliehen
-            }
-            if(value.checkedStateAbgeschlossen !== undefined){
-                state.showAusgeliehenAbgeschlossen.checkedStateAbgeschlossen =  value.checkedStateAbgeschlossen
+            if (existingItem) {
+                // Aktualisiere nur die übergebenen Eigenschaften
+                if (value.checkedStateAusgeliehen !== undefined) {
+                    existingItem.checkedStateAusgeliehen = value.checkedStateAusgeliehen;
+                }
+                if (value.checkedStateAbgeschlossen !== undefined) {
+                    existingItem.checkedStateAbgeschlossen = value.checkedStateAbgeschlossen;
+                }
+            } else {
+                // Füge ein neues Element mit Standardwerten hinzu
+                const newItem = {
+                    idMitglied: value.idMitglied,
+                    checkedStateAusgeliehen: value.checkedStateAusgeliehen !== undefined ? value.checkedStateAusgeliehen : true, // Standardwert
+                    checkedStateAbgeschlossen: value.checkedStateAbgeschlossen !== undefined ? value.checkedStateAbgeschlossen : false, // Standardwert
+                };
+                state.showAusgeliehenAbgeschlossen.push(newItem);
             }
 
+            console.log('vuex state.showAusgeliehenAbgeschlossen', state.showAusgeliehenAbgeschlossen);
         },
-        },
+
+    },
     actions: {
         login({ commit }, userData) {
             commit('setUserLoggedIn', true);
@@ -277,7 +290,11 @@ const store = createStore({
             return cleanedExterneID.length;
         },
         getShowDialogRuecknahmeArtikel: (state) => state.showDialogRuecknahmeArtikel,
-        getShowAusgeliehenAbgeschlossen: (state) => state.showAusgeliehenAbgeschlossen,
+        getShowAusgeliehenAbgeschlossen: (state) => (idMitglied) => {
+            return state.showAusgeliehenAbgeschlossen.find(
+                (item) => item.idMitglied === idMitglied
+            );
+        },
 
     },
 

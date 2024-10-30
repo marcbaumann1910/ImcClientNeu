@@ -50,10 +50,10 @@ function handleCheckboxAusgeliehen(item) {
   console.log(`Checkbox für ID ${item.easyVereinMitglied_id.ausgeliehen} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
 
   if(isChecked){
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {checkedStateAusgeliehen: true})
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAusgeliehen: true})
     console.log('handleCheckboxAusgeliehen gecheckt')
   } else{
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {checkedStateAusgeliehen: false})
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAusgeliehen: false})
     console.log('handleCheckboxAusgeliehen nicht gecheckt')
   }
   expansionForLeihvorgang(item,true)
@@ -68,10 +68,10 @@ function handleCheckboxAbgeschlossen(item) {
   console.log(`Checkbox für ID ${item.easyVereinMitglied_id.abgeschlossen} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
 
   if(isChecked){
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {checkedStateAbgeschlossen: true})
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAbgeschlossen: true})
     console.log('handleCheckboxAbgeschlossen gecheckt')
   } else{
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {checkedStateAbgeschlossen: false})
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAbgeschlossen: false})
     console.log('handleCheckboxAbgeschlossen nicht gecheckt')
   }
 
@@ -86,12 +86,13 @@ async function expansionForLeihvorgang(member, reload = false) {
   //um ein erneutes Laden zu erzwingen
   if (!member.dataLoaded || reload) {
     try {
+      store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: member.easyVereinMitglied_id}) //Damit die Standardwerte gesetzt werden
 
       //Selektion-Kriterium ermitteln, anhand der Checkboxen
       //Der jeweilige Status der Checkbox ist im vuex-Store gespeichert
       //Standard im vuex-Store ist ausgeliehen = true, abgeschlossen = false
-      const checkedAusgeliehen = store.getters.getShowAusgeliehenAbgeschlossen.checkedStateAusgeliehen
-      const checkedAbgeschlossen = store.getters.getShowAusgeliehenAbgeschlossen.checkedStateAbgeschlossen
+      const checkedAusgeliehen = store.getters.getShowAusgeliehenAbgeschlossen(member.easyVereinMitglied_id).checkedStateAusgeliehen
+      const checkedAbgeschlossen = store.getters.getShowAusgeliehenAbgeschlossen(member.easyVereinMitglied_id).checkedStateAbgeschlossen
       //Beide Checkboxen gecheckt
       let selektionKriterium = '';
       if(checkedAusgeliehen && checkedAbgeschlossen){
