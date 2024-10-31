@@ -118,6 +118,7 @@ async function expansionForLeihvorgang(member, reload = false) {
       //Der Gesamtpreis kommt auch über die Abfrage, wird aber in ein separates Element des Objekte member geschrieben
       member.gesamtPreis = member.leihvorgaengeArtikelDetails[0].inventarBuchungenPositionen_GesamtPreis
       member.anzahlArtikel = member.leihvorgaengeArtikelDetails[0].inventarBuchungenPositionen_Count
+
       initializeCheckedItems();
       console.log(`Leihvorgänge für Mitglied ${member.easyVereinMitglied_id} erfolgreich`, member.leihvorgaengeArtikelDetails);
     } catch (error) {
@@ -151,10 +152,12 @@ function filteredArtikelDetails(item) {
   return item.leihvorgaengeArtikelDetails.filter((detail) => {
     const artikelBezeichnung = detail.inventarArtikel_ArtikelBezeichnung.toLowerCase();
     const konfektionsGroesse = detail.konfektionsGroesse_Konfektionsgroesse.toLowerCase();
+    const farbe = detail.farbe_Bezeichnung.toLowerCase();
 
     return (
         artikelBezeichnung.includes(lowerSearchTerm) ||
-        konfektionsGroesse.includes(lowerSearchTerm)
+        konfektionsGroesse.includes(lowerSearchTerm) ||
+        farbe.includes(lowerSearchTerm)
     );
   });
 }
@@ -163,6 +166,12 @@ function formatDate(dateString) {
   if (!dateString) return '';
   const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
   return new Date(dateString).toLocaleDateString('de-DE', options);
+}
+
+function isVisibleIventarStatus(status){
+  //Prüft den itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus Status
+  //Wenn 1 (ausgeliehen) Element anzeigen, sonst nicht
+  return status === 1;
 }
 
 </script>
@@ -292,17 +301,17 @@ function formatDate(dateString) {
                           </v-col>
 
                           <v-col cols="2" class="mb-2">
-                            <v-list-item-title>Nummer: {{ itemArtikelDetails.inventarBuchungenPositionen_externeInventarNummer }}</v-list-item-title>
                             <v-list-item-title>{{ itemArtikelDetails.inventarArtikel_ArtikelBezeichnung }}</v-list-item-title>
+                            <v-list-item-title>Nummer: {{ itemArtikelDetails.inventarBuchungenPositionen_externeInventarNummer }}</v-list-item-title>
                             <v-list-item-subtitle>Farbe: {{ itemArtikelDetails.farbe_Bezeichnung }} </v-list-item-subtitle>
                             <v-list-item-subtitle>Größe: {{ itemArtikelDetails.konfektionsGroesse_Konfektionsgroesse }}</v-list-item-subtitle>
                             <v-list-item-subtitle>Menge: {{ itemArtikelDetails.inventarBuchungenPositionen_Menge }} Stück</v-list-item-subtitle>
                             <v-list-item-subtitle>
                               Status: {{itemArtikelDetails.inventarBuchungenPositionenStatus_Bezeichnung}}
                               <v-icon
-                                  :color="itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus === 1 ? 'orange' : 'green'"
+                                  :color="isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus) ? 'orange' : 'green'"
                               >
-                                {{ itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus === 1 ? 'mdi-share' : 'mdi-lock' }}
+                                {{ isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus) ? 'mdi-share' : 'mdi-lock' }}
                               </v-icon>
                             </v-list-item-subtitle>
                             <v-list-item-subtitle>Datum: {{formatDate(itemArtikelDetails.inventarBuchungenPositionen_StatusDatum) }}</v-list-item-subtitle>
@@ -313,18 +322,24 @@ function formatDate(dateString) {
 
                           <v-col cols="4" class="d-flex flex-column justify-end align-center align-self-stretch mb-2">
 
-                            <v-label class="mb-6">
+                            <v-label
+                                class="mb-6"
+                                v-if="!isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus)"
+                            >
                               Zustand
                             </v-label>
 
-                            <v-label class="mb-6">
+                            <v-label
+                                class="mb-6"
+                                v-if="!isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus)"
+                            >
                               Bemerkung
                             </v-label>
 
                             <v-label
                                 @click="showDialogRuecknahme(itemArtikelDetails, item)"
                                 class="hover text-subtitle-2"
-                                v-if="itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus === 1"
+                                v-if="isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus)"
                             >
                               <v-icon class="mr-1">mdi-arrow-down-thin-circle-outline</v-icon>
                               Rücknahme
@@ -336,7 +351,7 @@ function formatDate(dateString) {
                             <v-label
                                 @click="deleteItem(itemArtikelDetails.IDInventarArtikel)"
                                 class="hover text-subtitle-2"
-                                v-if="itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus === 1"
+                                v-if="isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus)"
                             >
                               <v-icon class="mr-1">mdi-pencil-outline</v-icon>
                               Nummer ändern
@@ -347,7 +362,7 @@ function formatDate(dateString) {
                             <v-label
                                 @click="showDialogForExterneID(itemArtikelDetails.Menge, itemArtikelDetails.IDInventarArtikel)"
                                 class="hover text-subtitle-2 text-blue-darken-4 mt-2"
-                                v-if="itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus === 1"
+                                v-if="isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus)"
                             >
                               <v-icon class="mr-1">mdi-sync</v-icon>
                               Artikel austauschen
