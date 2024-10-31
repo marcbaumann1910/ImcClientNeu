@@ -1,8 +1,9 @@
 <script setup>
-import {ref, reactive, onMounted, computed} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
+
 const imageUrl = process.env.VITE_API_URL
 // Ref zur Verfolgung der erweiterten Panels
 const expandedPanels = ref([]);
@@ -10,6 +11,7 @@ const expandedPanels = ref([]);
 const checkedItems = reactive({});
 const loading = ref(false);
 const searchArtikels = ref({});
+const searchMitglied = ref({})
 let leihvorgaengeMitgliederAbrufen = ref([]);
 
 // Hier werden alle Mitglieder abgerufen
@@ -112,12 +114,37 @@ async function expansionForLeihvorgang(member, reload = false) {
         selektionKriterium = '' //
       }
 
-      const response = await AuthenticationService.leihvorgangArtikel(member.easyVereinMitglied_id, {IDinventarBuchungenPositionenStatus: selektionKriterium});
-      member.leihvorgaengeArtikelDetails = response.data;
+      const response = await AuthenticationService.leihvorgangArtikel(
+          member.easyVereinMitglied_id,
+          {IDinventarBuchungenPositionenStatus: selektionKriterium}
+      );
+
+      // Mapping der empfangenen Daten
+      const mappedData = response.data.map((item) => ({
+        konfektionsGroesse_Konfektionsgroesse: item.Konfektionsgroesse,
+        ia_Bildpfad: item.Bildpfad,
+        ia_ArtikelBezeichnung: item.ArtikelBezeichnung,
+        ibp_Menge: item.Menge,
+        farbe: item.Farbe,
+        ibp_externeInventarNummer: item.externeInventarNummer,
+        ibp_Preis: item.Preis,
+        ibp_IDinventarBuchungenPositionen: item.IDinventarBuchungenPositionen,
+        ibp_Bezeichnung: item.StatusBezeichnung,
+        ibp_IDinventarBuchungenPositionenStatus: item.IDinventarBuchungenPositionenStatus,
+        ibp_StatusDatum: item.StatusDatum,
+        iz_Bezeichnung: item.ZustandBezeichnung,
+        ibp_Bemerkung: item.Bemerkung,
+        ibp_GesamtPreis: item.GesamtPreis,
+        ibp_Count: item.AnzahlPositionen,
+      }));
+
+      // Daten dem Mitglied zuweisen
+      member.leihvorgaengeArtikelDetails = mappedData;
+
       member.dataLoaded = true;
       //Der Gesamtpreis kommt auch über die Abfrage, wird aber in ein separates Element des Objekte member geschrieben
-      member.gesamtPreis = member.leihvorgaengeArtikelDetails[0].inventarBuchungenPositionen_GesamtPreis
-      member.anzahlArtikel = member.leihvorgaengeArtikelDetails[0].inventarBuchungenPositionen_Count
+      member.gesamtPreis = member.leihvorgaengeArtikelDetails[0].ibp_GesamtPreis
+      member.anzahlArtikel = member.leihvorgaengeArtikelDetails[0].ibp_Count
 
       initializeCheckedItems();
       console.log(`Leihvorgänge für Mitglied ${member.easyVereinMitglied_id} erfolgreich`, member.leihvorgaengeArtikelDetails);
@@ -130,7 +157,7 @@ async function expansionForLeihvorgang(member, reload = false) {
 function showDialogRuecknahme(artikelDetails, member) {
   store.dispatch('setShowDialogRuecknahmeArtikel', {
     showDialog: true,
-    IDinventarBuchungenPositionen: artikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionen,
+    IDinventarBuchungenPositionen: artikelDetails.ibp_IDinventarBuchungenPositionen,
     bemerkung: '',
     artikelDetails: artikelDetails,
     artikelZustand: '',
@@ -150,9 +177,9 @@ function filteredArtikelDetails(item) {
   }
 
   return item.leihvorgaengeArtikelDetails.filter((detail) => {
-    const artikelBezeichnung = detail.inventarArtikel_ArtikelBezeichnung.toLowerCase();
+    const artikelBezeichnung = detail.ia_ArtikelBezeichnung.toLowerCase();
     const konfektionsGroesse = detail.konfektionsGroesse_Konfektionsgroesse.toLowerCase();
-    const farbe = detail.farbe_Bezeichnung.toLowerCase();
+    const farbe = detail.farbe.toLowerCase();
 
     return (
         artikelBezeichnung.includes(lowerSearchTerm) ||
@@ -169,7 +196,7 @@ function formatDate(dateString) {
 }
 
 function isVisibleIventarStatus(status){
-  //Prüft den itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus Status
+  //Prüft den itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus Status
   //Wenn 1 (ausgeliehen) Element anzeigen, sonst nicht
   return status === 1;
 }
@@ -191,7 +218,7 @@ function isVisibleIventarStatus(status){
 
     <div>
       <v-text-field
-          v-model="search"
+          v-model="searchMitglied"
           class="search-field mb-4"
           label="Suche Mitglieder"
           prepend-inner-icon="mdi-magnify"
@@ -288,58 +315,60 @@ function isVisibleIventarStatus(status){
                           :key="itemArtikelDetails.IDinventarBuchungenPositionen"
                           class="mb-2 mt-2">
                         <v-row no-gutters align="start" class="w-100">
-                          <v-col cols="1" class="d-flex align-center" > <!-- Flexibel halten und rechten Abstand hinzufügen -->
+                          <v-col cols="1" class="d-flex flex-column justify-center align-start align-self-stretch" > <!-- Flexibel halten und rechten Abstand hinzufügen -->
+                            <v-icon
+                                class="ml-6"
+                                :color="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus) ? 'orange' : 'green'"
+                            >
+                              {{ isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus) ? 'mdi-share' : 'mdi-lock' }}
+                            </v-icon>
                             <v-img
-                                :src="`${imageUrl}${itemArtikelDetails.inventarArtikel_Bildpfad}`"
+                                :src="`${imageUrl}${itemArtikelDetails.ia_Bildpfad}`"
                                 alt="Artikelbild"
-                                min-height="50"
-                                min-width="50"
+                                min-height="70"
+                                min-width="70"
                                 max-width="70"
                                 max-height="70"
-                                class="mt-2"
+                                class="mt-2 mb-4 ml-1"
                             ></v-img>
                           </v-col>
 
-                          <v-col cols="2" class="mb-2">
-                            <v-list-item-title>{{ itemArtikelDetails.inventarArtikel_ArtikelBezeichnung }}</v-list-item-title>
-                            <v-list-item-title>Nummer: {{ itemArtikelDetails.inventarBuchungenPositionen_externeInventarNummer }}</v-list-item-title>
-                            <v-list-item-subtitle>Farbe: {{ itemArtikelDetails.farbe_Bezeichnung }} </v-list-item-subtitle>
+                          <v-col cols="3" class="mb-2">
+                            <v-list-item-title>{{ itemArtikelDetails.ia_ArtikelBezeichnung }}</v-list-item-title>
+                            <v-list-item-title>Nummer: {{ itemArtikelDetails.ibp_externeInventarNummer }}</v-list-item-title>
+                            <v-list-item-subtitle>Farbe: {{ itemArtikelDetails.farbe }} </v-list-item-subtitle>
                             <v-list-item-subtitle>Größe: {{ itemArtikelDetails.konfektionsGroesse_Konfektionsgroesse }}</v-list-item-subtitle>
-                            <v-list-item-subtitle>Menge: {{ itemArtikelDetails.inventarBuchungenPositionen_Menge }} Stück</v-list-item-subtitle>
+                            <v-list-item-subtitle>Menge: {{ itemArtikelDetails.ibp_Menge }} Stück</v-list-item-subtitle>
                             <v-list-item-subtitle>
-                              Status: {{itemArtikelDetails.inventarBuchungenPositionenStatus_Bezeichnung}}
-                              <v-icon
-                                  :color="isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus) ? 'orange' : 'green'"
-                              >
-                                {{ isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus) ? 'mdi-share' : 'mdi-lock' }}
-                              </v-icon>
+                              Status: {{itemArtikelDetails.ibp_Bezeichnung}}
+
                             </v-list-item-subtitle>
-                            <v-list-item-subtitle>Datum: {{formatDate(itemArtikelDetails.inventarBuchungenPositionen_StatusDatum) }}</v-list-item-subtitle>
+                            <v-list-item-subtitle>Datum: {{formatDate(itemArtikelDetails.ibp_StatusDatum) }}</v-list-item-subtitle>
 
 
 
                           </v-col>
 
-                          <v-col cols="4" class="d-flex flex-column justify-end align-center align-self-stretch mb-2">
+                          <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
 
                             <v-label
                                 class="mb-6"
-                                v-if="!isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus)"
+                                v-if="!isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
                             >
-                              Zustand
+                              Zustand: {{itemArtikelDetails.iz_Bezeichnung}}
                             </v-label>
 
                             <v-label
                                 class="mb-6"
-                                v-if="!isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus)"
+                                v-if="!isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
                             >
-                              Bemerkung
+                              Bemerkung: {{itemArtikelDetails.ibp_Bemerkung}}
                             </v-label>
 
                             <v-label
                                 @click="showDialogRuecknahme(itemArtikelDetails, item)"
                                 class="hover text-subtitle-2"
-                                v-if="isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus)"
+                                v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
                             >
                               <v-icon class="mr-1">mdi-arrow-down-thin-circle-outline</v-icon>
                               Rücknahme
@@ -351,7 +380,7 @@ function isVisibleIventarStatus(status){
                             <v-label
                                 @click="deleteItem(itemArtikelDetails.IDInventarArtikel)"
                                 class="hover text-subtitle-2"
-                                v-if="isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus)"
+                                v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
                             >
                               <v-icon class="mr-1">mdi-pencil-outline</v-icon>
                               Nummer ändern
@@ -362,15 +391,15 @@ function isVisibleIventarStatus(status){
                             <v-label
                                 @click="showDialogForExterneID(itemArtikelDetails.Menge, itemArtikelDetails.IDInventarArtikel)"
                                 class="hover text-subtitle-2 text-blue-darken-4 mt-2"
-                                v-if="isVisibleIventarStatus(itemArtikelDetails.inventarBuchungenPositionen_IDinventarBuchungenPositionenStatus)"
+                                v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
                             >
                               <v-icon class="mr-1">mdi-sync</v-icon>
                               Artikel austauschen
                             </v-label>
                           </v-col>
 
-                          <v-col cols="1" class="d-flex justify-end align-end">
-                            <v-list-item-title>{{ Math.round(((itemArtikelDetails.inventarBuchungenPositionen_Preis) *100) /100).toFixed(2) }} €</v-list-item-title>
+                          <v-col cols="2" class="d-flex justify-end align-end">
+                            <v-list-item-title>{{ Math.round(((itemArtikelDetails.ibp_Preis) *100) /100).toFixed(2) }} €</v-list-item-title>
                           </v-col>
 
                           <v-divider></v-divider>
