@@ -21,7 +21,8 @@ const store = createStore({
             bemerkung: '',
             artikelDetails: [],
             artikelZustand: '',
-            memberName: ''
+            memberName: '',
+            idMitglied: ''
         },
         showAusgeliehenAbgeschlossen: [],
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
@@ -175,6 +176,10 @@ const store = createStore({
             if(value.memberName.length > 0 && value.memberName !== ''){
                 state.showDialogRuecknahmeArtikel.memberName = value.memberName;
             }
+            if(value.idMitglied !== '') {
+                state.showDialogRuecknahmeArtikel.idMitglied = value.idMitglied
+            }
+
             },
         setShowAusgeliehenAbgeschlossen(state, value) {
             const existingItem = state.showAusgeliehenAbgeschlossen.find(

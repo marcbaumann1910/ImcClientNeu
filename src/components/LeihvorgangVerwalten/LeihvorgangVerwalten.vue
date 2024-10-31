@@ -1,8 +1,10 @@
 <script setup>
-import {onMounted, reactive, ref} from "vue";
+import {onMounted, ref} from "vue";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
+import {expansionForLeihvorgang} from "@/scripte/globalFunctions.js"
+
 
 const imageUrl = process.env.VITE_API_URL
 // Ref zur Verfolgung der erweiterten Panels
@@ -12,28 +14,32 @@ const checkedItems = reactive({});
 const loading = ref(false);
 const searchArtikels = ref({});
 const searchMitglied = ref({})
-let leihvorgaengeMitgliederAbrufen = ref([]);
 
 // Hier werden alle Mitglieder abgerufen
+import { reactive } from 'vue';
+
+const leihvorgaengeMitgliederAbrufen = reactive([]);
+
 onMounted(async () => {
   try {
     const response = await AuthenticationService.leihvorgangVerwalten();
-    leihvorgaengeMitgliederAbrufen.value = response.data.map(member => ({
+    leihvorgaengeMitgliederAbrufen.splice(0, leihvorgaengeMitgliederAbrufen.length, ...response.data.map(member => ({
       ...member,
       leihvorgaengeArtikelDetails: [],
       dataLoaded: false,
-    }));
-    console.log('leihvorgaengeMitgliederAbrufen erfolgreich', leihvorgaengeMitgliederAbrufen.value);
+    })));
+    console.log('leihvorgaengeMitgliederAbrufen erfolgreich', leihvorgaengeMitgliederAbrufen);
   } catch (error) {
     console.log('Abruf der Daten leihvorgaengeMitgliederAbrufen fehlgeschlagen', error);
   }
-  initializeCheckedItems() //checkt die Checkbox ausgeliehen standardmäßig
+  initializeCheckedItems();
 });
+
 
 // Funktion zur Initialisierung von checkedItems basierend auf leihvorgaengeMitgliederAbrufen
 //Siehe ausführliche Beschreibung in der Doku
-function initializeCheckedItems(){
-  leihvorgaengeMitgliederAbrufen.value.forEach(item => {
+function initializeCheckedItems() {
+  leihvorgaengeMitgliederAbrufen.forEach(item => {
     if (!(item.easyVereinMitglied_id in checkedItems)) {
       checkedItems[item.easyVereinMitglied_id] = {
         ausgeliehen: true,    // Standardmäßig gecheckt
@@ -51,14 +57,20 @@ function handleCheckboxAusgeliehen(item) {
   const isChecked = checkedItems[item.easyVereinMitglied_id].ausgeliehen;
   console.log(`Checkbox für ID ${item.easyVereinMitglied_id.ausgeliehen} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
 
-  if(isChecked){
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAusgeliehen: true})
+  if (isChecked) {
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {
+      idMitglied: item.easyVereinMitglied_id,
+      checkedStateAusgeliehen: true
+    })
     console.log('handleCheckboxAusgeliehen gecheckt')
-  } else{
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAusgeliehen: false})
+  } else {
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {
+      idMitglied: item.easyVereinMitglied_id,
+      checkedStateAusgeliehen: false
+    })
     console.log('handleCheckboxAusgeliehen nicht gecheckt')
   }
-  expansionForLeihvorgang(item,true)
+  expansionForLeihvorgang(item, true)
   console.log('getShowAusgeliehenAbgeschlossen', store.getters.getShowAusgeliehenAbgeschlossen)
 
 }
@@ -69,90 +81,27 @@ function handleCheckboxAbgeschlossen(item) {
   const isChecked = checkedItems[item.easyVereinMitglied_id].abgeschlossen;
   console.log(`Checkbox für ID ${item.easyVereinMitglied_id.abgeschlossen} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
 
-  if(isChecked){
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAbgeschlossen: true})
+  if (isChecked) {
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {
+      idMitglied: item.easyVereinMitglied_id,
+      checkedStateAbgeschlossen: true
+    })
     console.log('handleCheckboxAbgeschlossen gecheckt')
-  } else{
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAbgeschlossen: false})
+  } else {
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {
+      idMitglied: item.easyVereinMitglied_id,
+      checkedStateAbgeschlossen: false
+    })
     console.log('handleCheckboxAbgeschlossen nicht gecheckt')
   }
 
-  expansionForLeihvorgang(item,true)
+  expansionForLeihvorgang(item, true)
   console.log('getShowAusgeliehenAbgeschlossen', store.getters.getShowAusgeliehenAbgeschlossen)
 
 }
 
 // Mit Klick auf eines der Mitglieder werden die verliehene Artikel je Mitglied abgerufen
-async function expansionForLeihvorgang(member, reload = false) {
-  //reload ist true, wenn diese Funktion von einer anderen aufgerufen wird
-  //um ein erneutes Laden zu erzwingen
-  if (!member.dataLoaded || reload) {
-    try {
-      store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: member.easyVereinMitglied_id}) //Damit die Standardwerte gesetzt werden
-
-      //Selektion-Kriterium ermitteln, anhand der Checkboxen
-      //Der jeweilige Status der Checkbox ist im vuex-Store gespeichert und wird je idMitglied abgerufen
-      //Standard im vuex-Store ist ausgeliehen = true, abgeschlossen = false
-      const checkedAusgeliehen = store.getters.getShowAusgeliehenAbgeschlossen(member.easyVereinMitglied_id).checkedStateAusgeliehen
-      const checkedAbgeschlossen = store.getters.getShowAusgeliehenAbgeschlossen(member.easyVereinMitglied_id).checkedStateAbgeschlossen
-      //Beide Checkboxen gecheckt
-      let selektionKriterium = '';
-      if(checkedAusgeliehen && checkedAbgeschlossen){
-        selektionKriterium = '1,2' //Status 1 = ausgeliehene, Status 2 = abgeschlossen
-      }
-      //Checkbox ausgeliehen ist gecheckt, abgeschlossen nicht
-      if(checkedAusgeliehen && !checkedAbgeschlossen){
-        selektionKriterium = '1' //Status 1 = ausgeliehene
-      }
-      //Checkbox ausgeliehen ist nicht gecheckt, abgeschlossen ist gecheckt
-      if(!checkedAusgeliehen && checkedAbgeschlossen){
-        selektionKriterium = '2' //Status 2 = abgeschlossen
-      }
-      //Beide Checkboxen sind nicht gecheckt, alle Status werden gezeigt
-      //ToDo: Hier muss noch geprüft werden ob das evtl. über eine separate Checkbox geregelt werden muss
-      if(!checkedAusgeliehen && !checkedAbgeschlossen){
-        selektionKriterium = '' //
-      }
-
-      const response = await AuthenticationService.leihvorgangArtikel(
-          member.easyVereinMitglied_id,
-          {IDinventarBuchungenPositionenStatus: selektionKriterium}
-      );
-
-      // Mapping der empfangenen Daten
-      const mappedData = response.data.map((item) => ({
-        konfektionsGroesse_Konfektionsgroesse: item.Konfektionsgroesse,
-        ia_Bildpfad: item.Bildpfad,
-        ia_ArtikelBezeichnung: item.ArtikelBezeichnung,
-        ibp_Menge: item.Menge,
-        farbe: item.Farbe,
-        ibp_externeInventarNummer: item.externeInventarNummer,
-        ibp_Preis: item.Preis,
-        ibp_IDinventarBuchungenPositionen: item.IDinventarBuchungenPositionen,
-        ibp_Bezeichnung: item.StatusBezeichnung,
-        ibp_IDinventarBuchungenPositionenStatus: item.IDinventarBuchungenPositionenStatus,
-        ibp_StatusDatum: item.StatusDatum,
-        iz_Bezeichnung: item.ZustandBezeichnung,
-        ibp_Bemerkung: item.Bemerkung,
-        ibp_GesamtPreis: item.GesamtPreis,
-        ibp_Count: item.AnzahlPositionen,
-      }));
-
-      // Daten dem Mitglied zuweisen
-      member.leihvorgaengeArtikelDetails = mappedData;
-
-      member.dataLoaded = true;
-      //Der Gesamtpreis kommt auch über die Abfrage, wird aber in ein separates Element des Objekte member geschrieben
-      member.gesamtPreis = member.leihvorgaengeArtikelDetails[0].ibp_GesamtPreis
-      member.anzahlArtikel = member.leihvorgaengeArtikelDetails[0].ibp_Count
-
-      initializeCheckedItems();
-      console.log(`Leihvorgänge für Mitglied ${member.easyVereinMitglied_id} erfolgreich`, member.leihvorgaengeArtikelDetails);
-    } catch (error) {
-      console.log(`Abruf der Daten für Mitglied ${member.easyVereinMitglied_id} fehlgeschlagen`, error);
-    }
-  }
-}
+await expansionForLeihvorgang
 
 function showDialogRuecknahme(artikelDetails, member) {
   store.dispatch('setShowDialogRuecknahmeArtikel', {
@@ -161,7 +110,8 @@ function showDialogRuecknahme(artikelDetails, member) {
     bemerkung: '',
     artikelDetails: artikelDetails,
     artikelZustand: '',
-    memberName: `${member.easyVereinMitglied_firstName} ${member.easyVereinMitglied_familyName}`
+    memberName: `${member.easyVereinMitglied_firstName} ${member.easyVereinMitglied_familyName}`,
+    idMitglied: member.easyVereinMitglied_id
 
   });
   console.log('showDialogRuecknahme artikelDetails', artikelDetails)
@@ -191,11 +141,11 @@ function filteredArtikelDetails(item) {
 
 function formatDate(dateString) {
   if (!dateString) return '';
-  const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  const options = {day: '2-digit', month: '2-digit', year: 'numeric'};
   return new Date(dateString).toLocaleDateString('de-DE', options);
 }
 
-function isVisibleIventarStatus(status){
+function isVisibleIventarStatus(status) {
   //Prüft den itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus Status
   //Wenn 1 (ausgeliehen) Element anzeigen, sonst nicht
   return status === 1;
@@ -248,178 +198,190 @@ function isVisibleIventarStatus(status){
             :value="item.easyVereinMitglied_id"
             class="mb-1">
           <v-expansion-panel-title @click="expansionForLeihvorgang(item)">
-            {{ item.easyVereinMitglied_firstName }} {{item.easyVereinMitglied_familyName}}
+            {{ item.easyVereinMitglied_firstName }} {{ item.easyVereinMitglied_familyName }}
             <template v-slot:actions="{ expanded }">
-              <v-icon :color="!expanded ? 'orange' : ''" :icon="expanded ? 'mdi-pencil' : 'mdi-progress-clock'"></v-icon>
+              <v-icon :color="!expanded ? 'orange' : ''"
+                      :icon="expanded ? 'mdi-pencil' : 'mdi-progress-clock'"></v-icon>
             </template>
           </v-expansion-panel-title>
-      <v-divider></v-divider>
-      <div class="d-flex justify-start">
-        <!-- Checkbox wird nur angezeigt, wenn das Panel erweitert ist -->
-        <!-- Siehe ausführliche Beschreibung in der Doku -->
-        <v-checkbox
-            class="ml-3"
-            color="orange"
-            label="ausgeliehen"
-            hide-details
-            v-model="checkedItems[item.easyVereinMitglied_id].ausgeliehen"
-            @change="handleCheckboxAusgeliehen(item)"
-            v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
-        ></v-checkbox>
-        <v-checkbox
-            color="green"
-            label="abgeschlossen"
-            hide-details
-            v-model="checkedItems[item.easyVereinMitglied_id].abgeschlossen"
-            @change="handleCheckboxAbgeschlossen(item)"
-            v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
-        ></v-checkbox>
-        <v-spacer></v-spacer>
-        <v-text-field
-            v-model="searchArtikels[item.easyVereinMitglied_id]"
-            :loading="loading"
-            append-inner-icon="mdi-magnify"
-            density="compact"
-            label="Artikel suchen"
-            variant="solo"
-            single-line
-            class="ma-2"
-            clearable
-            v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
-        ></v-text-field>
+          <v-divider></v-divider>
+          <div class="d-flex justify-start">
+            <!-- Checkbox wird nur angezeigt, wenn das Panel erweitert ist -->
+            <!-- Siehe ausführliche Beschreibung in der Doku -->
+            <v-checkbox
+                class="ml-3 mt-3"
+                color="orange"
+                label="ausgeliehen"
+                hide-details
+                v-model="checkedItems[item.easyVereinMitglied_id].ausgeliehen"
+                @change="handleCheckboxAusgeliehen(item)"
+                v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
+            ></v-checkbox>
+            <v-checkbox
+                class="mt-3"
+                color="green"
+                label="abgeschlossen"
+                hide-details
+                v-model="checkedItems[item.easyVereinMitglied_id].abgeschlossen"
+                @change="handleCheckboxAbgeschlossen(item)"
+                v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
+            ></v-checkbox>
+            <v-spacer></v-spacer>
+            <v-text-field
+                v-model="searchArtikels[item.easyVereinMitglied_id]"
+                :loading="loading"
+                append-inner-icon="mdi-magnify"
+                density="compact"
+                label="Artikel suchen"
+                variant="solo"
+                single-line
+                class="mt-6"
+                clearable
+                v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
+            ></v-text-field>
 
-        <v-spacer></v-spacer>
-      </div>
+            <v-spacer></v-spacer>
+          </div>
 
 
           <v-divider></v-divider>
           <v-expansion-panel-text>
-                  <!-- ###################### Details ############################## -->
-                  <div>
-                    <v-list>
-                      <v-row>
-                        <v-col>
-                          <v-list-item-action class="ml-4">
-                            <v-list-item-title>Artikel {{ item.anzahlArtikel }} Stück</v-list-item-title>
-                          </v-list-item-action>
-                        </v-col>
+            <!-- ###################### Details ############################## -->
+            <div>
+              <v-list>
+                <v-row>
+                  <v-col>
+                    <v-list-item-action class="ml-4">
+                      <v-list-item-title>Artikel {{ item.anzahlArtikel }} Stück</v-list-item-title>
+                    </v-list-item-action>
+                  </v-col>
 
-                        <v-list-item-action class="mr-7">
-                          <v-list-item-title>Preis</v-list-item-title>
-                        </v-list-item-action>
+                  <v-list-item-action class="mr-7">
+                    <v-list-item-title>Preis</v-list-item-title>
+                  </v-list-item-action>
 
-                      </v-row>
-                      <v-divider></v-divider>
-                      <v-list-item
-                          v-for="(itemArtikelDetails) in filteredArtikelDetails(item)"
-                          :key="itemArtikelDetails.IDinventarBuchungenPositionen"
-                          class="mb-2 mt-2">
-                        <v-row no-gutters align="start" class="w-100">
-                          <v-col cols="1" class="d-flex flex-column justify-center align-start align-self-stretch" > <!-- Flexibel halten und rechten Abstand hinzufügen -->
-                            <v-icon
-                                class="ml-6"
-                                :color="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus) ? 'orange' : 'green'"
-                            >
-                              {{ isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus) ? 'mdi-share' : 'mdi-lock' }}
-                            </v-icon>
-                            <v-img
-                                :src="`${imageUrl}${itemArtikelDetails.ia_Bildpfad}`"
-                                alt="Artikelbild"
-                                min-height="70"
-                                min-width="70"
-                                max-width="70"
-                                max-height="70"
-                                class="mt-2 mb-4 ml-1"
-                            ></v-img>
-                          </v-col>
+                </v-row>
+                <v-divider></v-divider>
+                <v-list-item
+                    v-for="(itemArtikelDetails) in filteredArtikelDetails(item)"
+                    :key="itemArtikelDetails.IDinventarBuchungenPositionen"
+                    class="mb-2 mt-2">
+                  <v-row no-gutters align="start" class="w-100">
+                    <v-col cols="1" class="d-flex flex-column justify-center align-start align-self-stretch">
+                      <!-- Flexibel halten und rechten Abstand hinzufügen -->
+                      <v-icon
+                          class="ml-6"
+                          :color="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus) ? 'orange' : 'green'"
+                      >
+                        {{
+                          isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus) ? 'mdi-share' : 'mdi-lock'
+                        }}
+                      </v-icon>
+                      <v-img
+                          :src="`${imageUrl}${itemArtikelDetails.ia_Bildpfad}`"
+                          alt="Artikelbild"
+                          min-height="70"
+                          min-width="70"
+                          max-width="70"
+                          max-height="70"
+                          class="mt-2 mb-4 ml-1"
+                      ></v-img>
+                    </v-col>
 
-                          <v-col cols="3" class="mb-2">
-                            <v-list-item-title>{{ itemArtikelDetails.ia_ArtikelBezeichnung }}</v-list-item-title>
-                            <v-list-item-title>Nummer: {{ itemArtikelDetails.ibp_externeInventarNummer }}</v-list-item-title>
-                            <v-list-item-subtitle>Farbe: {{ itemArtikelDetails.farbe }} </v-list-item-subtitle>
-                            <v-list-item-subtitle>Größe: {{ itemArtikelDetails.konfektionsGroesse_Konfektionsgroesse }}</v-list-item-subtitle>
-                            <v-list-item-subtitle>Menge: {{ itemArtikelDetails.ibp_Menge }} Stück</v-list-item-subtitle>
-                            <v-list-item-subtitle>
-                              Status: {{itemArtikelDetails.ibp_Bezeichnung}}
+                    <v-col cols="3" class="mb-2">
+                      <v-list-item-title>{{ itemArtikelDetails.ia_ArtikelBezeichnung }}</v-list-item-title>
+                      <v-list-item-title>Nummer: {{ itemArtikelDetails.ibp_externeInventarNummer }}</v-list-item-title>
+                      <v-list-item-subtitle>Farbe: {{ itemArtikelDetails.farbe }}</v-list-item-subtitle>
+                      <v-list-item-subtitle>Größe: {{
+                          itemArtikelDetails.konfektionsGroesse_Konfektionsgroesse
+                        }}
+                      </v-list-item-subtitle>
+                      <v-list-item-subtitle>Menge: {{ itemArtikelDetails.ibp_Menge }} Stück</v-list-item-subtitle>
+                      <v-list-item-subtitle>
+                        Status: {{ itemArtikelDetails.ibp_Bezeichnung }}
 
-                            </v-list-item-subtitle>
-                            <v-list-item-subtitle>Datum: {{formatDate(itemArtikelDetails.ibp_StatusDatum) }}</v-list-item-subtitle>
+                      </v-list-item-subtitle>
+                      <v-list-item-subtitle>Datum: {{
+                          formatDate(itemArtikelDetails.ibp_StatusDatum)
+                        }}
+                      </v-list-item-subtitle>
 
 
+                    </v-col>
 
-                          </v-col>
+                    <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
 
-                          <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
+                      <v-label
+                          class="mb-6"
+                          v-if="!isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
+                      >
+                        Zustand bei Rücknahme: {{ itemArtikelDetails.iz_Bezeichnung }}
+                      </v-label>
 
-                            <v-label
-                                class="mb-6"
-                                v-if="!isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
-                            >
-                              Zustand: {{itemArtikelDetails.iz_Bezeichnung}}
-                            </v-label>
+                      <v-label
+                          class="mb-6"
+                          v-if="!isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
+                      >
+                        Bemerkung: {{ itemArtikelDetails.ibp_Bemerkung }}
+                      </v-label>
 
-                            <v-label
-                                class="mb-6"
-                                v-if="!isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
-                            >
-                              Bemerkung: {{itemArtikelDetails.ibp_Bemerkung}}
-                            </v-label>
+                      <v-label
+                          @click="showDialogRuecknahme(itemArtikelDetails, item)"
+                          class="hover text-subtitle-2"
+                          v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
+                      >
+                        <v-icon class="mr-1">mdi-arrow-down-thin-circle-outline</v-icon>
+                        Rücknahme
+                      </v-label>
 
-                            <v-label
-                                @click="showDialogRuecknahme(itemArtikelDetails, item)"
-                                class="hover text-subtitle-2"
-                                v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
-                            >
-                              <v-icon class="mr-1">mdi-arrow-down-thin-circle-outline</v-icon>
-                              Rücknahme
-                            </v-label>
+                    </v-col>
 
-                          </v-col>
+                    <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
+                      <v-label
+                          @click="deleteItem(itemArtikelDetails.IDInventarArtikel)"
+                          class="hover text-subtitle-2"
+                          v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
+                      >
+                        <v-icon class="mr-1">mdi-pencil-outline</v-icon>
+                        Nummer ändern
+                      </v-label>
+                    </v-col>
 
-                          <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
-                            <v-label
-                                @click="deleteItem(itemArtikelDetails.IDInventarArtikel)"
-                                class="hover text-subtitle-2"
-                                v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
-                            >
-                              <v-icon class="mr-1">mdi-pencil-outline</v-icon>
-                              Nummer ändern
-                            </v-label>
-                          </v-col>
+                    <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
+                      <v-label
+                          @click="showDialogForExterneID(itemArtikelDetails.Menge, itemArtikelDetails.IDInventarArtikel)"
+                          class="hover text-subtitle-2 text-blue-darken-4 mt-2"
+                          v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
+                      >
+                        <v-icon class="mr-1">mdi-sync</v-icon>
+                        Artikel austauschen
+                      </v-label>
+                    </v-col>
 
-                          <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
-                            <v-label
-                                @click="showDialogForExterneID(itemArtikelDetails.Menge, itemArtikelDetails.IDInventarArtikel)"
-                                class="hover text-subtitle-2 text-blue-darken-4 mt-2"
-                                v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
-                            >
-                              <v-icon class="mr-1">mdi-sync</v-icon>
-                              Artikel austauschen
-                            </v-label>
-                          </v-col>
+                    <v-col cols="2" class="d-flex justify-end align-end">
+                      <v-list-item-title>{{ Math.round(((itemArtikelDetails.ibp_Preis) * 100) / 100).toFixed(2) }} €
+                      </v-list-item-title>
+                    </v-col>
 
-                          <v-col cols="2" class="d-flex justify-end align-end">
-                            <v-list-item-title>{{ Math.round(((itemArtikelDetails.ibp_Preis) *100) /100).toFixed(2) }} €</v-list-item-title>
-                          </v-col>
+                    <v-divider></v-divider>
 
-                          <v-divider></v-divider>
+                  </v-row>
+                </v-list-item>
 
-                        </v-row>
-                      </v-list-item>
+                <v-row>
+                  <v-col class="d-flex justify-end mr-0">
+                    <v-list-item-action class="mr-2">
+                      <v-list-item-title><b>Gesamtpreis: {{ (Math.round(item.gesamtPreis * 100) / 100).toFixed(2) }}
+                        €</b></v-list-item-title>
+                    </v-list-item-action>
+                  </v-col>
 
-                      <v-row>
-                        <v-col class="d-flex justify-end mr-0">
-                          <v-list-item-action class="mr-2">
-                            <v-list-item-title><b>Gesamtpreis: {{ (Math.round(item.gesamtPreis *100) /100).toFixed(2) }} €</b></v-list-item-title>
-                          </v-list-item-action>
-                        </v-col>
-
-                      </v-row>
-                    </v-list>
-                  </div>
-                </v-expansion-panel-text>
-              </v-expansion-panel>
-            </v-expansion-panels>
+                </v-row>
+              </v-list>
+            </div>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </div>
   </v-container>
 </template>

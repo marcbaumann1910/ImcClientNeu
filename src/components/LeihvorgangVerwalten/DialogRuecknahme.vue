@@ -2,6 +2,8 @@
 import {computed, ref, watch} from 'vue'
 import store from "@/store/store.js";
 import AuthenticationService from "@/services/AuthenticationService.js";
+import LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/LeihvorgangVerwalten.vue";
+import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js"
 const showDialog = computed(()=> store.getters.getShowDialogRuecknahmeArtikel.showDialog);
 const artikelDetails = computed(()=> store.getters.getShowDialogRuecknahmeArtikel.artikelDetails)
 const memberName = computed(()=> store.getters.getShowDialogRuecknahmeArtikel.memberName)
@@ -38,7 +40,8 @@ function dialogClose(){
     bemerkung: '',
     artikelDetails: {},
     artikelZustand: '',
-    memberName: ''
+    memberName: '',
+    idMitglied: ''
   });
 }
 
@@ -49,9 +52,6 @@ async function dialogSave(){
     alert("Bitte einen Zustand auswählen")
     return;
   }
-  else{
-    console.log('selectedItem', selectedItem.value.IDInventarZustand);
-  }
 
   store.dispatch('setShowDialogRuecknahmeArtikel', {
     showDialog: false,
@@ -59,7 +59,8 @@ async function dialogSave(){
     bemerkung: textBemerkung.value,
     artikelDetails: {},
     artikelZustand: selectedItem.value.IDInventarZustand,
-    memberName: ''
+    memberName: '',
+    idMitglied: ''
   });
 
   //Die Rücknahme an das Backend übermitteln
@@ -76,6 +77,12 @@ async function dialogSave(){
     alert('Fehler bei Rücknahme des Artikels')
   }
   console.log('getShowDialogRuecknahmeArtikel', store.getters.getShowDialogRuecknahmeArtikel)
+
+  //reload der Artikel veranlassen
+  const idMitglied = store.getters.getShowDialogRuecknahmeArtikel.idMitglied
+  await expansionForLeihvorgang({easyVereinMitglied_id: idMitglied}, true)
+  console.log('selectedItem', selectedItem.value.IDInventarZustand);
+  console.log('getShowAusgeliehenAbgeschlossen.idMitglied',store.getters.getShowAusgeliehenAbgeschlossen.idMitglied)
 
 }
 
