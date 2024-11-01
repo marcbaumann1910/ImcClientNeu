@@ -1,9 +1,9 @@
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
-import {expansionForLeihvorgang} from "@/scripte/globalFunctions.js"
+import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js"
 
 
 const imageUrl = process.env.VITE_API_URL
@@ -14,32 +14,28 @@ const checkedItems = reactive({});
 const loading = ref(false);
 const searchArtikels = ref({});
 const searchMitglied = ref({})
+const leihvorgaengeMitgliederAbrufen = ref([]);
 
 // Hier werden alle Mitglieder abgerufen
-import { reactive } from 'vue';
-
-const leihvorgaengeMitgliederAbrufen = reactive([]);
-
 onMounted(async () => {
   try {
     const response = await AuthenticationService.leihvorgangVerwalten();
-    leihvorgaengeMitgliederAbrufen.splice(0, leihvorgaengeMitgliederAbrufen.length, ...response.data.map(member => ({
+    leihvorgaengeMitgliederAbrufen.value = response.data.map(member => reactive({
       ...member,
       leihvorgaengeArtikelDetails: [],
       dataLoaded: false,
-    })));
-    console.log('leihvorgaengeMitgliederAbrufen erfolgreich', leihvorgaengeMitgliederAbrufen);
+    }));
+    console.log('leihvorgaengeMitgliederAbrufen erfolgreich', leihvorgaengeMitgliederAbrufen.value);
   } catch (error) {
     console.log('Abruf der Daten leihvorgaengeMitgliederAbrufen fehlgeschlagen', error);
   }
-  initializeCheckedItems();
+  initializeCheckedItems(); //checkt die Checkbox ausgeliehen standardmäßig
 });
-
 
 // Funktion zur Initialisierung von checkedItems basierend auf leihvorgaengeMitgliederAbrufen
 //Siehe ausführliche Beschreibung in der Doku
-function initializeCheckedItems() {
-  leihvorgaengeMitgliederAbrufen.forEach(item => {
+function initializeCheckedItems(){
+  leihvorgaengeMitgliederAbrufen.value.forEach(item => {
     if (!(item.easyVereinMitglied_id in checkedItems)) {
       checkedItems[item.easyVereinMitglied_id] = {
         ausgeliehen: true,    // Standardmäßig gecheckt
@@ -57,20 +53,14 @@ function handleCheckboxAusgeliehen(item) {
   const isChecked = checkedItems[item.easyVereinMitglied_id].ausgeliehen;
   console.log(`Checkbox für ID ${item.easyVereinMitglied_id.ausgeliehen} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
 
-  if (isChecked) {
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {
-      idMitglied: item.easyVereinMitglied_id,
-      checkedStateAusgeliehen: true
-    })
+  if(isChecked){
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAusgeliehen: true})
     console.log('handleCheckboxAusgeliehen gecheckt')
-  } else {
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {
-      idMitglied: item.easyVereinMitglied_id,
-      checkedStateAusgeliehen: false
-    })
+  } else{
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAusgeliehen: false})
     console.log('handleCheckboxAusgeliehen nicht gecheckt')
   }
-  expansionForLeihvorgang(item, true)
+  expansionForLeihvorgang(item,true)
   console.log('getShowAusgeliehenAbgeschlossen', store.getters.getShowAusgeliehenAbgeschlossen)
 
 }
@@ -81,27 +71,21 @@ function handleCheckboxAbgeschlossen(item) {
   const isChecked = checkedItems[item.easyVereinMitglied_id].abgeschlossen;
   console.log(`Checkbox für ID ${item.easyVereinMitglied_id.abgeschlossen} ist jetzt ${isChecked ? 'gecheckt' : 'nicht gecheckt'}`);
 
-  if (isChecked) {
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {
-      idMitglied: item.easyVereinMitglied_id,
-      checkedStateAbgeschlossen: true
-    })
+  if(isChecked){
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAbgeschlossen: true})
     console.log('handleCheckboxAbgeschlossen gecheckt')
-  } else {
-    store.dispatch('setShowAusgeliehenAbgeschlossen', {
-      idMitglied: item.easyVereinMitglied_id,
-      checkedStateAbgeschlossen: false
-    })
+  } else{
+    store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: item.easyVereinMitglied_id, checkedStateAbgeschlossen: false})
     console.log('handleCheckboxAbgeschlossen nicht gecheckt')
   }
 
-  expansionForLeihvorgang(item, true)
+  expansionForLeihvorgang(item,true)
   console.log('getShowAusgeliehenAbgeschlossen', store.getters.getShowAusgeliehenAbgeschlossen)
 
 }
 
 // Mit Klick auf eines der Mitglieder werden die verliehene Artikel je Mitglied abgerufen
-await expansionForLeihvorgang
+//await expansionForLeihvorgang
 
 function showDialogRuecknahme(artikelDetails, member) {
   store.dispatch('setShowDialogRuecknahmeArtikel', {
@@ -111,7 +95,8 @@ function showDialogRuecknahme(artikelDetails, member) {
     artikelDetails: artikelDetails,
     artikelZustand: '',
     memberName: `${member.easyVereinMitglied_firstName} ${member.easyVereinMitglied_familyName}`,
-    idMitglied: member.easyVereinMitglied_id
+    idMitglied: member.easyVereinMitglied_id,
+    member: member
 
   });
   console.log('showDialogRuecknahme artikelDetails', artikelDetails)

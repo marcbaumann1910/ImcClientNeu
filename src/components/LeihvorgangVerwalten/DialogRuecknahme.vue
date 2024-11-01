@@ -11,6 +11,9 @@ const textBemerkung = ref('');
 const stateItems = ref([]);
 const selectedItem = ref(null);
 
+const member = computed(() => store.getters.getShowDialogRuecknahmeArtikel.member);
+
+
 // Watcher zum Abrufen der State Items beim Öffnen des Dialogs
 watch(showDialog, (newVal) => {
   if(newVal){
@@ -60,7 +63,8 @@ async function dialogSave(){
     artikelDetails: {},
     artikelZustand: selectedItem.value.IDInventarZustand,
     memberName: '',
-    idMitglied: ''
+    idMitglied: '',
+    member: member
   });
 
   //Die Rücknahme an das Backend übermitteln
@@ -80,7 +84,7 @@ async function dialogSave(){
 
   //reload der Artikel veranlassen
   const idMitglied = store.getters.getShowDialogRuecknahmeArtikel.idMitglied
-  await expansionForLeihvorgang({easyVereinMitglied_id: idMitglied}, true)
+  await expansionForLeihvorgang(member, true)
   console.log('selectedItem', selectedItem.value.IDInventarZustand);
   console.log('getShowAusgeliehenAbgeschlossen.idMitglied',store.getters.getShowAusgeliehenAbgeschlossen.idMitglied)
 
