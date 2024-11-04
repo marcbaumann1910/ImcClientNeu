@@ -181,11 +181,6 @@ const store = createStore({
                 state.showDialogRuecknahmeArtikel.idMitglied = value.idMitglied
             }
 
-            state.showDialogRuecknahmeArtikel.member = value.member;
-
-
-
-
 
             },
         setShowAusgeliehenAbgeschlossen(state, value) {

@@ -16,6 +16,8 @@ const searchArtikels = ref({});
 const searchMitglied = ref({})
 const leihvorgaengeMitgliederAbrufen = ref([]);
 
+const selectedMember = ref(null);
+
 // Hier werden alle Mitglieder abgerufen
 onMounted(async () => {
   try {
@@ -88,6 +90,7 @@ function handleCheckboxAbgeschlossen(item) {
 //await expansionForLeihvorgang
 
 function showDialogRuecknahme(artikelDetails, member) {
+  selectedMember.value = member;
   store.dispatch('setShowDialogRuecknahmeArtikel', {
     showDialog: true,
     IDinventarBuchungenPositionen: artikelDetails.ibp_IDinventarBuchungenPositionen,
@@ -95,9 +98,7 @@ function showDialogRuecknahme(artikelDetails, member) {
     artikelDetails: artikelDetails,
     artikelZustand: '',
     memberName: `${member.easyVereinMitglied_firstName} ${member.easyVereinMitglied_familyName}`,
-    idMitglied: member.easyVereinMitglied_id,
-    member: member
-
+    idMitglied: member.easyVereinMitglied_id
   });
   console.log('showDialogRuecknahme artikelDetails', artikelDetails)
 }
@@ -149,7 +150,7 @@ function isVisibleIventarStatus(status) {
       </v-card>
     </div>
 
-    <DialogRuecknahme v-if="showDialogRuecknahme"/>
+    <DialogRuecknahme v-if="showDialogRuecknahme" :member="selectedMember" />
 
     <div>
       <v-text-field
