@@ -1,5 +1,5 @@
 <script setup>
-import store from '../store/store.js';
+import store from '../../store/store.js';
 import {computed, onMounted, watchEffect} from "vue";
 import DialogExterneNummer from "@/components/Leihvorgang/DialogExterneNummer.vue";
 const imageUrl = process.env.VITE_API_URL

@@ -25,6 +25,10 @@ const store = createStore({
             idMitglied: '',
             member: []
         },
+        showDialogNummerAendern: {
+            showDialog: false,
+            idInventarArtikel: null,
+        },
         showAusgeliehenAbgeschlossen: [],
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
@@ -208,6 +212,10 @@ const store = createStore({
 
             console.log('vuex state.showAusgeliehenAbgeschlossen', state.showAusgeliehenAbgeschlossen);
         },
+        setShowDialogNummerAendern(state, value){
+            state.showDialogNummerAendern.showDialog = value.showDialog;
+            state.showDialogNummerAendern.idInventarArtikel = value.idInventarArtikel;
+        }
 
     },
     actions: {
@@ -256,6 +264,9 @@ const store = createStore({
         },
         setShowAusgeliehenAbgeschlossen( { commit }, value){
             commit('setShowAusgeliehenAbgeschlossen', value)
+        },
+        setShowDialogNummerAendern( { commit }, value){
+            commit('setShowDialogNummerAendern', value)
         }
 
     },
@@ -302,6 +313,7 @@ const store = createStore({
                 (item) => item.idMitglied === idMitglied
             );
         },
+        getShowDialogNummerAendern: (state) => state.showDialogNummerAendern,
 
     },
 

@@ -4,6 +4,7 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
 import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js"
+import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 
 
 const imageUrl = process.env.VITE_API_URL
@@ -15,7 +16,7 @@ const loading = ref(false);
 const searchArtikels = ref({});
 const searchMitglied = ref({})
 const leihvorgaengeMitgliederAbrufen = ref([]);
-
+const idInventarArtikel = ref('');
 const selectedMember = ref(null);
 
 // Hier werden alle Mitglieder abgerufen
@@ -137,6 +138,14 @@ function isVisibleIventarStatus(status) {
   return status === 1;
 }
 
+function showDialogNummerAendern(item, member){
+  selectedMember.value = member;
+  store.dispatch('setShowDialogNummerAendern', {
+    showDialog: true,
+    idInventarArtikel: item,
+  })
+}
+
 </script>
 
 <template>
@@ -151,6 +160,8 @@ function isVisibleIventarStatus(status) {
     </div>
 
     <DialogRuecknahme v-if="showDialogRuecknahme" :member="selectedMember" />
+    <DialogNummerAendern :member="selectedMember"/>
+
 
     <div>
       <v-text-field
@@ -324,7 +335,7 @@ function isVisibleIventarStatus(status) {
 
                     <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
                       <v-label
-                          @click="deleteItem(itemArtikelDetails.IDInventarArtikel)"
+                          @click="showDialogNummerAendern(itemArtikelDetails.ibp_IDinventarBuchungenPositionen, item)"
                           class="hover text-subtitle-2"
                           v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
                       >

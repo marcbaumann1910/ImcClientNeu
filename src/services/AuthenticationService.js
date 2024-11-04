@@ -65,7 +65,10 @@ export default {
     leihvorgangRuecknahmeArtikel(data){
         console.log('leihvorgangverwalten/zustand:', data);
         return Api.patch('/leihvorgangverwalten/ruecknahme', data);
+    },
+    leihvorgangNummerAendern(data){
+        console.log('leihvorgangNummerAendern/externenummeraendern:', data);
+        return Api.patch('/leihvorgangverwalten/externenummeraendern', data);
     }
-
 
 };

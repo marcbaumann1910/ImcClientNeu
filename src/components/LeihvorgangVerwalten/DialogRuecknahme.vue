@@ -2,7 +2,6 @@
 import {computed, ref, watch} from 'vue'
 import store from "@/store/store.js";
 import AuthenticationService from "@/services/AuthenticationService.js";
-import LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/LeihvorgangVerwalten.vue";
 import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js"
 const showDialog = computed(()=> store.getters.getShowDialogRuecknahmeArtikel.showDialog);
 const artikelDetails = computed(()=> store.getters.getShowDialogRuecknahmeArtikel.artikelDetails)
