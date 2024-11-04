@@ -76,19 +76,20 @@ async function dialogSave(){
       artikelZustand: store.getters.getShowDialogRuecknahmeArtikel.artikelZustand,
     })
     console.log('response von leihvorgangRuecknahmeArtikel: ',respone)
-    alert('Artikel-Rücknahme wurde gebucht')
   }catch(err){
     console.log('Fehler in leihvorgangRuecknahmeArtikel', err)
     alert('Fehler bei Rücknahme des Artikels')
+    return;
   }
   console.log('getShowDialogRuecknahmeArtikel', store.getters.getShowDialogRuecknahmeArtikel)
 
   //reload der Artikel veranlassen
-  const idMitglied = store.getters.getShowDialogRuecknahmeArtikel.idMitglied
   await expansionForLeihvorgang(props.member, true)
   console.log('selectedItem', selectedItem.value.IDInventarZustand);
   console.log('getShowAusgeliehenAbgeschlossen.idMitglied',store.getters.getShowAusgeliehenAbgeschlossen.idMitglied)
-
+  selectedItem.value = null;
+  textBemerkung.value = '';
+  alert('Artikel-Rücknahme wurde gebucht')
 }
 
 </script>
