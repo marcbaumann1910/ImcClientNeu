@@ -102,7 +102,7 @@ async function dialogSave(){
 
       <v-card
           prepend-icon="mdi-arrow-down-thin-circle-outline"
-          :title="`Rücknahme: ${artikelDetails.inventarArtikel_ArtikelBezeichnung} | ${artikelDetails.konfektionsGroesse_Konfektionsgroesse} | ${artikelDetails.farbe_Bezeichnung}`"
+          :title="`Rücknahme: ${artikelDetails.ia_ArtikelBezeichnung} | ${artikelDetails.konfektionsGroesse_Konfektionsgroesse} | ${artikelDetails.farbe}`"
           :subtitle="`${memberName}`"
       >
         <v-card-text>

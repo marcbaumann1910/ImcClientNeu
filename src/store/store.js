@@ -29,6 +29,10 @@ const store = createStore({
             showDialog: false,
             idInventarArtikel: null,
         },
+        showDialogArtikelTausch: {
+            showDialog: false,
+            artikelDetails: null,
+        },
         showAusgeliehenAbgeschlossen: [],
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
@@ -215,6 +219,10 @@ const store = createStore({
         setShowDialogNummerAendern(state, value){
             state.showDialogNummerAendern.showDialog = value.showDialog;
             state.showDialogNummerAendern.idInventarArtikel = value.idInventarArtikel;
+        },
+        setShowDialogArtikelTausch(state, value){
+            state.showDialogArtikelTausch.showDialog = value.showDialog;
+            state.showDialogArtikelTausch.artikelDetails = value.artikelDetails;
         }
 
     },
@@ -267,6 +275,9 @@ const store = createStore({
         },
         setShowDialogNummerAendern( { commit }, value){
             commit('setShowDialogNummerAendern', value)
+        },
+        setShowDialogArtikelTausch( { commit }, value){
+            commit('setShowDialogArtikelTausch', value)
         }
 
     },
@@ -314,6 +325,7 @@ const store = createStore({
             );
         },
         getShowDialogNummerAendern: (state) => state.showDialogNummerAendern,
+        getShowDialogArtikelTausch: (state) => state.showDialogArtikelTausch,
 
     },
 

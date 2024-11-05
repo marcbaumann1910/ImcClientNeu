@@ -5,6 +5,7 @@ import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme
 import store from "@/store/store.js";
 import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js"
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
+import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";
 
 
 const imageUrl = process.env.VITE_API_URL
@@ -146,6 +147,14 @@ function showDialogNummerAendern(item, member){
   })
 }
 
+function showDialogArtikelTausch(item, member){
+  selectedMember.value = member;
+  store.dispatch('setShowDialogArtikelTausch', {
+    showDialog: true,
+    artikelDetails: item,
+  })
+}
+
 </script>
 
 <template>
@@ -161,6 +170,7 @@ function showDialogNummerAendern(item, member){
 
     <DialogRuecknahme v-if="showDialogRuecknahme" :member="selectedMember" />
     <DialogNummerAendern :member="selectedMember"/>
+    <DialogArtikelTausch :member="selectedMember"/>
 
 
     <div>
@@ -346,7 +356,7 @@ function showDialogNummerAendern(item, member){
 
                     <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
                       <v-label
-                          @click="showDialogForExterneID(itemArtikelDetails.Menge, itemArtikelDetails.IDInventarArtikel)"
+                          @click="showDialogArtikelTausch(itemArtikelDetails, item)"
                           class="hover text-subtitle-2 text-blue-darken-4 mt-2"
                           v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
                       >
