@@ -4,12 +4,13 @@ import store from "@/store/store.js";
 import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js";
 import AuthenticationService from "@/services/AuthenticationService.js";
 const textBemerkung = ref('');
+//Enthält die Werte nach einer Änderung der Select-Box
 const selectedItemNewChoose = ref(null);
 const selectedItemZustand = ref(null);
+//Nimmt die Daten aus Datenbank entgegen
 const stateItemsArtikel = ref([]);
 const stateItemsZustand = ref([]);
-
-const newNumber = ref('');
+const externeInventarNummer = ref('');
 
 const artikelDetails = computed(()=> store.getters.getShowDialogArtikelTausch.artikelDetails);
 
@@ -53,9 +54,11 @@ function itemProbs(stateItemsArtikel){
 
 async function fetchItems() {
   try{
+    //Verfügbare Artikel zur jeweiligen Kategorie abrufen
     const responseArtikel = await AuthenticationService.leihvorgangGetArtikelTausch(artikelDetails.value.ia_IDInventarKategorie)
     stateItemsArtikel.value = responseArtikel.data
     console.log('Erfolgreich leihvorgangArtikelTausch', fetchItems)
+    //Abruf der Zustände eines Artikels
     const responseZustand = await AuthenticationService.leihvorgangArtikelZustand();
     stateItemsZustand.value = responseZustand.data
   }catch(error){
@@ -71,7 +74,7 @@ function handleSelectionChange(){
 }
 
 function handleSelectionChange2(){
-
+  console.log('selectedItemZustand', selectedItemZustand)
 }
 
 function dialogClose(){
@@ -90,10 +93,10 @@ async function dialogSave(){
       IDInventarArtikel: selectedItemNewChoose.value.IDInventarArtikel, //neue, getauschte IDInventarArtikel
       Menge: 1,
       Preis: selectedItemNewChoose.value.Preis, //neuer, getauschter Preis
-      externeInventarNummer: '', //neue, getauschte externeInventarNummer
+      externeInventarNummer: externeInventarNummer.value, //neue, getauschte externeInventarNummer
       AusgeliehenBis: '',
-      Bemerkung: '',
-      IDInventarZustand: ''
+      Bemerkung: textBemerkung.value,
+      IDInventarZustand: selectedItemZustand.value.IDInventarZustand
     })
   }catch(err){
     alert('Vorgang fehlgeschlagen. Nummer konnte nicht geändert werden')
@@ -147,8 +150,8 @@ async function dialogSave(){
           ></v-select>
 
           <v-text-field
-              label="Neue Nummer"
-              v-model="newNumber"
+              label="Neue Nummer eingeben"
+              v-model="externeInventarNummer"
           >
           </v-text-field>
 
