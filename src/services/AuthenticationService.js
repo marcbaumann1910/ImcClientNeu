@@ -69,6 +69,10 @@ export default {
     leihvorgangNummerAendern(data){
         console.log('leihvorgangNummerAendern/externenummeraendern:', data);
         return Api.patch('/leihvorgangverwalten/externenummeraendern', data);
-    }
+    },
+    leihvorgangArtikelTausch(idInventarKategorie) {
+        console.log('leihvorgangArtikelTausch leihvorgangverwalten/artikeltausch: ', idInventarKategorie);
+        return Api.get(`/leihvorgangverwalten/artikeltausch/${idInventarKategorie}`);
+    },
 
 };

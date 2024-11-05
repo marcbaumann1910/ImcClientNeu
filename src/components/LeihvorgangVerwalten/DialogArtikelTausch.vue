@@ -1,16 +1,15 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import store from "@/store/store.js";
 import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js";
 import AuthenticationService from "@/services/AuthenticationService.js";
-const newNumber = ref('');
+const textBemerkung = ref('');
+const stateItems = ref([]);
+const selectedItem = ref(null);
 
 const props = defineProps({
-  member: Object,
-  artikelDetails: Object,
+  member: Object
 })
-
-const artikelDetails = computed(()=> store.getters.getShowDialogArtikelTausch.artikelDetails);
 
 //Ausführlich siehe Doku
 const showDialog = computed({
@@ -24,6 +23,29 @@ const showDialog = computed({
     });
   }
 });
+
+// Watcher zum Abrufen der State Items beim Öffnen des Dialogs
+watch(showDialog, (newVal) => {
+  if(newVal){
+    fetchItems();
+  }
+});
+
+const artikelDetails = computed(()=> store.getters.getShowDialogArtikelTausch.artikelDetails);
+
+async function fetchItems() {
+  try{
+    const response = await AuthenticationService.leihvorgangArtikelTausch(artikelDetails.value.ia_IDInventarKategorie)
+    stateItems.value = response.data
+    console.log('Erfolgreich leihvorgangArtikelTausch', fetchItems)
+  }catch(error){
+    console.log('Fehler in leihvorgangArtikelTausch', error)
+  }
+}
+
+function handleSelectionChange(){
+
+}
 
 function dialogClose(){
   showDialog.value = false;
@@ -72,9 +94,9 @@ async function dialogSave(){
           <v-select
               v-model="selectedItem"
               :items="stateItems"
-              :item-title="i => i.Bezeichnung"
-              :item-value="i => i.IDInventarZustand"
-              label="Bitte den Zustand wählen"
+              :item-title="i => i.ArtikelBezeichnung"
+              :item-value="i => i.IDInventarArtikel"
+              label="Bitte den neuen Artikel wählen"
               persistent-hint
               return-object
               single-line
