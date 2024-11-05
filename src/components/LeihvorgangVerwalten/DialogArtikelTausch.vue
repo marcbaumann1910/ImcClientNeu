@@ -4,8 +4,14 @@ import store from "@/store/store.js";
 import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js";
 import AuthenticationService from "@/services/AuthenticationService.js";
 const textBemerkung = ref('');
-const stateItems = ref([]);
-const selectedItem = ref(null);
+const selectedItemNewChoose = ref(null);
+const selectedItemZustand = ref(null);
+const stateItemsArtikel = ref([]);
+const stateItemsZustand = ref([]);
+
+const newNumber = ref('');
+
+const artikelDetails = computed(()=> store.getters.getShowDialogArtikelTausch.artikelDetails);
 
 const props = defineProps({
   member: Object
@@ -31,19 +37,40 @@ watch(showDialog, (newVal) => {
   }
 });
 
-const artikelDetails = computed(()=> store.getters.getShowDialogArtikelTausch.artikelDetails);
+//Aufbereitung fürs Select mit Subtitle
+function itemProbs(stateItemsArtikel){
+  return {
+    title: stateItemsArtikel.ArtikelBezeichnung,
+    subtitle: `
+              Bestand: ${parseInt(stateItemsArtikel.Bestand.toString())}
+              Farbe: ${stateItemsArtikel.Farbe}
+              Größe: ${stateItemsArtikel.Konfektionsgroesse}
+              Preis: ${ Math.round(((stateItemsArtikel.Preis) *100) /100).toFixed(2) } €
+              `,
+    disabled: parseInt(stateItemsArtikel.Bestand.toString()) === 0, //Wenn Bestand 0 dann Eintrag disabled
+  }
+}
 
 async function fetchItems() {
   try{
-    const response = await AuthenticationService.leihvorgangArtikelTausch(artikelDetails.value.ia_IDInventarKategorie)
-    stateItems.value = response.data
+    const responseArtikel = await AuthenticationService.leihvorgangGetArtikelTausch(artikelDetails.value.ia_IDInventarKategorie)
+    stateItemsArtikel.value = responseArtikel.data
     console.log('Erfolgreich leihvorgangArtikelTausch', fetchItems)
+    const responseZustand = await AuthenticationService.leihvorgangArtikelZustand();
+    stateItemsZustand.value = responseZustand.data
   }catch(error){
     console.log('Fehler in leihvorgangArtikelTausch', error)
   }
 }
 
 function handleSelectionChange(){
+  console.log('selectedItemNewChoose:',selectedItemNewChoose.value);
+  console.log('selectedItemNewChoose IDInventarArtikel:',selectedItemNewChoose.value.IDInventarArtikel);
+  console.log('selectedItemNewChoose IDInventarBuchungen:',selectedItemNewChoose.value.IDInventarBuchungen);
+  console.log('member',props.member);
+}
+
+function handleSelectionChange2(){
 
 }
 
@@ -52,17 +79,22 @@ function dialogClose(){
 }
 
 async function dialogSave(){
-  if(newNumber.value === '' && newNumber.value === undefined){
-    alert('Bitte eine Nummer eingeben!')
+  if(selectedItemNewChoose.value === '' && selectedItemNewChoose.value === undefined){
+    alert('Bitte einen Artikel auswählen!')
     return;
   }
 
   try{
-    const response = await AuthenticationService.leihvorgangNummerAendern({
-      IDinventarBuchungenPositionen: idInventarArtikel.value,
-      neueExterneInventarNummer: newNumber.value,
+    const response = await AuthenticationService.leihvorgangArtikelTauschen({
+      IDInventarBuchungen: artikelDetails.value.ibp_IDInventarBuchungen, //ursprüngliche IDInventarBuchungen
+      IDInventarArtikel: selectedItemNewChoose.value.IDInventarArtikel, //neue, getauschte IDInventarArtikel
+      Menge: 1,
+      Preis: selectedItemNewChoose.value.Preis, //neuer, getauschter Preis
+      externeInventarNummer: '', //neue, getauschte externeInventarNummer
+      AusgeliehenBis: '',
+      Bemerkung: '',
+      IDInventarZustand: ''
     })
-
   }catch(err){
     alert('Vorgang fehlgeschlagen. Nummer konnte nicht geändert werden')
     console.log(err)
@@ -92,10 +124,9 @@ async function dialogSave(){
         <v-card-text>
 
           <v-select
-              v-model="selectedItem"
-              :items="stateItems"
-              :item-title="i => i.ArtikelBezeichnung"
-              :item-value="i => i.IDInventarArtikel"
+              v-model="selectedItemNewChoose"
+              :item-props="itemProbs"
+              :items="stateItemsArtikel"
               label="Bitte den neuen Artikel wählen"
               persistent-hint
               return-object
@@ -103,6 +134,23 @@ async function dialogSave(){
               @update:modelValue="handleSelectionChange"
           ></v-select>
 
+          <v-select
+              v-model="selectedItemZustand"
+              :items="stateItemsZustand"
+              :item-title="i => i.Bezeichnung"
+              :item-value="i => i.IDInventarZustand"
+              label="Bitte den Zustand wählen"
+              persistent-hint
+              return-object
+              single-line
+              @update:modelValue="handleSelectionChange2"
+          ></v-select>
+
+          <v-text-field
+              label="Neue Nummer"
+              v-model="newNumber"
+          >
+          </v-text-field>
 
           <v-text-field
               label="Bemerkung (z.B. über den Zustand)"
