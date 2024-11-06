@@ -137,7 +137,13 @@ function formatDate(dateString) {
 function isVisibleIventarStatus(status) {
   //Prüft den itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus Status
   //Wenn 1 (ausgeliehen) Element anzeigen, sonst nicht
-  return status === 1;
+  //Status 7 = ausgeliehen Tausch
+  if(status === 1 || status === 7){
+    return true
+  }
+  else{
+    false
+  }
 }
 
 function showDialogNummerAendern(item, member){

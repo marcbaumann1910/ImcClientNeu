@@ -17,15 +17,15 @@ async function expansionForLeihvorgang(member, reload = false) {
             //Beide Checkboxen gecheckt
             let selektionKriterium = '';
             if(checkedAusgeliehen && checkedAbgeschlossen){
-                selektionKriterium = '1,2' //Status 1 = ausgeliehene, Status 2 = abgeschlossen
+                selektionKriterium = '1,2,6,7' //Status 1 = ausgeliehene, Status 2 = abgeschlossen, Status 6 = zurückgegeben Tausch, Status 7 = ausgeliehen Tausch
             }
             //Checkbox ausgeliehen ist gecheckt, abgeschlossen nicht
             if(checkedAusgeliehen && !checkedAbgeschlossen){
-                selektionKriterium = '1' //Status 1 = ausgeliehene
+                selektionKriterium = '1,7' //Status 1 = ausgeliehene, Status 7 = ausgeliehen Tausch
             }
             //Checkbox ausgeliehen ist nicht gecheckt, abgeschlossen ist gecheckt
             if(!checkedAusgeliehen && checkedAbgeschlossen){
-                selektionKriterium = '2' //Status 2 = abgeschlossen
+                selektionKriterium = '2,6' //Status 2 = abgeschlossen, Status 6 = zurückgegeben Tausch
             }
             //Beide Checkboxen sind nicht gecheckt, alle Status werden gezeigt
             //ToDo: Hier muss noch geprüft werden ob das evtl. über eine separate Checkbox geregelt werden muss
