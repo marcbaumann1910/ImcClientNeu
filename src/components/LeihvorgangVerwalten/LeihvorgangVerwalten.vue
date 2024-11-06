@@ -175,10 +175,6 @@ function showDialogArtikelTausch(item, member){
       </v-card>
     </div>
 
-    <DialogRuecknahme v-if="showDialogRuecknahme" :member="selectedMember" />
-    <DialogNummerAendern :member="selectedMember"/>
-    <DialogArtikelTausch :member="selectedMember"/>
-
 
     <div>
       <v-text-field
@@ -397,6 +393,9 @@ function showDialogArtikelTausch(item, member){
         </v-expansion-panel>
       </v-expansion-panels>
     </div>
+    <DialogRuecknahme v-if="showDialogRuecknahme" :member="selectedMember" />
+    <DialogNummerAendern :member="selectedMember"/>
+    <DialogArtikelTausch :member="selectedMember"/>
   </v-container>
 </template>
 
