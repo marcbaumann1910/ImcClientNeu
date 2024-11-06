@@ -10,7 +10,7 @@ const selectedItemZustand = ref(null);
 //Nimmt die Daten aus Datenbank entgegen
 const stateItemsArtikel = ref([]);
 const stateItemsZustand = ref([]);
-const externeInventarNummer = ref('');
+const textExterneInventarNummer = ref('');
 
 const artikelDetails = computed(()=> store.getters.getShowDialogArtikelTausch.artikelDetails);
 
@@ -41,14 +41,16 @@ watch(showDialog, (newVal) => {
 //Aufbereitung fürs Select mit Subtitle
 function itemProbs(stateItemsArtikel){
   return {
-    title: stateItemsArtikel.ArtikelBezeichnung,
-    subtitle: `
+    title: `
+              Größe: ${stateItemsArtikel.Konfektionsgroesse}
               Bestand: ${parseInt(stateItemsArtikel.Bestand.toString())}
               Farbe: ${stateItemsArtikel.Farbe}
-              Größe: ${stateItemsArtikel.Konfektionsgroesse}
               Preis: ${ Math.round(((stateItemsArtikel.Preis) *100) /100).toFixed(2) } €
               `,
+    subtitle: stateItemsArtikel.ArtikelBezeichnung,
     disabled: parseInt(stateItemsArtikel.Bestand.toString()) === 0, //Wenn Bestand 0 dann Eintrag disabled
+
+
   }
 }
 
@@ -79,35 +81,56 @@ function handleSelectionChange2(){
 
 function dialogClose(){
   showDialog.value = false;
+  selectedItemNewChoose.value = null;
+  selectedItemZustand.value = null;
+  textExterneInventarNummer.value = null;
+  textBemerkung.value = null;
 }
 
 async function dialogSave(){
-  if(selectedItemNewChoose.value === '' && selectedItemNewChoose.value === undefined){
+  if(selectedItemNewChoose.value === '' || selectedItemNewChoose.value === undefined || selectedItemNewChoose.value === null){
     alert('Bitte einen Artikel auswählen!')
+    return;
+  }
+
+  if(selectedItemZustand.value === '' || selectedItemZustand.value === undefined || selectedItemZustand.value === null){
+    alert('Bitte einen Zustand auswählen!')
+    return;
+  }
+
+  if(textExterneInventarNummer.value === '' || textExterneInventarNummer.value === undefined || textExterneInventarNummer.value === null){
+    alert('Bitte die Nummer eingeben!')
     return;
   }
 
   try{
     const response = await AuthenticationService.leihvorgangArtikelTauschen({
-      IDInventarBuchungen: artikelDetails.value.ibp_IDInventarBuchungen, //ursprüngliche IDInventarBuchungen
+      ALT_IDinventarBuchungenPositionen: artikelDetails.value.ibp_IDinventarBuchungenPositionen, //ursprüngliche IDinventarBuchungenPositionen
+      ALT_IDInventarArtikel: artikelDetails.value.ia_IDInventarArtikel, //ursprüngliche IDInventarArtikel
+      ALT_IDInventarBuchungen: artikelDetails.value.ibp_IDInventarBuchungen, //ursprüngliche IDInventarBuchungen
+      IDBenutzer: localStorage.idBenutzer, //ID des Benutzers der die Buchung durchführt
       IDInventarArtikel: selectedItemNewChoose.value.IDInventarArtikel, //neue, getauschte IDInventarArtikel
       Menge: 1,
       Preis: selectedItemNewChoose.value.Preis, //neuer, getauschter Preis
-      externeInventarNummer: externeInventarNummer.value, //neue, getauschte externeInventarNummer
-      AusgeliehenBis: '',
+      externeInventarNummer: textExterneInventarNummer.value, //neue, getauschte externeInventarNummer
+      AusgeliehenBis: 'NULL',
       Bemerkung: textBemerkung.value,
       IDInventarZustand: selectedItemZustand.value.IDInventarZustand
     })
+    console.log('Tausch erfolgreich durchgeführt')
   }catch(err){
-    alert('Vorgang fehlgeschlagen. Nummer konnte nicht geändert werden')
+    alert('Vorgang fehlgeschlagen. Tausch konnt nicht durchgeführt werden')
     console.log(err)
     return;
   }
 
-  await expansionForLeihvorgang(props.member, true)
   showDialog.value = false;
-  alert('Die Nummer wurde erfolgreich geändert!')
-  newNumber.value = '';
+  alert('Tausch wurde erfolgreich durchgeführt!')
+  selectedItemNewChoose.value = null;
+  selectedItemZustand.value = null;
+  textExterneInventarNummer.value = null;
+  textBemerkung.value = null;
+  await expansionForLeihvorgang(props.member, true)
 }
 
 </script>
@@ -151,7 +174,7 @@ async function dialogSave(){
 
           <v-text-field
               label="Neue Nummer eingeben"
-              v-model="externeInventarNummer"
+              v-model="textExterneInventarNummer"
           >
           </v-text-field>
 
@@ -177,7 +200,7 @@ async function dialogSave(){
 
           <v-btn
               color="primary"
-              text="Rücknahme ausführen"
+              text="Tausch durchführen"
               variant="tonal"
               @click="dialogSave()"
           ></v-btn>

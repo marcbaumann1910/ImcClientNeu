@@ -56,7 +56,8 @@ async function expansionForLeihvorgang(member, reload = false) {
                 ibp_GesamtPreis: item.GesamtPreis,
                 ibp_Count: item.AnzahlPositionen,
                 ia_IDInventarKategorie: item.IDInventarKategorie,
-                ibp_IDInventarBuchungen: item.IDInventarBuchungen
+                ibp_IDInventarBuchungen: item.IDInventarBuchungen,
+                ia_IDInventarArtikel: item.IDInventarArtikel
             }));
 
             // Daten dem Mitglied zuweisen
