@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, reactive, ref} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
@@ -15,7 +15,7 @@ const expandedPanels = ref([]);
 const checkedItems = reactive({});
 const loading = ref(false);
 const searchArtikels = ref({});
-const searchMitglied = ref({})
+const searchMitglied = ref('');
 const leihvorgaengeMitgliederAbrufen = ref([]);
 const idInventarArtikel = ref('');
 const selectedMember = ref(null);
@@ -128,6 +128,18 @@ function filteredArtikelDetails(item) {
   });
 }
 
+const filteredLeihvorgaengeMitglieder = computed(() => {
+  if (!searchMitglied.value) {
+    // Wenn kein Suchbegriff eingegeben wurde, gib alle Mitglieder zurück
+    return leihvorgaengeMitgliederAbrufen.value;
+  }
+  // Ansonsten filtere die Mitglieder basierend auf dem Suchbegriff
+  return leihvorgaengeMitgliederAbrufen.value.filter((item) => {
+    const fullName = `${item.easyVereinMitglied_firstName} ${item.easyVereinMitglied_familyName}`.toLowerCase();
+    return fullName.includes(searchMitglied.value.toLowerCase());
+  });
+});
+
 function formatDate(dateString) {
   if (!dateString) return '';
   const options = {day: '2-digit', month: '2-digit', year: 'numeric'};
@@ -203,7 +215,7 @@ function showDialogArtikelTausch(item, member){
       <v-expansion-panels v-model="expandedPanels" multiple>
         <!-- Erstes Level -->
         <v-expansion-panel
-            v-for="(item) in leihvorgaengeMitgliederAbrufen"
+            v-for="(item) in filteredLeihvorgaengeMitglieder"
             :key="item.easyVereinMitglied_id"
             :value="item.easyVereinMitglied_id"
             class="mb-1">
