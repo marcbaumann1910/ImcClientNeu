@@ -12,6 +12,7 @@ const selectedItem = ref(null);
 
 const props = defineProps({
   member: Object,
+  itemReturn: Object,
 })
 
 // Watcher zum Abrufen der State Items beim Öffnen des Dialogs
@@ -73,6 +74,10 @@ async function dialogSave(){
       IDinventarBuchungenPositionen: store.getters.getShowDialogRuecknahmeArtikel.IDinventarBuchungenPositionen,
       bemerkung: store.getters.getShowDialogRuecknahmeArtikel.bemerkung,
       artikelZustand: store.getters.getShowDialogRuecknahmeArtikel.artikelZustand,
+      IDBenutzer: localStorage.idBenutzer, //ID des Benutzers der die Buchung durchführt
+      IDInventarArtikel: store.getters.getShowDialogRuecknahmeArtikel.artikelDetails.ia_IDInventarArtikel,
+      IDInventarBuchungen: store.getters.getShowDialogRuecknahmeArtikel.artikelDetails.ibp_IDInventarBuchungen,
+      Menge: 1,
     })
     console.log('response von leihvorgangRuecknahmeArtikel: ',respone)
   }catch(err){
