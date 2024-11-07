@@ -178,6 +178,8 @@ function showDialogArtikelTausch(item, member){
 
 <template>
 
+  <v-col cols="12" md="8" lg="8">
+
   <v-container>
     <div>
       <v-card class="d-flex justify-center mb-10">
@@ -408,7 +410,9 @@ function showDialogArtikelTausch(item, member){
     <DialogRuecknahme v-if="showDialogRuecknahme" :member="selectedMember" />
     <DialogNummerAendern :member="selectedMember"/>
     <DialogArtikelTausch :member="selectedMember"/>
+
   </v-container>
+  </v-col>
 </template>
 
 <style scoped>
