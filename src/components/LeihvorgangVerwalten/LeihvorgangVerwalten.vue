@@ -202,13 +202,13 @@ function showDialogArtikelTausch(item, member){
       ></v-text-field>
     </div>
 
-    <div>
-      <v-card class="mb-10 d-flex align-center">
-        <v-card-title>Filter:</v-card-title>
-        <v-chip color="orange" outlined text="offene Vorgänge" class="mr-3"></v-chip>
-        <v-chip color="green" outlined text="abgeschlossen Vorgänge"></v-chip>
-      </v-card>
-    </div>
+<!--    <div>-->
+<!--      <v-card class="mb-10 d-flex align-center">-->
+<!--        <v-card-title>Filter:</v-card-title>-->
+<!--        <v-chip color="orange" outlined text="offene Vorgänge" class="mr-3"></v-chip>-->
+<!--        <v-chip color="green" outlined text="abgeschlossen Vorgänge"></v-chip>-->
+<!--      </v-card>-->
+<!--    </div>-->
 
 
     <div>
