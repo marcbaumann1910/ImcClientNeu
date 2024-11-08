@@ -178,17 +178,14 @@ function showDialogArtikelTausch(item, member){
 
 <template>
 
-  <v-col cols="12" md="8" lg="8">
-
   <v-container>
     <div>
-      <v-card class="d-flex justify-center mb-10">
+      <v-card class="d-flex justify-center mb-10" color="primary">
         <v-card-item>
           <v-card-title>Hier können Sie die Leihvorgänge verwalten</v-card-title>
         </v-card-item>
       </v-card>
     </div>
-
 
     <div>
       <v-text-field
@@ -399,7 +396,6 @@ function showDialogArtikelTausch(item, member){
                         €</b></v-list-item-title>
                     </v-list-item-action>
                   </v-col>
-
                 </v-row>
               </v-list>
             </div>
@@ -407,12 +403,11 @@ function showDialogArtikelTausch(item, member){
         </v-expansion-panel>
       </v-expansion-panels>
     </div>
-    <DialogRuecknahme v-if="showDialogRuecknahme" :member="selectedMember" />
+    <DialogRuecknahme v-if="showDialogRuecknahme" :member="selectedMember"/>
     <DialogNummerAendern :member="selectedMember"/>
     <DialogArtikelTausch :member="selectedMember"/>
 
   </v-container>
-  </v-col>
 </template>
 
 <style scoped>

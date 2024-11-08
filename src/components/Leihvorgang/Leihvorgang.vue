@@ -26,12 +26,11 @@ const vChipColors = ref(['success', 'primary', 'primary']) //Steuerung der vChip
 watchEffect(()=>{
     if(!isSelectedMember.value){
       currentPage.value = 0;
+      store.dispatch('clearCartItems',[])
     }
+  updateChipColors()//Steuerung der vChip Farben Anzeigenschritte
 });
 
-onMounted(()=> {
-  updateChipColors() //Steuerung der vChip Farben Anzeigenschritte
-})
 
 // watch(currentPage, (newVal) => {
 //   if(newVal === 0 && !store.getters.getBorrowMember || store.getters.getBorrowMember.length === 0){
