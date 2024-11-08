@@ -65,8 +65,16 @@ async function expansionForLeihvorgang(member, reload = false) {
 
             member.dataLoaded = true;
             //Der Gesamtpreis kommt auch über die Abfrage, wird aber in ein separates Element des Objekte member geschrieben
-            member.gesamtPreis = member.leihvorgaengeArtikelDetails[0].ibp_GesamtPreis
-            member.anzahlArtikel = member.leihvorgaengeArtikelDetails[0].ibp_Count
+            if (
+                member.leihvorgaengeArtikelDetails &&
+                member.leihvorgaengeArtikelDetails.length > 0
+            ) {
+                member.gesamtPreis = member.leihvorgaengeArtikelDetails[0].ibp_GesamtPreis;
+                member.anzahlArtikel = member.leihvorgaengeArtikelDetails[0].ibp_Count;
+            } else {
+                member.gesamtPreis = 0;
+                member.anzahlArtikel = 0;
+            }
 
             console.log(`Leihvorgänge für Mitglied ${member.easyVereinMitglied_id} erfolgreich`, member.leihvorgaengeArtikelDetails);
         } catch (error) {

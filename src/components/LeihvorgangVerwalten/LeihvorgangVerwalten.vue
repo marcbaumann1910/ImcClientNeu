@@ -128,7 +128,7 @@ function filteredArtikelDetails(item) {
   });
 }
 
-const filteredLeihvorgaengeMitglieder = computed(() => {
+const filteredLeihvorgaengeMitgliederAbrufen = computed(() => {
   if (!searchMitglied.value) {
     // Wenn kein Suchbegriff eingegeben wurde, gib alle Mitglieder zurück
     return leihvorgaengeMitgliederAbrufen.value;
@@ -214,7 +214,7 @@ function showDialogArtikelTausch(item, member){
       <v-expansion-panels v-model="expandedPanels" multiple>
         <!-- Erstes Level -->
         <v-expansion-panel
-            v-for="(item) in filteredLeihvorgaengeMitglieder"
+            v-for="(item) in filteredLeihvorgaengeMitgliederAbrufen"
             :key="item.easyVereinMitglied_id"
             :value="item.easyVereinMitglied_id"
             class="mb-1">
@@ -273,12 +273,12 @@ function showDialogArtikelTausch(item, member){
                 <v-row>
                   <v-col>
                     <v-list-item-action class="ml-4">
-                      <v-list-item-title>Artikel {{ item.anzahlArtikel }} Stück</v-list-item-title>
+                      <v-list-item-title >Artikel {{ item.anzahlArtikel }} Stück</v-list-item-title>
                     </v-list-item-action>
                   </v-col>
 
                   <v-list-item-action class="mr-7">
-                    <v-list-item-title>Preis</v-list-item-title>
+                    <v-list-item-title><b>Gesamtpreis: {{ (Math.round(item.gesamtPreis * 100) / 100).toFixed(2) }} €</b></v-list-item-title>
                   </v-list-item-action>
 
                 </v-row>
