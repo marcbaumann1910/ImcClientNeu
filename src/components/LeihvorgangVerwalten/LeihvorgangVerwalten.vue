@@ -412,4 +412,9 @@ function showDialogArtikelTausch(item, member){
 
 <style scoped>
 
+.hover:hover{
+  cursor: pointer;
+  transform: scale(1.1);
+}
+
 </style>
