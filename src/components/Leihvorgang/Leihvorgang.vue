@@ -86,8 +86,17 @@ const btnText = computed(()=>{
 
 //Eine Seite vor innerhalb der v-card und die Buttonbeschriftung anpassen
 //Nur wenn Unterseite = 2 ist, dann wir der leihvorgangBuchen() ausgeführt, sonst eine Seite nach vorne navigiert
-async function nextPage() {
+async function nextPage(message) {
   if (currentPage.value === 2) {
+    //Prüft ob der Artikel eine Pflicht zur Erfassung der externeID hat.
+    //Wenn ja, wird die Navigation unterbrochen und der Vorgang kann nicht gebucht werden.
+    for (const item of cartItems.value) {
+        const laengeExterneID = item.externeID.length || 0
+        if(item.Menge !== laengeExterneID && item.ExterneInventarNummerPflicht ===1){
+          alert(`Die Externe Nummer muss erfasst werden:\n${item.ArtikelBezeichnung}` )
+          return;
+        }
+    }
     await leihvorgangBuchen();
   } else {
     currentPage.value += 1;

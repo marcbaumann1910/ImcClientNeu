@@ -46,7 +46,6 @@ function dialogSave(){
   store.dispatch('setExterneInventarNummerToCartItem', {idArtikel: idArtikel, externeID: textInventarNummern});
   console.log('getCartItems from vuex:', store.getters.getCartItems)
   console.log('2 DialogExterneNummer from vuxe', store.getters.getShowDialogExterneInventarNummer.idArtikel);
-
 }
 
 </script>

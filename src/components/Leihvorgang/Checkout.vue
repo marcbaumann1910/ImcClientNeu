@@ -10,6 +10,7 @@ watchEffect(() => {
   cartItems.value.forEach(item => {
     const menge = item.Menge
     const externeIDCount = store.getters.getExterneNummernCount(item.IDInventarArtikel);
+    console.log('ExterneInventarNummerPflicht:', item.ExterneInventarNummerPflicht);
 
     if(menge < externeIDCount){
       console.log('menge < externeIDCount', menge, externeIDCount);
@@ -18,8 +19,6 @@ watchEffect(() => {
 
   })
 })
-
-
 
 function handleMinusClick(itemID, currentQuantity){
   if(currentQuantity === 1)
@@ -131,7 +130,8 @@ function showDialogForExterneID(menge, idArtikel){
                   @click="showDialogForExterneID(item.Menge, item.IDInventarArtikel)"
                   class="hover text-subtitle-2 text-blue-darken-4 mt-2"
               >
-                Externe Nr. erfassen
+                {{ item.ExterneInventarNummerPflicht === 1 ? 'Externe Nr. erfassen*' : 'Externe Nr. erfassen' }}
+
               </v-label>
             </v-badge>
             <!-- Label, das immer angezeigt wird (falls Badge nicht gerendert wird) -->
@@ -140,7 +140,8 @@ function showDialogForExterneID(menge, idArtikel){
                 @click="showDialogForExterneID(item.Menge, item.IDInventarArtikel)"
                 class="hover text-subtitle-2 text-blue-darken-4 mt-2"
             >
-              Externe Nr. erfassen
+              {{ item.ExterneInventarNummerPflicht === 1 ? '*Externe Nr. erfassen' : 'Externe Nr. erfassen' }}
+
             </v-label>
           </v-col>
 
@@ -155,6 +156,10 @@ function showDialogForExterneID(menge, idArtikel){
 
       <v-row>
         <v-col class="d-flex justify-end mr-0">
+        <v-list-item-action class="mr-2">
+          <v-list-item-title class="ml-3">(*) Erfassung Externer Nr. pflicht!</v-list-item-title>
+        </v-list-item-action>
+          <v-spacer></v-spacer>
         <v-list-item-action class="mr-2">
           <v-list-item-title><b>Gesamtpreis: {{ (Math.round(cartItemsAmount *100) /100).toFixed(2) }} €</b></v-list-item-title>
         </v-list-item-action>
