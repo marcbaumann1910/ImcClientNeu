@@ -8,9 +8,9 @@ const showDialog = computed(()=> store.getters.getShowDialogExterneInventarNumme
 const dialogFormFields = computed(()=> store.getters.getShowDialogExterneInventarNummer.Menge)
 //Holt die IDInventarArtikel aus dem Dialog zur Erfassung der ExtenenInventarNummern
 const idArtikel = computed(()=> store.getters.getShowDialogExterneInventarNummer.idArtikel)
+const externeInventarNummerPflicht = computed(()=> store.getters.getShowDialogExterneInventarNummer.externeInventarNummerPflicht)
 const textInventarNummern = ref([]);
 const inventarExterneNummern = ref([]);
-const inventarExterneNummernPflicht = ref(false);
 
 //Sorgt dafür, dass die ExternenInventarNummern (externeID), die in cartItems als Array gespeichert sind
 //dem jeweiligen Textfeld - passend zur idArtikel - im vuex-Store gespeichert werden und beim Öffnen
@@ -28,8 +28,6 @@ watch(
         const response = await AuthenticationService.leihvorgangInventarExterneNummern(1)
         inventarExterneNummern.value = response.data;
         console.log('inventarExterneNummern:', response.data)
-
-        inventarExterneNummernPflicht.value = true;
 
         // Anpassung der Länge von textInventarNummern
         if (textInventarNummern.value.length < dialogFormFields.value) {
@@ -71,7 +69,7 @@ function dialogSave(){
         <v-row dense>
           <v-col
           >
-            <template v-if="!inventarExterneNummernPflicht">
+            <template v-if="!externeInventarNummerPflicht">
           <!--generiert die Textfelder abhängig von der gewählten Menge des jeweiligen Artikels. Menge wird auch über den vuex-Store übergeben-->
             <v-text-field
                 :label="'Inventar-Nummer ' + i"
@@ -87,7 +85,7 @@ function dialogSave(){
                 :items="inventarExterneNummern"
                 item-title="ExterneNummer"
                 item-value="ExterneNummer"
-                :label="'Bitte den Zustand wählen'"
+                label="Bitte eine Inventar-Nummer wählen"
                 persistent-hint
                 single-line
             ></v-select>
