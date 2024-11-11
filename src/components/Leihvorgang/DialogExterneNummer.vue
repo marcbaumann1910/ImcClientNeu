@@ -10,6 +10,7 @@ const dialogFormFields = computed(()=> store.getters.getShowDialogExterneInventa
 const idArtikel = computed(()=> store.getters.getShowDialogExterneInventarNummer.idArtikel)
 const textInventarNummern = ref([]);
 const inventarExterneNummern = ref([]);
+const inventarExterneNummernPflicht = ref(false);
 
 //Sorgt dafür, dass die ExternenInventarNummern (externeID), die in cartItems als Array gespeichert sind
 //dem jeweiligen Textfeld - passend zur idArtikel - im vuex-Store gespeichert werden und beim Öffnen
@@ -27,6 +28,8 @@ watch(
         const response = await AuthenticationService.leihvorgangInventarExterneNummern(1)
         inventarExterneNummern.value = response.data;
         console.log('inventarExterneNummern:', response.data)
+
+        inventarExterneNummernPflicht.value = false;
 
         // Anpassung der Länge von textInventarNummern
         if (textInventarNummern.value.length < dialogFormFields.value) {
@@ -68,6 +71,7 @@ function dialogSave(){
         <v-row dense>
           <v-col
           >
+            <template v-if="!inventarExterneNummernPflicht">
           <!--generiert die Textfelder abhängig von der gewählten Menge des jeweiligen Artikels. Menge wird auch über den vuex-Store übergeben-->
             <v-text-field
                 :label="'Inventar-Nummer ' + i"
@@ -75,19 +79,19 @@ function dialogSave(){
                 v-model="textInventarNummern[i - 1]"
             >
             </v-text-field>
-
+            </template>
+            <template v-else>
             <v-select
                 v-for="i in dialogFormFields" :key="i"
                 v-model="textInventarNummern[i - 1]"
                 :items="inventarExterneNummern"
-                :item-title="item => item.ExterneNummer"
-                :item-value="item => item.IDinventarExterneNummern"
-                label="Bitte den Zustand wählen"
+                item-title="ExterneNummer"
+                item-value="ExterneNummer"
+                :label="'Bitte den Zustand wählen+ i'"
                 persistent-hint
-                return-object
                 single-line
             ></v-select>
-
+            </template>
           </v-col>
         </v-row>
 
