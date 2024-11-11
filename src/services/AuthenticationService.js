@@ -38,6 +38,10 @@ export default {
         console.log('leihvorgang: ', data);
         return Api.patch('/leihvorgang', data);
     },
+    leihvorgangInventarExterneNummern(idInventarKategorie) {
+        console.log('leihvorgang/inventarexternenummern/:idInventarKategorie: ', idInventarKategorie);
+        return Api.get(`/leihvorgang/inventarexternenummern/${idInventarKategorie}`);
+    },
     leihvorgangVerwalten() {
         console.log('leihvorgangverwalten: ',);
         return Api.get(`/leihvorgangverwalten`);
