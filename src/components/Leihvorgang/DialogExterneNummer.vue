@@ -29,7 +29,7 @@ watch(
         inventarExterneNummern.value = response.data;
         console.log('inventarExterneNummern:', response.data)
 
-        inventarExterneNummernPflicht.value = false;
+        inventarExterneNummernPflicht.value = true;
 
         // Anpassung der Länge von textInventarNummern
         if (textInventarNummern.value.length < dialogFormFields.value) {
@@ -87,7 +87,7 @@ function dialogSave(){
                 :items="inventarExterneNummern"
                 item-title="ExterneNummer"
                 item-value="ExterneNummer"
-                :label="'Bitte den Zustand wählen+ i'"
+                :label="'Bitte den Zustand wählen'"
                 persistent-hint
                 single-line
             ></v-select>

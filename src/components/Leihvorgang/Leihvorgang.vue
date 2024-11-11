@@ -91,11 +91,16 @@ async function nextPage(message) {
     //Prüft ob der Artikel eine Pflicht zur Erfassung der externeID hat.
     //Wenn ja, wird die Navigation unterbrochen und der Vorgang kann nicht gebucht werden.
     for (const item of cartItems.value) {
-        const laengeExterneID = item.externeID.length || 0
-        if(item.Menge !== laengeExterneID && item.ExterneInventarNummerPflicht ===1){
+        //Übergibt die Anzahl der erfassten ExternenID's an externeNummernCount
+        const externeNummernCount = store.getters.getExterneNummernCount(item.IDInventarArtikel) || 0
+        //Hier wird geprüft ob die Menge der ExternenID's in externeNummernCount mit der
+        //gewählten Menge übereinstimmt, wenn diese nicht übereinstimmen, kann der Vorgang nicht
+        //gebucht werden
+        if(item.Menge !== externeNummernCount && item.ExterneInventarNummerPflicht === 1){
           alert(`Die Externe Nummer muss erfasst werden:\n${item.ArtikelBezeichnung}` )
           return;
         }
+
     }
     await leihvorgangBuchen();
   } else {
