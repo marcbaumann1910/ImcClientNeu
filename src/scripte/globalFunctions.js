@@ -83,7 +83,4 @@ async function expansionForLeihvorgang(member, reload = false) {
     }
 }
 
-
-
-
-export { expansionForLeihvorgang }
+export { expansionForLeihvorgang}

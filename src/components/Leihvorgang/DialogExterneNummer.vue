@@ -41,8 +41,6 @@ watch(
     { immediate: true }
 );
 
-
-
 function dialogClose(){
   store.dispatch("setShowDialogExterneInventarNummer", {showDialog: false, Menge: 0})
 }
@@ -54,6 +52,16 @@ function dialogSave(){
   store.dispatch('setExterneInventarNummerToCartItem', {idArtikel: idArtikel, externeID: textInventarNummern});
   console.log('getCartItems from vuex:', store.getters.getCartItems)
   console.log('2 DialogExterneNummer from vuxe', store.getters.getShowDialogExterneInventarNummer.idArtikel);
+}
+
+//Auführliche siehe Doku
+// --> Besonderheit, wenn ein Element im v-select ausgewählt wurde, ist es in den anderen v-select nicht mehr auswählbar:
+function filteredInventarExterneNummern(index) {
+  const selectedIDs = textInventarNummern.value
+      .map((item, idx) => idx !== index ? item : null)
+      .filter(item => item !== null);
+  //Ich gleiche hier nicht die ID der externenNummer ab, sondern die Bezeichnung (eigentliche Nummer) ab
+  return inventarExterneNummern.value.filter(option => !selectedIDs.includes(option.ExterneNummer));
 }
 
 </script>
@@ -79,15 +87,20 @@ function dialogSave(){
             </v-text-field>
             </template>
             <template v-else>
-            <v-select
-                v-for="i in dialogFormFields" :key="i"
-                v-model="textInventarNummern[i - 1]"
-                :items="inventarExterneNummern"
-                item-title="ExterneNummer"
-                item-value="ExterneNummer"
-                label="Bitte eine Inventar-Nummer wählen"
-                persistent-hint
-                single-line
+              <!--Ist die InventarNummer Pflicht, werden die verfügbaren Nummern in den Selects aufgelistet-->
+              <!--generiert die Selects abhängig von der gewählten Menge des jeweiligen Artikels. Menge wird auch über den vuex-Store übergeben-->
+              <!--item-value="ExterneNummer" Muss auch die ExterneNummer sein, da diese im vuexStore gespeichert und später für das InsertUpdate benötigt wird!!!-->
+              <!--Siehe Doku DialogExterneNummer.vue Besonderheit v-select  -->
+              <v-select
+                  v-for="(value, index) in textInventarNummern"
+                  :key="'select-' + index"
+                  v-model="textInventarNummern[index]"
+                  :items="filteredInventarExterneNummern(index, textInventarNummern, inventarExterneNummern, value.ExterneNummer)"
+                  item-title="ExterneNummer"
+                  item-value="ExterneNummer"
+                  :label="'Bitte den Zustand wählen ' + (index + 1)"
+                  persistent-hint
+                  single-line
             ></v-select>
             </template>
           </v-col>
