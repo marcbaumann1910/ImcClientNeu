@@ -58,10 +58,6 @@ export default {
             params: filters
         });
     },
-    leihvorgangArtikelRuecknahme(idInventarBuchungenPositionen) {
-        console.log('leihvorgangverwalten idInventarBuchungenPositionen: ', idInventarBuchungenPositionen);
-        return Api.get(`/leihvorgangverwalten/buchungspositionen/${idInventarBuchungenPositionen}`);
-    },
     leihvorgangArtikelZustand() {
         console.log('leihvorgangverwalten/zustand:', );
         return Api.get(`/leihvorgangverwalten/zustand`);
@@ -82,5 +78,9 @@ export default {
         console.log('leihvorgangNummerAendern/externenummeraendern:', data);
         return Api.patch('/leihvorgangverwalten/artikeltauschen', data);
     },
+    leihvorgangInventarExterneNummernUpdate(data){
+    console.log('leihvorgangInventarExterneNummernUpdate:', data);
+    return Api.patch('/leihvorgangverwalten/inventarexternenummernupdate', data);
+}
 
 };

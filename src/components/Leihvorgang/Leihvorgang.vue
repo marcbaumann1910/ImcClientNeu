@@ -122,6 +122,19 @@ async function leihvorgangBuchen(){
       IDBenutzer: localStorage.idBenutzer,
     });
     console.log('Erfolg leihvorgangBuchen', response.data);
+
+    //Damit die Verfügbarkeit der externeInventarNummer upgedatet werden kann
+    //bereite ich hier ein flaches Array auf und übergebe es an das Backend
+    const externeInventarNummer = [];
+    for (const item of cartItems.value) {
+      if(item.ExterneInventarNummerPflicht === 1){
+        externeInventarNummer.push(...item.externeID);
+      }
+    }
+    const responseExterneNummer = await AuthenticationService.leihvorgangInventarExterneNummernUpdate(externeInventarNummer)
+    console.log('responseExterneNummer', responseExterneNummer)
+
+    console.log('Update ExterneNummer erfolgreich!')
     store.dispatch('clearCartItems') //Setzt den vuex-Store für den Leihvorgang auf Anfang (null)
     isSelectedMember.value = false; //Setzt das ausgewählte Mitglied zurück
     snackbarText.value = 'Leihvorgang wurde erfolgreich gebucht';
