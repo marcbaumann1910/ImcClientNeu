@@ -9,6 +9,8 @@ const dialogFormFields = computed(()=> store.getters.getShowDialogExterneInventa
 //Holt die IDInventarArtikel aus dem Dialog zur Erfassung der ExtenenInventarNummern
 const idArtikel = computed(()=> store.getters.getShowDialogExterneInventarNummer.idArtikel)
 const externeInventarNummerPflicht = computed(()=> store.getters.getShowDialogExterneInventarNummer.externeInventarNummerPflicht)
+
+
 const textInventarNummern = ref([]);
 const inventarExterneNummern = ref([]);
 
@@ -77,7 +79,7 @@ function filteredInventarExterneNummern(index) {
         <v-row dense>
           <v-col
           >
-            <template v-if="!externeInventarNummerPflicht">
+          <template v-if="!externeInventarNummerPflicht">
           <!--generiert die Textfelder abhängig von der gewählten Menge des jeweiligen Artikels. Menge wird auch über den vuex-Store übergeben-->
             <v-text-field
                 :label="'Inventar-Nummer ' + i"
@@ -95,7 +97,7 @@ function filteredInventarExterneNummern(index) {
                   v-for="(value, index) in textInventarNummern"
                   :key="'select-' + index"
                   v-model="textInventarNummern[index]"
-                  :items="filteredInventarExterneNummern(index, textInventarNummern, inventarExterneNummern, value.ExterneNummer)"
+                  :items="filteredInventarExterneNummern(index)"
                   item-title="ExterneNummer"
                   item-value="ExterneNummer"
                   :label="'Bitte den Zustand wählen ' + (index + 1)"

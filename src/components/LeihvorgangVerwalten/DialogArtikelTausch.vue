@@ -11,6 +11,8 @@ const selectedItemZustand = ref(null);
 const stateItemsArtikel = ref([]);
 const stateItemsZustand = ref([]);
 const textExterneInventarNummer = ref('');
+const inventarExterneNummern = ref([]);
+const selectExterneInventarNummern = ref('');
 
 const artikelDetails = computed(()=> store.getters.getShowDialogArtikelTausch.artikelDetails);
 
@@ -35,6 +37,7 @@ const showDialog = computed({
 watch(showDialog, (newVal) => {
   if(newVal){
     fetchItems();
+    fetchInventarExterneNummer();
   }
 });
 
@@ -68,6 +71,15 @@ async function fetchItems() {
   }
 }
 
+async function fetchInventarExterneNummer(){
+  //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!
+  const response = await AuthenticationService.leihvorgangInventarExterneNummern(artikelDetails.value.ia_IDInventarKategorie)
+  inventarExterneNummern.value = response.data;
+  console.log('inventarExterneNummern:', response.data)
+  console.log('artikelDetails.externeInventarNummerPflicht',artikelDetails.value.ia_externeInventarNummerPflicht)
+
+}
+
 function handleSelectionChange(){
   console.log('selectedItemNewChoose:',selectedItemNewChoose.value);
   console.log('selectedItemNewChoose IDInventarArtikel:',selectedItemNewChoose.value.IDInventarArtikel);
@@ -98,10 +110,15 @@ async function dialogSave(){
     return;
   }
 
-  if(textExterneInventarNummer.value === '' || textExterneInventarNummer.value === undefined || textExterneInventarNummer.value === null){
-    alert('Bitte die Nummer eingeben!')
-    return;
-  }
+  // if(textExterneInventarNummer.value === ''
+  //     || textExterneInventarNummer.value === undefined
+  //     || textExterneInventarNummer.value === null
+  //     && selectExterneInventarNummern.value === ''
+  //     && selectExterneInventarNummern.value === undefined && false
+  // ){
+  //   alert('Bitte die Nummer eingeben!')
+  //   return;
+  // }
 
   try{
     const response = await AuthenticationService.leihvorgangArtikelTauschen({
@@ -112,11 +129,18 @@ async function dialogSave(){
       IDInventarArtikel: selectedItemNewChoose.value.IDInventarArtikel, //neue, getauschte IDInventarArtikel
       Menge: 1,
       Preis: selectedItemNewChoose.value.Preis, //neuer, getauschter Preis
-      externeInventarNummer: textExterneInventarNummer.value, //neue, getauschte externeInventarNummer
+      externeInventarNummer: textExterneInventarNummer.value || selectExterneInventarNummern.value, //neue, getauschte externeInventarNummer
       AusgeliehenBis: 'NULL',
       Bemerkung: textBemerkung.value,
       IDInventarZustand: selectedItemZustand.value.IDInventarZustand
     })
+
+    //Damit die Verfügbarkeit der externeInventarNummer upgedatet werden kann
+    if(selectExterneInventarNummern.value){
+      const responseExterneNummer = await AuthenticationService.leihvorgangInventarExterneNummernUpdate([selectExterneInventarNummern.value])
+      console.log('responseExterneNummer', responseExterneNummer)
+    }
+
     console.log('Tausch erfolgreich durchgeführt')
   }catch(err){
     alert('Vorgang fehlgeschlagen. Tausch konnt nicht durchgeführt werden')
@@ -172,11 +196,26 @@ async function dialogSave(){
               @update:modelValue="handleSelectionChange2"
           ></v-select>
 
-          <v-text-field
-              label="Neue Nummer eingeben"
-              v-model="textExterneInventarNummer"
-          >
-          </v-text-field>
+          <template v-if="!artikelDetails.ia_externeInventarNummerPflicht">
+            <v-text-field
+                label="Neue Nummer eingeben"
+                v-model="textExterneInventarNummer"
+            >
+            </v-text-field>
+          </template>
+          <template v-else>
+            <!--Ist die InventarNummer Pflicht, werden die verfügbaren Nummern in den Selects aufgelistet-->
+            <!--Siehe Doku DialogExterneNummer.vue Besonderheit v-select  -->
+            <v-select
+                v-model="selectExterneInventarNummern"
+                :items="inventarExterneNummern"
+                item-title="ExterneNummer"
+                item-value="ExterneNummer"
+                :label="'Bitte die Inventar Nummer wählen'"
+                persistent-hint
+                single-line
+            ></v-select>
+          </template>
 
           <v-text-field
               label="Bemerkung (z.B. über den Zustand)"

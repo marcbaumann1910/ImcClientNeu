@@ -131,8 +131,12 @@ async function leihvorgangBuchen(){
         externeInventarNummer.push(...item.externeID);
       }
     }
-    const responseExterneNummer = await AuthenticationService.leihvorgangInventarExterneNummernUpdate(externeInventarNummer)
-    console.log('responseExterneNummer', responseExterneNummer)
+    //Nur wenn es auch externeInventarNummer (aus v-select) gibt, wird das Update ausgeführt
+    if(externeInventarNummer.length > 0){
+      const responseExterneNummer = await AuthenticationService.leihvorgangInventarExterneNummernUpdate(externeInventarNummer)
+      console.log('responseExterneNummer', responseExterneNummer)
+    }
+
 
     console.log('Update ExterneNummer erfolgreich!')
     store.dispatch('clearCartItems') //Setzt den vuex-Store für den Leihvorgang auf Anfang (null)

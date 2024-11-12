@@ -130,7 +130,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht){
                   @click="showDialogForExterneID(item.Menge, item.IDInventarArtikel, item.ExterneInventarNummerPflicht)"
                   class="hover text-subtitle-2 text-blue-darken-4 mt-2"
               >
-                {{ item.ExterneInventarNummerPflicht === 1 ? 'Externe Nr. erfassen*' : 'Externe Nr. erfassen' }}
+                {{ item.ExterneInventarNummerPflicht === 1 ? '*Externe Nr. erfassen' : 'Externe Nr. erfassen' }}
 
               </v-label>
             </v-badge>
