@@ -109,9 +109,8 @@ async function fetchInventarExterneNummer(){
                   :items="filteredInventarExterneNummern(index)"
                   item-title="ExterneNummer"
                   item-value="ExterneNummer"
-                  label="'Bitte die Inventar Nummer wählen'"
+                  label="Bitte die Inventar Nummer wählen"
                   persistent-hint
-                  single-line
             ></v-select>
             </template>
           </v-col>

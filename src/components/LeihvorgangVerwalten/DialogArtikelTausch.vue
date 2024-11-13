@@ -110,15 +110,13 @@ async function dialogSave(){
     return;
   }
 
-  // if(textExterneInventarNummer.value === ''
-  //     || textExterneInventarNummer.value === undefined
-  //     || textExterneInventarNummer.value === null
-  //     && selectExterneInventarNummern.value === ''
-  //     && selectExterneInventarNummern.value === undefined && false
-  // ){
-  //   alert('Bitte die Nummer eingeben!')
-  //   return;
-  // }
+  if (artikelDetails.value.ia_externeInventarNummerPflicht === 1) {
+    // Das <v-select> ist sichtbar
+    if (!selectExterneInventarNummern.value || selectExterneInventarNummern.value === '') {
+      alert('Bitte die Nummer eingeben!');
+      return;
+    }
+  }
 
   try{
     const response = await AuthenticationService.leihvorgangArtikelTauschen({
@@ -211,9 +209,8 @@ async function dialogSave(){
                 :items="inventarExterneNummern"
                 item-title="ExterneNummer"
                 item-value="ExterneNummer"
-                :label="'Bitte die Inventar Nummer wählen'"
+                label="Bitte die Inventar Nummer wählen"
                 persistent-hint
-                single-line
             ></v-select>
           </template>
 
