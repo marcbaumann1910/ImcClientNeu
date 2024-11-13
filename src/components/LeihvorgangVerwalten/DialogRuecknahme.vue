@@ -79,6 +79,17 @@ async function dialogSave(){
       IDInventarBuchungen: store.getters.getShowDialogRuecknahmeArtikel.artikelDetails.ibp_IDInventarBuchungen,
       Menge: 1,
     })
+
+    if(artikelDetails.value.ia_externeInventarNummerPflicht === 1){
+      try{
+        const responseExterneNummerFreigeben = await AuthenticationService.leihvorgangInventarExterneNummernFreigeben([artikelDetails.value.ibp_externeInventarNummer])
+        console.log('responseExterneNummerFreigeben', responseExterneNummerFreigeben)
+      }catch(err)
+      {
+        console.log('Fehler ExterneNummerVergeben/responseExterneNummerFreigeben')
+      }
+    }
+
     console.log('response von leihvorgangRuecknahmeArtikel: ',respone)
   }catch(err){
     console.log('Fehler in leihvorgangRuecknahmeArtikel', err)
