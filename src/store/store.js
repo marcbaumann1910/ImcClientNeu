@@ -14,7 +14,14 @@ const store = createStore({
         cartItemsAmount: 0, //Gesamtsumme aller Artikel
         borrowMember: [], //Mitglied
         showWarenkorbDesktop: true, //Anzeigensteuerung des Warenkorbs
-        showDialogExterneInventarNummer: {showDialog: false, Menge: 0, idArtikel: 0, externeInventarNummerPflicht: 0}, //Zeigt den Dialog zur Erfassung der Externen Nummern an. {showDialog: boolean, Menge: int}
+        showDialogExterneInventarNummer: {
+            //Zeigt den Dialog zur Erfassung der Externen Nummern an.
+            showDialog: false,
+            Menge: 0,
+            idArtikel: 0,
+            externeInventarNummerPflicht: 0,
+            idInventarKategorie: 0
+        },
         showDialogRuecknahmeArtikel: {
             showDialog: false,
             IDinventarBuchungenPositionen: 0,

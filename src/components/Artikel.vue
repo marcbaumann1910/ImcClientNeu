@@ -29,6 +29,7 @@ function updateCart(item){
       Bildpfad: item.Bildpfad,
       Bestand: item.Bestand,
       ExterneInventarNummerPflicht: item.externeInventarNummerPflicht,
+      IDInventarKategorie: item.IDInventarKategorie,
       externeID: [],
     }
     //Erhöht die Anzeige im Warenkorb, wird über den vuex-Store erledigt

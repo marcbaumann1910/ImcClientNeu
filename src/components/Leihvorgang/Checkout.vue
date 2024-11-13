@@ -41,10 +41,18 @@ function deleteItem(id){
   store.dispatch('deleteItemFromCart', id);
 }
 
-function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht){
-    store.dispatch('setShowDialogExterneInventarNummer', {showDialog: true, Menge: menge, idArtikel: idArtikel, externeInventarNummerPflicht: externeInventarNummerPflicht});
+function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, idInventarKategorie){
+    //Übergabe der Daten aus cartItems vuex-Store
+  store.dispatch('setShowDialogExterneInventarNummer', {
+      showDialog: true,
+      Menge: menge,
+      idArtikel: idArtikel,
+      externeInventarNummerPflicht: externeInventarNummerPflicht,
+      idInventarKategorie: idInventarKategorie,
+    });
     console.log('menge',menge)
     console.log('idArtikel', idArtikel)
+    console.log('idInventarKategorie', idInventarKategorie)
     console.log('idArtikel from vuxe', store.getters.getShowDialogExterneInventarNummer.idArtikel);
 }
 
@@ -127,7 +135,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht){
             >
               <!-- Der Label wird innerhalb des Badges angezeigt -->
               <v-label
-                  @click="showDialogForExterneID(item.Menge, item.IDInventarArtikel, item.ExterneInventarNummerPflicht)"
+                  @click="()=> showDialogForExterneID(item.Menge, item.IDInventarArtikel, item.ExterneInventarNummerPflicht, item.IDInventarKategorie)"
                   class="hover text-subtitle-2 text-blue-darken-4 mt-2"
               >
                 {{ item.ExterneInventarNummerPflicht === 1 ? '*Externe Nr. erfassen' : 'Externe Nr. erfassen' }}
@@ -137,7 +145,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht){
             <!-- Label, das immer angezeigt wird (falls Badge nicht gerendert wird) -->
             <v-label
                 v-else
-                @click="showDialogForExterneID(item.Menge, item.IDInventarArtikel, item.ExterneInventarNummerPflicht)"
+                @click="()=> showDialogForExterneID(item.Menge, item.IDInventarArtikel, item.ExterneInventarNummerPflicht, item.IDInventarKategorie)"
                 class="hover text-subtitle-2 text-blue-darken-4 mt-2"
             >
               {{ item.ExterneInventarNummerPflicht === 1 ? '*Externe Nr. erfassen' : 'Externe Nr. erfassen' }}

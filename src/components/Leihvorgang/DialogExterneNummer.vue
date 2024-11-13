@@ -9,7 +9,7 @@ const dialogFormFields = computed(()=> store.getters.getShowDialogExterneInventa
 //Holt die IDInventarArtikel aus dem Dialog zur Erfassung der ExtenenInventarNummern
 const idArtikel = computed(()=> store.getters.getShowDialogExterneInventarNummer.idArtikel)
 const externeInventarNummerPflicht = computed(()=> store.getters.getShowDialogExterneInventarNummer.externeInventarNummerPflicht)
-
+const idInventarKategorie = computed(()=> store.getters.getShowDialogExterneInventarNummer.idInventarKategorie)
 
 const textInventarNummern = ref([]);
 const inventarExterneNummern = ref([]);
@@ -26,10 +26,7 @@ watch(
         // Dialog wird geöffnet
         textInventarNummern.value = [...store.getters.getExterneNummernForArtikel(idArtikel.value)];
 
-        //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!
-        const response = await AuthenticationService.leihvorgangInventarExterneNummern(1)
-        inventarExterneNummern.value = response.data;
-        console.log('inventarExterneNummern:', response.data)
+        await fetchInventarExterneNummer();
 
         // Anpassung der Länge von textInventarNummern
         if (textInventarNummern.value.length < dialogFormFields.value) {
@@ -66,6 +63,18 @@ function filteredInventarExterneNummern(index) {
   return inventarExterneNummern.value.filter(option => !selectedIDs.includes(option.ExterneNummer));
 }
 
+async function fetchInventarExterneNummer(){
+  //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!
+  try{
+    const response = await AuthenticationService.leihvorgangInventarExterneNummern(idInventarKategorie.value)
+    inventarExterneNummern.value = response.data;
+    console.log('inventarExterneNummern:', response.data)
+  }catch(err)
+  {
+    console.log('Fehler beim Versuch des Datenabrufes!')
+  }
+}
+
 </script>
 
 <template>
@@ -100,7 +109,7 @@ function filteredInventarExterneNummern(index) {
                   :items="filteredInventarExterneNummern(index)"
                   item-title="ExterneNummer"
                   item-value="ExterneNummer"
-                  :label="'Bitte den Zustand wählen ' + (index + 1)"
+                  label="'Bitte die Inventar Nummer wählen'"
                   persistent-hint
                   single-line
             ></v-select>
