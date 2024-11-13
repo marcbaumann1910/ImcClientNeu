@@ -78,9 +78,13 @@ export default {
         console.log('leihvorgangNummerAendern/externenummeraendern:', data);
         return Api.patch('/leihvorgangverwalten/artikeltauschen', data);
     },
-    leihvorgangInventarExterneNummernUpdate(data){
-    console.log('leihvorgangInventarExterneNummernUpdate:', data);
-    return Api.patch('/leihvorgangverwalten/inventarexternenummernupdate', data);
-}
+    leihvorgangInventarExterneNummernVergeben(data){
+    console.log('leihvorgangInventarExterneNummernUpdateVergeben:', data);
+    return Api.patch('/leihvorgangverwalten/inventarexternenummernupdatevergeben', data);
+    },
+    leihvorgangInventarExterneNummernFreigeben(data) {
+        console.log('leihvorgangInventarExterneNummernFreigeben:', data);
+        return Api.patch('/leihvorgangverwalten/inventarexternenummernupdatefreigeben', data);
+    }
 
 };

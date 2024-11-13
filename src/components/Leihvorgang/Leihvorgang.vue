@@ -133,7 +133,7 @@ async function leihvorgangBuchen(){
     }
     //Nur wenn es auch externeInventarNummer (aus v-select) gibt, wird das Update ausgeführt
     if(externeInventarNummer.length > 0){
-      const responseExterneNummer = await AuthenticationService.leihvorgangInventarExterneNummernUpdate(externeInventarNummer)
+      const responseExterneNummer = await AuthenticationService.leihvorgangInventarExterneNummernVergeben(externeInventarNummer)
       console.log('responseExterneNummer', responseExterneNummer)
     }
 

@@ -97,6 +97,7 @@ function dialogClose(){
   selectedItemZustand.value = null;
   textExterneInventarNummer.value = null;
   textBemerkung.value = null;
+  selectExterneInventarNummern.value = '';
 }
 
 async function dialogSave(){
@@ -110,8 +111,8 @@ async function dialogSave(){
     return;
   }
 
+  //Wenn v-select sichtbar ist, dann wird gebprüft ob eine Auswahl stattgefunden hat!
   if (artikelDetails.value.ia_externeInventarNummerPflicht === 1) {
-    // Das <v-select> ist sichtbar
     if (!selectExterneInventarNummern.value || selectExterneInventarNummern.value === '') {
       alert('Bitte die Nummer eingeben!');
       return;
@@ -135,10 +136,18 @@ async function dialogSave(){
 
     //Damit die Verfügbarkeit der externeInventarNummer upgedatet werden kann
     if(selectExterneInventarNummern.value){
-      const responseExterneNummer = await AuthenticationService.leihvorgangInventarExterneNummernUpdate([selectExterneInventarNummern.value])
-      console.log('responseExterneNummer', responseExterneNummer)
-    }
+      try{
+        const responseExterneNummerVergeben = await AuthenticationService.leihvorgangInventarExterneNummernVergeben([selectExterneInventarNummern.value])
+        console.log('responseExterneNummerVergeben', responseExterneNummerVergeben)
+        const responseExterneNummerFreigeben = await AuthenticationService.leihvorgangInventarExterneNummernFreigeben([artikelDetails.value.ibp_externeInventarNummer])
+        console.log('responseExterneNummerFreigeben', responseExterneNummerFreigeben)
+      }catch(err)
+      {
+        console.log('Fehler ExterneNummerVergeben/responseExterneNummerFreigeben')
+      }
 
+    }
+    selectExterneInventarNummern.value = '';
     console.log('Tausch erfolgreich durchgeführt')
   }catch(err){
     alert('Vorgang fehlgeschlagen. Tausch konnt nicht durchgeführt werden')
