@@ -1,16 +1,21 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import store from "@/store/store.js";
 import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js";
 import AuthenticationService from "@/services/AuthenticationService.js";
-const newNumber = ref('');
+const textExterneInventarNummer = ref('');
+const inventarExterneNummern = ref([]);
+const selectExterneInventarNummern = ref('');
 const idInventarArtikel = computed(() => store.getters.getShowDialogNummerAendern.idInventarArtikel);
+const artikelDetails = computed(() => store.getters.getShowDialogNummerAendern.artikelDetails);
+
 
 const props = defineProps({
   member: Object,
 })
 
 //Ausführlich siehe Doku
+//DialogNummerAendern.vue öffnen einer Dialog Komponente mit vuex-Store:
 const showDialog = computed({
   get() {
     return store.getters.getShowDialogNummerAendern.showDialog;
@@ -23,22 +28,44 @@ const showDialog = computed({
   }
 });
 
+// Watcher zum Abrufen der State Items beim Öffnen des Dialogs
+watch(showDialog, (newVal) => {
+  if(newVal){
+    fetchInventarExterneNummer();
+  }
+});
+
 function dialogClose(){
   showDialog.value = false;
-  newNumber.value = '';
+  textExterneInventarNummer.value = '';
+  selectExterneInventarNummern.value = '';
 }
 
 async function dialogSave(){
-    if(newNumber.value === '' && newNumber.value === undefined){
-      alert('Bitte eine Nummer eingeben!')
+  //Wenn v-select sichtbar ist, dann wird gebprüft ob eine Auswahl stattgefunden hat!
+  if (artikelDetails.value.ia_externeInventarNummerPflicht === 1) {
+    if (!selectExterneInventarNummern.value || selectExterneInventarNummern.value === '') {
+      alert('Bitte die Nummer auswählen!');
       return;
     }
+  }else{
+    if (!textExterneInventarNummer.value || textExterneInventarNummer.value === '') {
+      alert('Bitte die Nummer auswählen!');
+      return;
+    }
+  }
 
   try{
     const response = await AuthenticationService.leihvorgangNummerAendern({
       IDinventarBuchungenPositionen: idInventarArtikel.value,
-      neueExterneInventarNummer: newNumber.value,
+      neueExterneInventarNummer: textExterneInventarNummer.value || selectExterneInventarNummern.value,
+
     })
+
+    const responseExterneNummerVergeben = await AuthenticationService.leihvorgangInventarExterneNummernVergeben([selectExterneInventarNummern.value])
+    console.log('responseExterneNummerVergeben', responseExterneNummerVergeben)
+    const responseExterneNummerFreigeben = await AuthenticationService.leihvorgangInventarExterneNummernFreigeben([artikelDetails.value.ibp_externeInventarNummer])
+    console.log('responseExterneNummerFreigeben', responseExterneNummerFreigeben)
 
   }catch(err){
     alert('Vorgang fehlgeschlagen. Nummer konnte nicht geändert werden')
@@ -49,7 +76,16 @@ async function dialogSave(){
   await expansionForLeihvorgang(props.member, true)
   showDialog.value = false;
   alert('Die Nummer wurde erfolgreich geändert!')
-  newNumber.value = '';
+  textExterneInventarNummer.value = '';
+}
+
+async function fetchInventarExterneNummer(){
+  //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!
+  const response = await AuthenticationService.leihvorgangInventarExterneNummern(artikelDetails.value.ia_IDInventarKategorie)
+  inventarExterneNummern.value = response.data;
+  console.log('inventarExterneNummern:', response.data)
+  console.log('artikelDetails.externeInventarNummerPflicht',artikelDetails.value.ia_externeInventarNummerPflicht)
+
 }
 
 </script>
@@ -68,12 +104,25 @@ async function dialogSave(){
       >
         <v-card-text>
 
-          <v-text-field
-              label="Neue Nummer"
-              v-model="newNumber"
-          >
-
-          </v-text-field>
+          <template v-if="!artikelDetails.ia_externeInventarNummerPflicht">
+            <v-text-field
+                label="Neue Nummer eingeben"
+                v-model="textExterneInventarNummer"
+            >
+            </v-text-field>
+          </template>
+          <template v-else>
+            <!--Ist die InventarNummer Pflicht, werden die verfügbaren Nummern in den Selects aufgelistet-->
+            <!--Siehe Doku DialogExterneNummer.vue Besonderheit v-select  -->
+            <v-select
+                v-model="selectExterneInventarNummern"
+                :items="inventarExterneNummern"
+                item-title="ExterneNummer"
+                item-value="ExterneNummer"
+                label="Bitte die Inventar Nummer wählen"
+                persistent-hint
+            ></v-select>
+          </template>
 
         </v-card-text>
 

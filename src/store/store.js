@@ -35,6 +35,7 @@ const store = createStore({
         showDialogNummerAendern: {
             showDialog: false,
             idInventarArtikel: null,
+            artikelDetails: [],
         },
         showDialogArtikelTausch: {
             showDialog: false,
@@ -226,6 +227,8 @@ const store = createStore({
         setShowDialogNummerAendern(state, value){
             state.showDialogNummerAendern.showDialog = value.showDialog;
             state.showDialogNummerAendern.idInventarArtikel = value.idInventarArtikel;
+            state.showDialogNummerAendern.artikelDetails = value.artikelDetails;
+
         },
         setShowDialogArtikelTausch(state, value){
             state.showDialogArtikelTausch.showDialog = value.showDialog;

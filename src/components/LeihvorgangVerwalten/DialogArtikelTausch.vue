@@ -214,7 +214,7 @@ async function dialogSave(){
             <!--Ist die InventarNummer Pflicht, werden die verfügbaren Nummern in den Selects aufgelistet-->
             <!--Siehe Doku DialogExterneNummer.vue Besonderheit v-select  -->
             <v-select
-                v-model="selectExterneInventarNummern"
+                v-model="selectExterneInventarNummernselectExterneInventarNummern"
                 :items="inventarExterneNummern"
                 item-title="ExterneNummer"
                 item-value="ExterneNummer"

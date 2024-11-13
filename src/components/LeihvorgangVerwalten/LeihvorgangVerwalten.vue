@@ -7,7 +7,6 @@ import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js"
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";
 
-
 const imageUrl = process.env.VITE_API_URL
 // Ref zur Verfolgung der erweiterten Panels
 const expandedPanels = ref([]);
@@ -158,11 +157,12 @@ function isVisibleIventarStatus(status) {
   }
 }
 
-function showDialogNummerAendern(item, member){
+function showDialogNummerAendern(item, member, artikelDetails){
   selectedMember.value = member;
   store.dispatch('setShowDialogNummerAendern', {
     showDialog: true,
     idInventarArtikel: item,
+    artikelDetails: artikelDetails,
   })
 }
 
@@ -359,7 +359,7 @@ function showDialogArtikelTausch(item, member){
 
                     <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
                       <v-label
-                          @click="showDialogNummerAendern(itemArtikelDetails.ibp_IDinventarBuchungenPositionen, item)"
+                          @click="showDialogNummerAendern(itemArtikelDetails.ibp_IDinventarBuchungenPositionen, item, itemArtikelDetails)"
                           class="hover text-subtitle-2"
                           v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
                       >
