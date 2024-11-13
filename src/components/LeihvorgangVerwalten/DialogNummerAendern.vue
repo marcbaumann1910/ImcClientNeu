@@ -77,6 +77,7 @@ async function dialogSave(){
   showDialog.value = false;
   alert('Die Nummer wurde erfolgreich geändert!')
   textExterneInventarNummer.value = '';
+  selectExterneInventarNummern.value = '';
 }
 
 async function fetchInventarExterneNummer(){
