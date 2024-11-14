@@ -179,12 +179,16 @@ function showDialogArtikelTausch(item, member){
 <template>
 
   <v-container>
+<!--    <div>-->
+<!--      <v-card class="d-flex justify-center mb-10" color="primary">-->
+<!--        <v-card-item>-->
+<!--          <v-card-title>Hier können Sie die Leihvorgänge verwalten</v-card-title>-->
+<!--        </v-card-item>-->
+<!--      </v-card>-->
+<!--    </div>-->
+
     <div>
-      <v-card class="d-flex justify-center mb-10" color="primary">
-        <v-card-item>
-          <v-card-title>Hier können Sie die Leihvorgänge verwalten</v-card-title>
-        </v-card-item>
-      </v-card>
+          <h1 class="mb-6">Hier können Sie die Leihvorgänge verwalten</h1>
     </div>
 
     <div>
@@ -195,9 +199,12 @@ function showDialogArtikelTausch(item, member){
           prepend-inner-icon="mdi-magnify"
           clearable
           @click:clear=""
-          variant="solo-filled"
           hide-details
           single-line
+          color="red"
+          label-color="primary"
+          base-color="red"
+          bg-color="#303F9F"
       ></v-text-field>
     </div>
 
@@ -257,7 +264,6 @@ function showDialogArtikelTausch(item, member){
                 variant="solo"
                 single-line
                 class="mt-6"
-                clearable
                 v-if="expandedPanels.includes(item.easyVereinMitglied_id)"
             ></v-text-field>
 

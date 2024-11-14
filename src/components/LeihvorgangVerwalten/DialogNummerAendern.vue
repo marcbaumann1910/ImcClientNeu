@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 import store from "@/store/store.js";
-import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js";
+import { expansionForLeihvorgang, fetchInventarExterneNummer } from "@/scripte/globalFunctions.js";
 import AuthenticationService from "@/services/AuthenticationService.js";
 const textExterneInventarNummer = ref('');
 const inventarExterneNummern = ref([]);
@@ -29,9 +29,13 @@ const showDialog = computed({
 });
 
 // Watcher zum Abrufen der State Items beim Öffnen des Dialogs
-watch(showDialog, (newVal) => {
-  if(newVal){
-    fetchInventarExterneNummer();
+watch(showDialog, async (newVal) => {
+  if (newVal) {
+    inventarExterneNummern.value = await fetchInventarExterneNummer(artikelDetails.value.ia_IDInventarKategorie);
+    if (inventarExterneNummern.value == null) {
+      alert('Fehler beim Abruf der Inventar-Nummern!')
+      return;
+    }
   }
 });
 
@@ -80,15 +84,6 @@ async function dialogSave(){
   selectExterneInventarNummern.value = '';
 }
 
-async function fetchInventarExterneNummer(){
-  //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!
-  const response = await AuthenticationService.leihvorgangInventarExterneNummern(artikelDetails.value.ia_IDInventarKategorie)
-  inventarExterneNummern.value = response.data;
-  console.log('inventarExterneNummern:', response.data)
-  console.log('artikelDetails.externeInventarNummerPflicht',artikelDetails.value.ia_externeInventarNummerPflicht)
-
-}
-
 </script>
 
 <template>
@@ -101,7 +96,7 @@ async function fetchInventarExterneNummer(){
       <v-card
           prepend-icon="mdi-pencil-outline"
           title="Nummer ändern:"
-          :subtitle="`${props.member.easyVereinMitglied_firstName} ${props.member.easyVereinMitglied_familyName}`"
+          :subtitle="`${props.member.easyVereinMitglied_firstName} ${props.member.easyVereinMitglied_familyName} | Inventar-Nummer: ${artikelDetails.ibp_externeInventarNummer}`"
       >
         <v-card-text>
 

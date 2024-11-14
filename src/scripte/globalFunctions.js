@@ -83,5 +83,15 @@ async function expansionForLeihvorgang(member, reload = false) {
         }
     }
 }
+async function fetchInventarExterneNummer(IDInventarKategorie){
+    //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!
+    try{
+        const response = await AuthenticationService.leihvorgangInventarExterneNummern(IDInventarKategorie)
+        console.log('inventarExterneNummern:', response.data)
+        return response.data;
+    }catch(err){
+        return null;
+    }
+}
 
-export { expansionForLeihvorgang}
+export { expansionForLeihvorgang, fetchInventarExterneNummer}

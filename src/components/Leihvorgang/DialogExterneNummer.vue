@@ -2,6 +2,7 @@
 import {ref, computed, watch} from "vue";
 import store from "@/store/store.js";
 import AuthenticationService from "@/services/AuthenticationService.js";
+import { fetchInventarExterneNummer } from '@/scripte/globalFunctions.js'
 
 //Zeigt den Dialog abhängig vom Wert im vuex-Store an. Ist ein Object!!!
 const showDialog = computed(()=> store.getters.getShowDialogExterneInventarNummer.showDialog)
@@ -26,7 +27,16 @@ watch(
         // Dialog wird geöffnet
         textInventarNummern.value = [...store.getters.getExterneNummernForArtikel(idArtikel.value)];
 
-        await fetchInventarExterneNummer();
+        //Abruf der InventarNummern über die ausgelagerte Funktion
+        inventarExterneNummern.value = await fetchInventarExterneNummer(idInventarKategorie.value);
+        if(inventarExterneNummern.value == null){
+          alert('Fehler beim Abruf der Inventar-Nummern!')
+          return;
+        }
+
+        if(inventarExterneNummern.value.length < dialogFormFields.value) {
+          alert(`Es stehen für diesen Artikel nicht genügend Inventar-Nummern zur Verfügung!`)
+        }
 
         // Anpassung der Länge von textInventarNummern
         if (textInventarNummern.value.length < dialogFormFields.value) {
@@ -63,17 +73,26 @@ function filteredInventarExterneNummern(index) {
   return inventarExterneNummern.value.filter(option => !selectedIDs.includes(option.ExterneNummer));
 }
 
-async function fetchInventarExterneNummer(){
-  //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!
-  try{
-    const response = await AuthenticationService.leihvorgangInventarExterneNummern(idInventarKategorie.value)
-    inventarExterneNummern.value = response.data;
-    console.log('inventarExterneNummern:', response.data)
-  }catch(err)
-  {
-    console.log('Fehler beim Versuch des Datenabrufes!')
-  }
-}
+
+
+// async function fetchInventarExterneNummer(){
+//   //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!
+//   try{
+//     const response = await AuthenticationService.leihvorgangInventarExterneNummern(idInventarKategorie.value)
+//     inventarExterneNummern.value = response.data;
+//     console.log(inventarExterneNummern.value.length)
+//
+//     if(inventarExterneNummern.value.length < dialogFormFields.value) {
+//       alert(`Es stehen für diesen Artikel nicht genügend Inventar-Nummern zur Verfügung!`)
+//       return;
+//     }
+//
+//     console.log('inventarExterneNummern:', response.data)
+//   }catch(err)
+//   {
+//     console.log('Fehler beim Versuch des Datenabrufes!')
+//   }
+// }
 
 </script>
 
