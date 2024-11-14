@@ -89,8 +89,8 @@ function showCartChange(){
       <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <span class="span">Menü</span>
     </div>
-      <v-toolbar-title class="toolbarTitle">IMS Willstätter Hexen</v-toolbar-title>
-      <v-spacer></v-spacer>
+    <v-toolbar-title class="toolbarTitle">IMS Willstätter Hexen</v-toolbar-title>
+    <v-spacer></v-spacer>
 
     <!--Login-->
     <v-btn v-if="!isUserLoggedIn" @click="goLogin()">
@@ -111,14 +111,14 @@ function showCartChange(){
           color="success"
           :content="store.getters.getCartItemCount"
       >
-      <v-icon>mdi-cart-outline</v-icon>
+        <v-icon>mdi-cart-outline</v-icon>
       </v-badge>
       <v-icon v-else >mdi-cart-outline</v-icon>
     </v-btn>
-<!--Warenkorb nur auf kleinen AndUp anzeigen-->
-<!--    <template v-if="$vuetify.display.smAndUp">-->
-<!--      <v-btn icon="mdi-cart-outline" variant="text"></v-btn>-->
-<!--    </template>-->
+    <!--Warenkorb nur auf kleinen AndUp anzeigen-->
+    <!--    <template v-if="$vuetify.display.smAndUp">-->
+    <!--      <v-btn icon="mdi-cart-outline" variant="text"></v-btn>-->
+    <!--    </template>-->
 
     <div class="text-center">
       <!--Kebab-Menu-->
@@ -130,7 +130,7 @@ function showCartChange(){
         <v-list>
           <v-list-item v-for="kebab in kebabs" :key="kebab.title" @click="navigate(kebab.route)">
             <v-list-item-title>
-                <v-icon left class="mr-2" >{{ kebab.icon }}</v-icon>
+              <v-icon left class="mr-2" >{{ kebab.icon }}</v-icon>
               {{ kebab.title }}</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -139,18 +139,27 @@ function showCartChange(){
   </v-app-bar>
 
   <!-- Navigation Drawer Einträge Menü-->
-<!--  image="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg"-->
+  <!--  image="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg"-->
   <v-navigation-drawer
       v-model="drawer"
       :location="$vuetify.display.mobile ? 'top' : undefined" temporary
   >
     <v-list>
-      <v-list-item dense v-for="item in items" :key="item.title" @click="navigate(item.route)">
-          <v-list-item-title class="mb-0" v-if="item.title">
-            <v-icon class="mr-2">{{ item.icon }}</v-icon>
-            {{ item.title }}
-          </v-list-item-title>
-        <v-list-item-subtitle class="ml-9 mt-0" v-if="!item.title" @click="navigate(item.route)">{{item.subtitle}}</v-list-item-subtitle>
+      <v-list-item
+          dense v-for="item in items"
+          :key="item.title"
+          @click="navigate(item.route)">
+        <v-list-item-title
+            class="mb-0"
+            v-if="item.title">
+          <v-icon class="mr-2">{{ item.icon }}</v-icon>
+          {{ item.title }}
+        </v-list-item-title>
+        <v-list-item-subtitle
+            class="ml-9 mt-0"
+            v-if="!item.title"
+            @click="navigate(item.route)"
+        >{{item.subtitle}}</v-list-item-subtitle>
       </v-list-item>
     </v-list>
   </v-navigation-drawer>
