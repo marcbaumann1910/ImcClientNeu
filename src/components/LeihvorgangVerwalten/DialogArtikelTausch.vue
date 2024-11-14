@@ -147,7 +147,7 @@ async function dialogSave(){
       }
 
     }
-    selectExterneInventarNummern.value = '';
+
     console.log('Tausch erfolgreich durchgeführt')
   }catch(err){
     alert('Vorgang fehlgeschlagen. Tausch konnt nicht durchgeführt werden')
@@ -161,6 +161,7 @@ async function dialogSave(){
   selectedItemZustand.value = null;
   textExterneInventarNummer.value = null;
   textBemerkung.value = null;
+  selectExterneInventarNummern.value = '';
   await expansionForLeihvorgang(props.member, true)
 }
 
@@ -214,7 +215,7 @@ async function dialogSave(){
             <!--Ist die InventarNummer Pflicht, werden die verfügbaren Nummern in den Selects aufgelistet-->
             <!--Siehe Doku DialogExterneNummer.vue Besonderheit v-select  -->
             <v-select
-                v-model="selectExterneInventarNummernselectExterneInventarNummern"
+                v-model="selectExterneInventarNummern"
                 :items="inventarExterneNummern"
                 item-title="ExterneNummer"
                 item-value="ExterneNummer"

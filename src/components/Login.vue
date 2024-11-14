@@ -73,6 +73,7 @@
               variant="filled"
               :rules="passwortRules"
               @click:append-inner="visible = !visible"
+              @keyup.enter="login()"
           ></v-text-field>
 
         </div>
@@ -95,6 +96,7 @@
             size="large"
             block
             :loading="isLoading"
+            @keyup.enter="login()"
         >
           Login
         </v-btn>
