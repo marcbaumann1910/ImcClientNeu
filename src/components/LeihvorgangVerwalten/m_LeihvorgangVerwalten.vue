@@ -153,7 +153,7 @@ const kebabs = [
         <v-card-subtitle
             class="py-1 my-0 text-caption"
         >
-          <v-icon color="black">mdi-cash-register</v-icon>
+          <v-icon color="black">mdi-palette</v-icon>
           {{ itemArtikelDetails.farbe }}
         </v-card-subtitle>
       </v-col>
