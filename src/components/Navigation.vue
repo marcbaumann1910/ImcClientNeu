@@ -22,6 +22,7 @@ const items = [
   {title: 'Abrechnung', subtitle: '', route: '/abrechnung', icon: 'mdi-currency-eur'},
   {title: 'Registrierung', subtitle: '', route: '/register', icon: 'mdi-account-plus'},
   {title: 'Testing', subtitle: '', route: '/testing', icon: 'mdi-ab-testing'},
+  {title: 'Mobil', subtitle: '', route: '/m.leihvorgangverwalten', icon: 'mdi-cellphone'},
 
 ]
 

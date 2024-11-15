@@ -82,6 +82,8 @@ async function expansionForLeihvorgang(member, reload = false) {
             console.log(`Abruf der Daten für Mitglied ${member.easyVereinMitglied_id} fehlgeschlagen`, error);
         }
     }
+
+    return member;
 }
 async function fetchInventarExterneNummer(IDInventarKategorie){
     //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!
@@ -94,4 +96,10 @@ async function fetchInventarExterneNummer(IDInventarKategorie){
     }
 }
 
-export { expansionForLeihvorgang, fetchInventarExterneNummer}
+function formatDate(dateString) {
+    if (!dateString) return '';
+    const options = {day: '2-digit', month: '2-digit', year: 'numeric'};
+    return new Date(dateString).toLocaleDateString('de-DE', options);
+}
+
+export { expansionForLeihvorgang, fetchInventarExterneNummer, formatDate}

@@ -380,7 +380,7 @@ function showDialogArtikelTausch(item, member){
                           class="hover text-subtitle-2 text-blue-darken-4 mt-2"
                           v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
                       >
-                        <v-icon class="mr-1">mdi-sync</v-icon>
+                        <v-icon class="mr-1">mdi-swap-horizontal</v-icon>
                         Artikel austauschen
                       </v-label>
                     </v-col>

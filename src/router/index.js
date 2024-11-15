@@ -14,6 +14,7 @@ import ResetPasswordRequest from "@/components/ResetPasswordRequest.vue";
 import FlextTest from "@/components/FlextTest.vue";
 import Leihvorgang from "@/components/Leihvorgang/Leihvorgang.vue";
 import LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/LeihvorgangVerwalten.vue";
+import m_LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/m_LeihvorgangVerwalten.vue";
 
 const routes = [
     {
@@ -102,6 +103,12 @@ const routes = [
         path: '/leihvorgangverwalten',
         name: 'leihvorgangverwalten',
         component: LeihvorgangVerwalten,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
+    },
+    {
+        path: '/m.leihvorgangverwalten',
+        name: 'm_leihvorgangverwalten',
+        component: m_LeihvorgangVerwalten,
         meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
 ];
