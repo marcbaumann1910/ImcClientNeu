@@ -147,7 +147,7 @@ const kebabs = [
         >
         <v-card-subtitle class="py-1 my-0 text-caption"
         >
-          <v-icon color="black">mdi-clock-time-eight</v-icon>
+          <v-icon color="black">mdi-calendar-clock</v-icon>
           {{ formatDate(itemArtikelDetails.ibp_StatusDatum) }}
         </v-card-subtitle>
         <v-card-subtitle

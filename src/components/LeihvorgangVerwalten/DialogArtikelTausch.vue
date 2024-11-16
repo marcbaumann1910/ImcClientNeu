@@ -172,7 +172,7 @@ async function dialogSave(){
     >
 
       <v-card
-          prepend-icon="mdi-sync"
+          prepend-icon="mdi-swap-horizontal"
           :title="`Tausch: ${artikelDetails.ia_ArtikelBezeichnung} | ${artikelDetails.konfektionsGroesse_Konfektionsgroesse} | ${artikelDetails.farbe}`"
           :subtitle="`${props.member.easyVereinMitglied_firstName} ${props.member.easyVereinMitglied_familyName} | Inventar-Nummer: ${artikelDetails.ibp_externeInventarNummer}`"
 
