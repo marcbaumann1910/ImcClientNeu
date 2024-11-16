@@ -1,5 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { useDisplay } from 'vuetify';
+
 import store from "@/store/store.js";
 import { expansionForLeihvorgang, fetchInventarExterneNummer } from "@/scripte/globalFunctions.js";
 import AuthenticationService from "@/services/AuthenticationService.js";
@@ -20,6 +22,12 @@ const artikelDetails = computed(()=> store.getters.getShowDialogArtikelTausch.ar
 const props = defineProps({
   member: Object
 })
+
+const { mdAndUp } = useDisplay();
+
+const dialogWidth = computed(() => {
+  return mdAndUp.value ? 600 : '90vw';
+});
 
 //Ausführlich siehe Doku
 const showDialog = computed({
@@ -165,89 +173,115 @@ async function dialogSave(){
 </script>
 
 <template>
-  <div class="pa-4 text-center">
+  <div class="pa-2 text-center">
     <v-dialog
         v-model="showDialog"
         max-width="600"
     >
 
       <v-card
-          prepend-icon="mdi-swap-horizontal"
-          :title="`Tausch: ${artikelDetails.ia_ArtikelBezeichnung} | ${artikelDetails.konfektionsGroesse_Konfektionsgroesse} | ${artikelDetails.farbe}`"
-          :subtitle="`${props.member.easyVereinMitglied_firstName} ${props.member.easyVereinMitglied_familyName} | Inventar-Nummer: ${artikelDetails.ibp_externeInventarNummer}`"
-
       >
+        <div class="d-flex flex-column align-center">
+          <div class="d-flex align-center">
+            <!-- Icon -->
+            <v-icon size="36px" class="desktop-only mr-0">mdi-swap-horizontal</v-icon>
+            <!-- Titel -->
+            <v-card-title class="mb-0 text-sm-body-2 text-md-body-1">
+              {{ `Tausch: ${artikelDetails.ia_ArtikelBezeichnung} | ${artikelDetails.konfektionsGroesse_Konfektionsgroesse} | ${artikelDetails.farbe}` }}
+            </v-card-title>
+          </div>
+          <!-- Untertitel -->
+          <v-card-subtitle class="ml-4 mt-0 text-sm-body-3 text-md-body-2">
+            {{ `${props.member.easyVereinMitglied_firstName} ${props.member.easyVereinMitglied_familyName} | Inventar-Nummer: ${artikelDetails.ibp_externeInventarNummer}` }}
+          </v-card-subtitle>
+        </div>
+
+
         <v-card-text>
+          <v-container fluid>
+            <v-row>
+              <v-col cols="12">
+                <!-- Erster Select -->
+                <v-select
+                    v-model="selectedItemNewChoose"
+                    :item-props="itemProbs"
+                    :items="stateItemsArtikel"
+                    label="Bitte den neuen Artikel wählen"
+                    persistent-hint
+                    return-object
+                    single-line
+                    @update:modelValue="handleSelectionChange"
+                ></v-select>
+              </v-col>
 
-          <v-select
-              v-model="selectedItemNewChoose"
-              :item-props="itemProbs"
-              :items="stateItemsArtikel"
-              label="Bitte den neuen Artikel wählen"
-              persistent-hint
-              return-object
-              single-line
-              @update:modelValue="handleSelectionChange"
-          ></v-select>
+              <v-col cols="12">
+                <!-- Zweiter Select -->
+                <v-select
+                    v-model="selectedItemZustand"
+                    :items="stateItemsZustand"
+                    :item-title="i => i.Bezeichnung"
+                    :item-value="i => i.IDInventarZustand"
+                    label="Bitte den Zustand wählen"
+                    persistent-hint
+                    return-object
+                    single-line
+                    @update:modelValue="handleSelectionChange2"
+                ></v-select>
+              </v-col>
 
-          <v-select
-              v-model="selectedItemZustand"
-              :items="stateItemsZustand"
-              :item-title="i => i.Bezeichnung"
-              :item-value="i => i.IDInventarZustand"
-              label="Bitte den Zustand wählen"
-              persistent-hint
-              return-object
-              single-line
-              @update:modelValue="handleSelectionChange2"
-          ></v-select>
+              <!-- Bedingte Anzeige der Textfelder -->
+              <v-col cols="12" v-if="!artikelDetails.ia_externeInventarNummerPflicht">
+                <v-text-field
+                    label="Neue Nummer eingeben"
+                    v-model="textExterneInventarNummer"
+                ></v-text-field>
+              </v-col>
 
-          <template v-if="!artikelDetails.ia_externeInventarNummerPflicht">
-            <v-text-field
-                label="Neue Nummer eingeben"
-                v-model="textExterneInventarNummer"
-            >
-            </v-text-field>
-          </template>
-          <template v-else>
-            <!--Ist die InventarNummer Pflicht, werden die verfügbaren Nummern in den Selects aufgelistet-->
-            <!--Siehe Doku DialogExterneNummer.vue Besonderheit v-select  -->
-            <v-select
-                v-model="selectExterneInventarNummern"
-                :items="inventarExterneNummern"
-                item-title="ExterneNummer"
-                item-value="ExterneNummer"
-                label="Bitte die Inventar Nummer wählen"
-                persistent-hint
-            ></v-select>
-          </template>
+              <v-col cols="12" v-else>
+                <v-select
+                    v-model="selectExterneInventarNummern"
+                    :items="inventarExterneNummern"
+                    item-title="ExterneNummer"
+                    item-value="ExterneNummer"
+                    label="Bitte die Inventar Nummer wählen"
+                    persistent-hint
+                ></v-select>
+              </v-col>
 
-          <v-text-field
-              label="Bemerkung (z.B. über den Zustand)"
-              v-model="textBemerkung"
-          >
-
-          </v-text-field>
-
+              <v-col cols="12">
+                <v-text-field
+                    label="Bemerkung (z.B. über den Zustand)"
+                    v-model="textBemerkung"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-container fluid>
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-spacer></v-spacer>
+                <v-btn
+                    text="Schließen"
+                    variant="plain"
+                    @click="dialogClose"
+                ></v-btn>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-btn
+                    color="primary"
+                    text="Tausch durchführen"
+                    variant="tonal"
+                    @click="dialogSave()"
+                ></v-btn>
 
-          <v-btn
-              text="Schließen"
-              variant="plain"
-              @click="dialogClose"
-          ></v-btn>
-
-          <v-btn
-              color="primary"
-              text="Tausch durchführen"
-              variant="tonal"
-              @click="dialogSave()"
-          ></v-btn>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -255,5 +289,20 @@ async function dialogSave(){
 </template>
 
 <style scoped>
-
+@media (max-width: 600px) {
+  .mobile-only {
+    display: block;
+  }
+  .desktop-only {
+    display: none;
+  }
+}
+@media (min-width: 601px) {
+  .mobile-only {
+    display: none;
+  }
+  .desktop-only {
+    display: block;
+  }
+}
 </style>
