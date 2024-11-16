@@ -184,32 +184,38 @@ async function dialogSave(){
         <div class="d-flex flex-column align-center">
           <div class="d-flex align-center">
             <!-- Icon -->
-            <v-icon size="36px" class="desktop-only mr-0">mdi-swap-horizontal</v-icon>
+<!--            <v-icon size="36px" class="desktop-only mr-0">mdi-swap-horizontal</v-icon>-->
             <!-- Titel -->
-            <v-card-title class="mb-0 text-sm-body-2 text-md-body-1">
+            <v-card-title class="mb-0 mobile-text-small">
               {{ `Tausch: ${artikelDetails.ia_ArtikelBezeichnung} | ${artikelDetails.konfektionsGroesse_Konfektionsgroesse} | ${artikelDetails.farbe}` }}
             </v-card-title>
           </div>
           <!-- Untertitel -->
-          <v-card-subtitle class="ml-4 mt-0 text-sm-body-3 text-md-body-2">
-            {{ `${props.member.easyVereinMitglied_firstName} ${props.member.easyVereinMitglied_familyName} | Inventar-Nummer: ${artikelDetails.ibp_externeInventarNummer}` }}
+          <v-card-subtitle class="ml-4 mt-0 mobile-text-small">
+            {{ `${props.member.easyVereinMitglied_firstName} ${props.member.easyVereinMitglied_familyName}` }}
+          </v-card-subtitle>
+          <!-- Untertitel -->
+          <v-card-subtitle v-if="artikelDetails.ibp_externeInventarNummer"
+           class="ml-4 mt-0 mobile-text-small">
+            {{ `Inventar-Nummer: ${artikelDetails.ibp_externeInventarNummer}` }}
           </v-card-subtitle>
         </div>
 
-
-        <v-card-text>
+        <v-card-text class="mb-0 pb-0">
           <v-container fluid>
             <v-row>
               <v-col cols="12">
                 <!-- Erster Select -->
                 <v-select
+                    class="mobile-text-small"
                     v-model="selectedItemNewChoose"
                     :item-props="itemProbs"
                     :items="stateItemsArtikel"
-                    label="Bitte den neuen Artikel wählen"
+                    label="Artikel wählen"
                     persistent-hint
                     return-object
                     single-line
+                    variant="solo-filled"
                     @update:modelValue="handleSelectionChange"
                 ></v-select>
               </v-col>
@@ -217,14 +223,16 @@ async function dialogSave(){
               <v-col cols="12">
                 <!-- Zweiter Select -->
                 <v-select
+                    class="mobile-text-small"
                     v-model="selectedItemZustand"
                     :items="stateItemsZustand"
                     :item-title="i => i.Bezeichnung"
                     :item-value="i => i.IDInventarZustand"
-                    label="Bitte den Zustand wählen"
+                    label="Zustand wählen"
                     persistent-hint
                     return-object
                     single-line
+                    variant="solo-filled"
                     @update:modelValue="handleSelectionChange2"
                 ></v-select>
               </v-col>
@@ -239,46 +247,50 @@ async function dialogSave(){
 
               <v-col cols="12" v-else>
                 <v-select
+                    class="mobile-text-small"
                     v-model="selectExterneInventarNummern"
                     :items="inventarExterneNummern"
                     item-title="ExterneNummer"
                     item-value="ExterneNummer"
-                    label="Bitte die Inventar Nummer wählen"
+                    label="Inventar Nummer wählen"
                     persistent-hint
+                    variant="solo-filled"
                 ></v-select>
               </v-col>
 
               <v-col cols="12">
                 <v-text-field
+                    class="mobile-text-small mb-0"
                     label="Bemerkung (z.B. über den Zustand)"
                     v-model="textBemerkung"
+                    variant="solo-filled"
                 ></v-text-field>
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
 
-        <v-divider></v-divider>
-
-        <v-card-actions>
+        <v-card-actions class="pt-0">
           <v-container fluid>
             <v-row>
-              <v-col cols="12" sm="6">
-                <v-spacer></v-spacer>
+              <v-col cols="12" sm="6" class="d-flex justify-end py-1">
                 <v-btn
-                    text="Schließen"
-                    variant="plain"
-                    @click="dialogClose"
-                ></v-btn>
-              </v-col>
-              <v-col cols="12" sm="6">
-                <v-btn
+                    block
                     color="primary"
                     text="Tausch durchführen"
-                    variant="tonal"
+                    variant="flat"
                     @click="dialogSave()"
                 ></v-btn>
-
+                <v-spacer></v-spacer>
+              </v-col>
+              <v-col cols="12" sm="6" class="d-flex justify-end py-1">
+                <v-btn
+                    block
+                    color="grey"
+                    text="Schließen"
+                    variant="tonal"
+                    @click="dialogClose"
+                ></v-btn>
               </v-col>
             </v-row>
           </v-container>
@@ -289,6 +301,7 @@ async function dialogSave(){
 </template>
 
 <style scoped>
+
 @media (max-width: 600px) {
   .mobile-only {
     display: block;
@@ -303,6 +316,36 @@ async function dialogSave(){
   }
   .desktop-only {
     display: block;
+  }
+}
+
+/* Textgröße für mobile Geräte */
+@media (max-width: 600px) {
+  .mobile-text-small {
+    font-size: 14px !important;
+  }
+}
+
+/* Textgröße für größere Geräte */
+@media (min-width: 601px) {
+  .mobile-text-small {
+    font-size: 16px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Textgröße für mobile Geräte in v-select */
+  :deep(.mobile-text-small) .v-field-label,
+  :deep(.mobile-text-small) .v-field__input {
+    font-size: 14px !important;
+  }
+}
+
+@media (min-width: 601px) {
+  /* Textgröße für größere Geräte in v-select */
+  :deep(.mobile-text-small) .v-field-label,
+  :deep(.mobile-text-small) .v-field__input {
+    font-size: 16px !important;
   }
 }
 </style>
