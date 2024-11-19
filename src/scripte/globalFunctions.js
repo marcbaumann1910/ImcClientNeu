@@ -119,4 +119,16 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('de-DE', options);
 }
 
-export { expansionForLeihvorgang, fetchInventarExterneNummer, formatDate}
+function isVisibleIventarStatus(statusBuchung) {
+    //Prüft den itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus Status
+    //Wenn 1 (ausgeliehen) Element anzeigen, sonst nicht
+    //Status 7 = ausgeliehen Tausch
+    if(statusBuchung === 1 || statusBuchung === 7){
+        return true
+    }
+    else{
+        false
+    }
+}
+
+export { expansionForLeihvorgang, fetchInventarExterneNummer, formatDate, isVisibleIventarStatus}

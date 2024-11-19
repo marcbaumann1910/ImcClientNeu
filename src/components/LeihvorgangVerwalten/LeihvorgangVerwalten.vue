@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
-import { expansionForLeihvorgang } from "@/scripte/globalFunctions.js"
+import { expansionForLeihvorgang, isVisibleIventarStatus } from "@/scripte/globalFunctions.js"
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";
 
@@ -149,17 +149,7 @@ function formatDate(dateString) {
   return new Date(dateString).toLocaleDateString('de-DE', options);
 }
 
-function isVisibleIventarStatus(status) {
-  //Prüft den itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus Status
-  //Wenn 1 (ausgeliehen) Element anzeigen, sonst nicht
-  //Status 7 = ausgeliehen Tausch
-  if(status === 1 || status === 7){
-    return true
-  }
-  else{
-    false
-  }
-}
+
 
 function showDialogNummerAendern(item, member, artikelDetails){
   selectedMember.value = member;
@@ -190,6 +180,8 @@ function handleExpansionPanelClick(member) {
     expansionForLeihvorgang(member);
   }
 }
+//globalFunctions
+isVisibleIventarStatus;
 
 </script>
 

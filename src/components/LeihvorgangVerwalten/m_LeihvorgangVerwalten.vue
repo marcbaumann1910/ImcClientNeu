@@ -5,7 +5,7 @@ import { useLeihvorgangVerwalten } from '@/composables/useLeihvorgangVerwalten.j
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";
-import { expansionForLeihvorgang, formatDate } from "@/scripte/globalFunctions.js";
+import { expansionForLeihvorgang, formatDate, isVisibleIventarStatus } from "@/scripte/globalFunctions.js";
 import store from "@/store/store.js";
 import cloneDeep from 'lodash/cloneDeep'; // Importiere cloneDeep für tiefe Kopien
 
@@ -106,6 +106,9 @@ const filteredArtikelDetails = computed(() => {
   });
 });
 
+//globalFunctions
+isVisibleIventarStatus;
+
 </script>
 
 
@@ -190,9 +193,15 @@ const filteredArtikelDetails = computed(() => {
     <v-row no-gutters>
       <!-- Artikelbeschreibungen untereinander -->
       <v-col cols="7" class="pa-0">
+
         <v-card-subtitle class="py-1 my-0 text-caption"
         >
-          <v-icon color="green">mdi-check-circle</v-icon>
+          <v-icon :color="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus) ? 'orange' : 'green'"
+          >
+            {{
+              isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus) ? 'mdi-share' : 'mdi-lock'
+            }}
+          </v-icon>
           {{itemArtikelDetails.ibp_Bezeichnung}}
         </v-card-subtitle
         >
