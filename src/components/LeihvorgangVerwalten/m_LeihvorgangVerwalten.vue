@@ -12,6 +12,7 @@ import cloneDeep from 'lodash/cloneDeep'; // Importiere cloneDeep für tiefe Kop
 const artikelDetails = ref(null);
 const checkedAusgeliehen = ref(true);
 const checkedAbgeschlossen = ref(false);
+const searchArtikel = ref('');
 
 //Holt das member Object aus dem vuex-Store
 const member = computed(() => store.getters.getMember);
@@ -93,6 +94,18 @@ async function handleCheckboxAbgeschlossen(){
   }
 }
 
+const filteredArtikelDetails = computed(() => {
+  if (!searchArtikel.value) {
+    // Wenn kein Suchbegriff eingegeben wurde, gib alle Artikel zurück
+    return artikelDetails.value;
+  }
+  // Ansonsten filtere die Artikel basierend auf dem Suchbegriff
+  return artikelDetails.value.filter((item) => {
+    const fullName = `${item.ia_ArtikelBezeichnung} ${item.ibp_externeInventarNummer} ${item.farbe}`.toLowerCase();
+    return fullName.includes(searchArtikel.value.toLowerCase());
+  });
+});
+
 </script>
 
 
@@ -108,10 +121,12 @@ async function handleCheckboxAbgeschlossen(){
 
 
   <v-text-field
+      v-model="searchArtikel"
       append-inner-icon="mdi-magnify"
       density="compact"
-      label="Search templates"
+      label="Artikel suchen"
       variant="solo"
+      clearable
       hide-details
       single-line
       max-width="400"
@@ -132,7 +147,7 @@ async function handleCheckboxAbgeschlossen(){
 
   <!-- Artikelkarte -->
   <v-card
-      v-for="itemArtikelDetails in artikelDetails"
+      v-for="itemArtikelDetails in filteredArtikelDetails"
       :key="itemArtikelDetails"
       class="ma-2"
       max-height="250">
