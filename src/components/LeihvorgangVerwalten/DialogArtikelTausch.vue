@@ -185,7 +185,7 @@ async function dialogSave(){
         <div class="d-flex flex-column align-center">
           <div class="d-flex align-center">
             <!-- Icon -->
-<!--            <v-icon size="36px" class="desktop-only mr-0">mdi-swap-horizontal</v-icon>-->
+        <!--<v-icon size="36px" class="desktop-only mr-0">mdi-swap-horizontal</v-icon>-->
             <!-- Titel -->
             <v-card-title class="mb-0 mobile-text-small">
               {{ `Tausch: ${artikelDetails.ia_ArtikelBezeichnung} | ${artikelDetails.konfektionsGroesse_Konfektionsgroesse} | ${artikelDetails.farbe}` }}
@@ -204,11 +204,11 @@ async function dialogSave(){
 
         <v-card-text class="mb-0 pb-0">
           <v-container fluid>
-            <v-row>
+            <v-row no-gutters>
               <v-col cols="12">
                 <!-- Erster Select -->
                 <v-select
-                    class="mobile-text-small"
+                    class="mobile-text-small custom-no-margin"
                     v-model="selectedItemNewChoose"
                     :item-props="itemProbs"
                     :items="stateItemsArtikel"
@@ -216,6 +216,7 @@ async function dialogSave(){
                     persistent-hint
                     return-object
                     single-line
+                    dense
                     variant="solo-filled"
                     @update:modelValue="handleSelectionChange"
                 ></v-select>
@@ -224,7 +225,7 @@ async function dialogSave(){
               <v-col cols="12">
                 <!-- Zweiter Select -->
                 <v-select
-                    class="mobile-text-small"
+                    class="mobile-text-small mt-0 mb-0 custom-no-margin"
                     v-model="selectedItemZustand"
                     :items="stateItemsZustand"
                     :item-title="i => i.Bezeichnung"
@@ -233,6 +234,7 @@ async function dialogSave(){
                     persistent-hint
                     return-object
                     single-line
+                    dense
                     variant="solo-filled"
                     @update:modelValue="handleSelectionChange2"
                 ></v-select>
@@ -243,38 +245,42 @@ async function dialogSave(){
                 <v-text-field
                     label="Neue Nummer eingeben"
                     v-model="textExterneInventarNummer"
+                    class="mt-0 mb-0 custom-no-margin"
+                    dense
                 ></v-text-field>
               </v-col>
 
               <v-col cols="12" v-else>
                 <v-select
-                    class="mobile-text-small"
+                    class="mobile-text-small mt-0 mb-0 custom-no-margin"
                     v-model="selectExterneInventarNummern"
                     :items="inventarExterneNummern"
                     item-title="ExterneNummer"
                     item-value="ExterneNummer"
                     label="Inventar Nummer wählen"
                     persistent-hint
+                    dense
                     variant="solo-filled"
                 ></v-select>
               </v-col>
 
               <v-col cols="12">
                 <v-text-field
-                    class="mobile-text-small mb-0"
+                    class="mobile-text-small mb-0 mt-0 custom-no-margin"
                     label="Bemerkung (z.B. über den Zustand)"
                     v-model="textBemerkung"
                     variant="solo-filled"
+                    dense
                 ></v-text-field>
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
 
-        <v-card-actions class="pt-0">
-          <v-container fluid>
-            <v-row>
-              <v-col cols="12" sm="6" class="d-flex justify-end py-1">
+        <v-card-actions class="pt-0 mb-0 mt-0">
+          <v-container fluid class="mb-0 mt-0">
+            <v-row no-gutters>
+              <v-col cols="12" sm="6" class="d-flex justify-end py-0 mt-0">
                 <v-btn
                     block
                     color="primary"
@@ -284,7 +290,7 @@ async function dialogSave(){
                 ></v-btn>
                 <v-spacer></v-spacer>
               </v-col>
-              <v-col cols="12" sm="6" class="d-flex justify-end py-1">
+              <v-col cols="12" sm="6" class="d-flex justify-end py-0 mt-1">
                 <v-btn
                     block
                     color="grey"
@@ -348,5 +354,15 @@ async function dialogSave(){
   :deep(.mobile-text-small) .v-field__input {
     font-size: 16px !important;
   }
+}
+
+.custom-no-margin {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.custom-no-padding {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
 }
 </style>
