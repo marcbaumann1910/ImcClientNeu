@@ -16,6 +16,8 @@ const checkedAbgeschlossen = ref(false);
 //Holt das member Object aus dem vuex-Store
 const member = computed(() => store.getters.getMember);
 // Lokale Kopie des Mitglieds (initialisiert mit einer tiefen Kopie aus dem Store)
+// Da mit einem computed erstellten Object (read-only) in der Funktion
+// expansionForLeihvorgang nicht gearbeitet werden kann, da das Object verändert wird!
 const localMember = ref(cloneDeep(member.value));
 
 // Watcher, um die lokale Kopie zu aktualisieren, wenn der Store sich ändert
@@ -26,23 +28,20 @@ watch(member, (newVal) => {
   }
 });
 
-
 onMounted(async () => {
 
   // Erweiterung der Leihvorgänge
+  // Hier wird das updateMember aus expansionForLeihvorgang (wenn sich die Daten durch das Backend ändern)
+  // verarbeitet und im Store gespeichert und an die lokale Kopie (localMember) übergeben!
   const updatedMember = await expansionForLeihvorgang(localMember.value, true);
   if (updatedMember) {
-    store.dispatch('setMember', updatedMember);
+    await store.dispatch('setMember', updatedMember);
     localMember.value = cloneDeep(updatedMember);
     artikelDetails.value = updatedMember.leihvorgaengeArtikelDetails;
   }
 
   console.log('member nach expansionForLeihvorgang:', localMember.value);
 });
-
-
-// const artikelDetails = member.value.leihvorgaengeArtikelDetails
-// Finde das Mitglied mit der übergebenen ID
 
 // Verwende die Funktion `filteredArtikelDetails` mit dem gefundenen Mitglied
 const gefilterteArtikelDetails = computed(() => {
@@ -61,21 +60,21 @@ const kebabs = [
 
 //Da ich in der Desktop-Ansicht mit checkboxen arbeite, übernehme ich die Logik über den vuex-Store auch in
 //mobilen Ansicht. Allerdings sind es hier keine Checkboxen, sondern Chips, weshalb ich den Zustand geklickt oder nicht
-//zwischenspeicher
+//zwischenspeichere
 //!!!Die Funktion expansionForLeihvorgang() in globalFunction greift auf den vuex-Store zu und holt sich dort die Informationen
 //zum 'checked' Status
 async function handleCheckboxAusgeliehen(){
   checkedAusgeliehen.value = !checkedAusgeliehen.value;
   await store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: localMember.value.easyVereinMitglied_id, checkedStateAusgeliehen: checkedAusgeliehen.value})
   console.log('checkedAusgeliehen',checkedAusgeliehen.value)
+  // Hier wird das updateMember aus expansionForLeihvorgang (wenn sich die Daten durch das Backend ändern)
+  // verarbeitet und im Store gespeichert und an die lokale Kopie (localMember) übergeben!
   const updatedMember = await expansionForLeihvorgang(localMember.value, true);
   if (updatedMember) {
     await store.dispatch('setMember', updatedMember);
     localMember.value = cloneDeep(updatedMember);
     artikelDetails.value = updatedMember.leihvorgaengeArtikelDetails;
   }
-
-
 }
 //Da ich in der Desktop-Ansicht mit checkboxen arbeite, übernehme ich die Logik über den vuex-Store auch in
 //mobilen Ansicht. Allerdings sind es hier keine Checkboxen, sondern Chips, weshalb ich den Zustand geklickt oder nicht
@@ -84,6 +83,8 @@ async function handleCheckboxAbgeschlossen(){
   checkedAbgeschlossen.value = !checkedAbgeschlossen.value;
   await store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: localMember.value.easyVereinMitglied_id, checkedStateAbgeschlossen: checkedAbgeschlossen.value})
   console.log('checkedAbgeschlossen',checkedAbgeschlossen.value)
+  // Hier wird das updateMember aus expansionForLeihvorgang (wenn sich die Daten durch das Backend ändern)
+  // verarbeitet und im Store gespeichert und an die lokale Kopie (localMember) übergeben!
   const updatedMember = await expansionForLeihvorgang(localMember.value, true);
   if (updatedMember) {
     await store.dispatch('setMember', updatedMember);

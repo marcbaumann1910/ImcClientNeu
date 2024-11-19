@@ -80,6 +80,9 @@ async function expansionForLeihvorgang(member, reload = false) {
             }
 
             // Erstelle ein neues Mitgliedsobjekt mit den aktualisierten Daten
+            // Dies wird für die mobile Ansicht benötigt, da hier nicht mit props gearbeitet werden kann
+            // um das member Object an m_LeihvorgangVerwalten zu übergeben. In diesem Fall mit dem vuex-Store
+            // gearbeitet werden, weshalb hier eine neus Object speziell für m_LeihvorgangVerwalten erzeugt wird
             const updatedMember = {
                 ...member,
                 leihvorgaengeArtikelDetails: mappedData,
