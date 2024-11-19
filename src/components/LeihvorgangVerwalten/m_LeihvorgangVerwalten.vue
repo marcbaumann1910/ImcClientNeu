@@ -44,15 +44,6 @@ onMounted(async () => {
   console.log('member nach expansionForLeihvorgang:', localMember.value);
 });
 
-// Verwende die Funktion `filteredArtikelDetails` mit dem gefundenen Mitglied
-const gefilterteArtikelDetails = computed(() => {
-  if (member.value && member.value.leihvorgaengeArtikelDetails) {
-    return member.value.leihvorgaengeArtikelDetails;
-  } else {
-    return [];
-  }
-});
-
 const kebabs = [
   { title: 'Rücknahme', action: 'ruecknahme', icon: 'mdi-arrow-down-thin-circle-outline' },
   { title: 'Nummer ändern', action: 'nummerAendern', icon: 'mdi-pencil' },
@@ -136,18 +127,24 @@ isVisibleIventarStatus;
       class="ma-2"
   ></v-text-field>
 
-  <span class="ml-2">Filter:</span>
+    <v-row></v-row>
 
-  <v-row></v-row>
-
+  <div class="d-flex justify-center mr-3">
   <v-chip class="ml-2 mt-6" color="orange"  @click="handleCheckboxAusgeliehen()">
     <b> ausgeliehen </b>
   </v-chip>
-
+  <v-spacer></v-spacer>
   <v-chip class="ml-2 mt-6" color="green" @click="handleCheckboxAbgeschlossen()">
     <b> abgeschlossen </b>
   </v-chip>
+  </div>
 
+  <div class="d-flex justify-center ml-2 mr-4 mt-2 mb-2">
+      <v-icon size="small">mdi-cart</v-icon> {{localMember.anzahlArtikel}}
+      <v-spacer></v-spacer>
+      <v-icon size="small">mdi-currency-eur</v-icon> {{localMember.gesamtPreis}}
+  </div>
+  <v-divider class="ml-2 mr-4"></v-divider>
   <!-- Artikelkarte -->
   <v-card
       v-for="itemArtikelDetails in filteredArtikelDetails"
