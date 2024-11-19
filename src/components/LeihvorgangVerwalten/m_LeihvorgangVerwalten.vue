@@ -107,9 +107,15 @@ isVisibleIventarStatus;
   <!-- Suchfeld -->
   <v-row>
     <v-col class="d-flex justify-end">
-      <span class="ml-2"><b>{{localMember.easyVereinMitglied_firstName}} {{localMember.easyVereinMitglied_familyName}}</b></span>
+      <router-link
+          class="text-blue text-decoration-none"
+          :to="{ name: 'leihvorgangverwalten' }"
+      >
+        <v-btn icon="mdi-arrow-left" size="24px" color="primary" class="mb-3 ml-2"></v-btn>
+      </router-link>
       <v-spacer></v-spacer>
-    <v-btn class="mb-3 mr-4" icon="mdi-close" max-height="10" max-width="10" color="transparent"></v-btn>
+      <span class="mr-3"><b>{{localMember.easyVereinMitglied_firstName}} {{localMember.easyVereinMitglied_familyName}}</b></span>
+<!--    <v-btn class="mb-3 mr-4" icon="mdi-close" max-height="10" max-width="10" color="transparent"></v-btn>-->
     </v-col>
   </v-row>
 
@@ -131,10 +137,12 @@ isVisibleIventarStatus;
 
   <div class="d-flex justify-center mr-3">
   <v-chip class="ml-2 mt-6" color="orange"  @click="handleCheckboxAusgeliehen()">
+    <v-icon v-if="checkedAusgeliehen">mdi-check</v-icon>
     <b> ausgeliehen </b>
   </v-chip>
   <v-spacer></v-spacer>
   <v-chip class="ml-2 mt-6" color="green" @click="handleCheckboxAbgeschlossen()">
+    <v-icon v-if="checkedAbgeschlossen">mdi-check</v-icon>
     <b> abgeschlossen </b>
   </v-chip>
   </div>
