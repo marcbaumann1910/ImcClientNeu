@@ -44,16 +44,37 @@ onMounted(async () => {
 });
 
 const kebabs = [
-  { title: 'Rücknahme', action: 'ruecknahme', icon: 'mdi-arrow-down-thin-circle-outline' },
-  { title: 'Nummer ändern', action: 'nummerAendern', icon: 'mdi-pencil' },
+  { title: 'Rücknahme', action: showDialogRuecknahme, icon: 'mdi-arrow-down-thin-circle-outline' },
+  { title: 'Nummer ändern', action: showDialogNummerAendern, icon: 'mdi-pencil' },
   { title: 'Tausch', action: showDialogArtikelTausch, icon: 'mdi-swap-horizontal' },
 ];
 
-async function showDialogArtikelTausch(item) {
+async function showDialogArtikelTausch(artikelDetails) {
   store.dispatch('setShowDialogArtikelTausch', {
     showDialog: true,
-    artikelDetails: item,
+    artikelDetails: artikelDetails,
   })
+}
+
+function showDialogNummerAendern(artikelDetails ){
+  store.dispatch('setShowDialogNummerAendern', {
+    showDialog: true,
+    idInventarArtikel: artikelDetails.ia_IDInventarArtikel,
+    artikelDetails: artikelDetails,
+  })
+}
+
+function showDialogRuecknahme(artikelDetails) {
+  store.dispatch('setShowDialogRuecknahmeArtikel', {
+    showDialog: true,
+    IDinventarBuchungenPositionen: artikelDetails.ibp_IDinventarBuchungenPositionen,
+    bemerkung: '',
+    artikelDetails: artikelDetails,
+    artikelZustand: '',
+    memberName: `${member.easyVereinMitglied_firstName} ${member.easyVereinMitglied_familyName}`,
+    idMitglied: member.easyVereinMitglied_id
+  });
+  console.log('showDialogRuecknahme artikelDetails', artikelDetails)
 }
 
 //Da ich in der Desktop-Ansicht mit checkboxen arbeite, übernehme ich die Logik über den vuex-Store auch in
@@ -270,6 +291,8 @@ isVisibleIventarStatus;
   </v-card>
 
   <DialogArtikelTausch :member="localMember"/>
+  <DialogRuecknahme :member="localMember"/>
+  <DialogNummerAendern :member="localMember"/>
 
 
   <!-- Aktionsbuttons -->
