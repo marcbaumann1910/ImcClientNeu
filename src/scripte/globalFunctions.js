@@ -78,14 +78,26 @@ async function expansionForLeihvorgang(member, reload = false) {
                 member.gesamtPreis = 0;
                 member.anzahlArtikel = 0;
             }
+
+            // Erstelle ein neues Mitgliedsobjekt mit den aktualisierten Daten
+            const updatedMember = {
+                ...member,
+                leihvorgaengeArtikelDetails: mappedData,
+                dataLoaded: true,
+                gesamtPreis: mappedData.length > 0 ? mappedData[0].ibp_GesamtPreis : 0,
+                anzahlArtikel: mappedData.length > 0 ? mappedData[0].ibp_Count : 0,
+            };
+
             console.log(`Leihvorgänge für Mitglied ${memberID} erfolgreich`, member.leihvorgaengeArtikelDetails);
-            return member;
+
+            return updatedMember;
         } catch (error) {
             console.log(`Abruf der Daten für Mitglied ${memberID} fehlgeschlagen`, error);
             return null;
         }
     }
-
+    // Wenn keine Aktualisierung nötig ist, gib das Mitglied zurück
+    return member;
 }
 async function fetchInventarExterneNummer(IDInventarKategorie){
     //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!

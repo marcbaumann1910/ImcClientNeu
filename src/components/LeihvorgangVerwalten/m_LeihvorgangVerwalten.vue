@@ -1,5 +1,5 @@
 <script setup>
-import {ref, computed, onMounted, reactive} from 'vue'
+import {ref, computed, onMounted, watch} from 'vue'
 const imageUrl = process.env.VITE_API_URL
 import { useLeihvorgangVerwalten } from '@/composables/useLeihvorgangVerwalten.js';
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
@@ -7,26 +7,37 @@ import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerA
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";
 import { expansionForLeihvorgang, formatDate } from "@/scripte/globalFunctions.js";
 import store from "@/store/store.js";
+import cloneDeep from 'lodash/cloneDeep'; // Importiere cloneDeep für tiefe Kopien
 
-const member = store.getters.getMember;
 const artikelDetails = ref(null);
+const checkedAusgeliehen = ref(true);
+const checkedAbgeschlossen = ref(false);
+
+//Holt das member Object aus dem vuex-Store
+const member = computed(() => store.getters.getMember);
+// Lokale Kopie des Mitglieds (initialisiert mit einer tiefen Kopie aus dem Store)
+const localMember = ref(cloneDeep(member.value));
+
+// Watcher, um die lokale Kopie zu aktualisieren, wenn der Store sich ändert
+watch(member, (newVal) => {
+  if (newVal) {
+    localMember.value = cloneDeep(newVal);
+    artikelDetails.value = newVal.leihvorgaengeArtikelDetails;
+  }
+});
 
 
 onMounted(async () => {
-  // ToDo: Experimentell, nur Testzweck
-  await store.dispatch('setShowAusgeliehenAbgeschlossen', {
-    idMitglied: member.easyVereinMitglied_id,
-    checkedStateAbgeschlossen: false
-  })
 
-  // Rufe die asynchrone Funktion auf und warte auf das Ergebnis
-  await expansionForLeihvorgang(member, true);
+  // Erweiterung der Leihvorgänge
+  const updatedMember = await expansionForLeihvorgang(localMember.value, true);
+  if (updatedMember) {
+    store.dispatch('setMember', updatedMember);
+    localMember.value = cloneDeep(updatedMember);
+    artikelDetails.value = updatedMember.leihvorgaengeArtikelDetails;
+  }
 
-  artikelDetails.value = member.leihvorgaengeArtikelDetails
-
-  // Überprüfe, ob member.value gefüllt ist
-  console.log('member nach expansionForLeihvorgang:', member);
-
+  console.log('member nach expansionForLeihvorgang:', localMember.value);
 });
 
 
@@ -48,6 +59,39 @@ const kebabs = [
   { title: 'Tausch', action: 'tausch', icon: 'mdi-swap-horizontal' },
 ];
 
+//Da ich in der Desktop-Ansicht mit checkboxen arbeite, übernehme ich die Logik über den vuex-Store auch in
+//mobilen Ansicht. Allerdings sind es hier keine Checkboxen, sondern Chips, weshalb ich den Zustand geklickt oder nicht
+//zwischenspeicher
+//!!!Die Funktion expansionForLeihvorgang() in globalFunction greift auf den vuex-Store zu und holt sich dort die Informationen
+//zum 'checked' Status
+async function handleCheckboxAusgeliehen(){
+  checkedAusgeliehen.value = !checkedAusgeliehen.value;
+  await store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: localMember.value.easyVereinMitglied_id, checkedStateAusgeliehen: checkedAusgeliehen.value})
+  console.log('checkedAusgeliehen',checkedAusgeliehen.value)
+  const updatedMember = await expansionForLeihvorgang(localMember.value, true);
+  if (updatedMember) {
+    await store.dispatch('setMember', updatedMember);
+    localMember.value = cloneDeep(updatedMember);
+    artikelDetails.value = updatedMember.leihvorgaengeArtikelDetails;
+  }
+
+
+}
+//Da ich in der Desktop-Ansicht mit checkboxen arbeite, übernehme ich die Logik über den vuex-Store auch in
+//mobilen Ansicht. Allerdings sind es hier keine Checkboxen, sondern Chips, weshalb ich den Zustand geklickt oder nicht
+//zwischenspeicher
+async function handleCheckboxAbgeschlossen(){
+  checkedAbgeschlossen.value = !checkedAbgeschlossen.value;
+  await store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: localMember.value.easyVereinMitglied_id, checkedStateAbgeschlossen: checkedAbgeschlossen.value})
+  console.log('checkedAbgeschlossen',checkedAbgeschlossen.value)
+  const updatedMember = await expansionForLeihvorgang(localMember.value, true);
+  if (updatedMember) {
+    await store.dispatch('setMember', updatedMember);
+    localMember.value = cloneDeep(updatedMember);
+    artikelDetails.value = updatedMember.leihvorgaengeArtikelDetails;
+  }
+}
+
 </script>
 
 
@@ -55,7 +99,7 @@ const kebabs = [
   <!-- Suchfeld -->
   <v-row>
     <v-col class="d-flex justify-end">
-      <span class="ml-2"><b>{{member.easyVereinMitglied_firstName}} {{member.easyVereinMitglied_familyName}}</b></span>
+      <span class="ml-2"><b>{{localMember.easyVereinMitglied_firstName}} {{localMember.easyVereinMitglied_familyName}}</b></span>
       <v-spacer></v-spacer>
     <v-btn class="mb-3 mr-4" icon="mdi-close" max-height="10" max-width="10" color="transparent"></v-btn>
     </v-col>
@@ -77,11 +121,11 @@ const kebabs = [
 
   <v-row></v-row>
 
-  <v-chip class="ml-2 mt-6" color="orange"  @click="expansionForLeihvorgang(205676911, true)">
+  <v-chip class="ml-2 mt-6" color="orange"  @click="handleCheckboxAusgeliehen()">
     <b> ausgeliehen </b>
   </v-chip>
 
-  <v-chip class="ml-2 mt-6" color="green" >
+  <v-chip class="ml-2 mt-6" color="green" @click="handleCheckboxAbgeschlossen()">
     <b> abgeschlossen </b>
   </v-chip>
 
