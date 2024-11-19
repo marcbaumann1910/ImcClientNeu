@@ -247,6 +247,7 @@ async function dialogSave(){
                     v-model="textExterneInventarNummer"
                     class="mt-0 mb-0 custom-no-margin"
                     dense
+                    variant="solo-filled"
                 ></v-text-field>
               </v-col>
 
