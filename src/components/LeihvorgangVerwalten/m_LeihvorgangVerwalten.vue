@@ -207,6 +207,13 @@ const filteredArtikelDetails = computed(() => {
           <v-icon color="black">mdi-palette</v-icon>
           {{ itemArtikelDetails.farbe }}
         </v-card-subtitle>
+
+        <v-card-subtitle
+            class="py-1 my-0 text-caption"
+        >
+          <v-icon color="black" class="ml-0" v-if="itemArtikelDetails.ibp_Bemerkung">mdi-comment</v-icon>
+          {{itemArtikelDetails.ibp_Bemerkung}}
+        </v-card-subtitle>
       </v-col>
       <v-col cols="5" class="pa-0">
         <v-card-subtitle
@@ -227,6 +234,12 @@ const filteredArtikelDetails = computed(() => {
         >
           <v-icon color="black" class="ml-2">mdi-cart</v-icon>
           {{itemArtikelDetails.ibp_Menge}}
+        </v-card-subtitle>
+        <v-card-subtitle
+            class="py-1 my-0 text-caption"
+        >
+          <v-icon color="black" class="ml-2" v-if="itemArtikelDetails.iz_Bezeichnung">mdi-checkbox-marked-circle</v-icon>
+          {{itemArtikelDetails.iz_Bezeichnung}}
         </v-card-subtitle>
       </v-col>
     </v-row>
