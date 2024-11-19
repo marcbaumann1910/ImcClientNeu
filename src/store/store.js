@@ -42,10 +42,11 @@ const store = createStore({
             artikelDetails: null,
         },
         showAusgeliehenAbgeschlossen: [],
+        member: [],
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
         createPersistedState({
-            paths: ['cartItems','userData', 'cartItemCount'], // persistieren der gewünschten Objekten
+            paths: ['cartItems','userData', 'cartItemCount', 'member'], // persistieren der gewünschten Objekten
             storage: window.sessionStorage, // Verwendung von sessionStorage statt localStorage
         }),
     ],
@@ -233,6 +234,9 @@ const store = createStore({
         setShowDialogArtikelTausch(state, value){
             state.showDialogArtikelTausch.showDialog = value.showDialog;
             state.showDialogArtikelTausch.artikelDetails = value.artikelDetails;
+        },
+        member(state, member){
+            state.member = member;
         }
 
     },
@@ -288,6 +292,9 @@ const store = createStore({
         },
         setShowDialogArtikelTausch( { commit }, value){
             commit('setShowDialogArtikelTausch', value)
+        },
+        setMember({ commit }, member){
+            commit('member', member)
         }
 
     },
@@ -336,8 +343,9 @@ const store = createStore({
         },
         getShowDialogNummerAendern: (state) => state.showDialogNummerAendern,
         getShowDialogArtikelTausch: (state) => state.showDialogArtikelTausch,
-
+        getMember: state => state.member,
     },
+
 
 });
 

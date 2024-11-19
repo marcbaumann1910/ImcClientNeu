@@ -1,44 +1,35 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import {ref, computed, onMounted, reactive} from 'vue'
 const imageUrl = process.env.VITE_API_URL
 import { useLeihvorgangVerwalten } from '@/composables/useLeihvorgangVerwalten.js';
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";
 import { expansionForLeihvorgang, formatDate } from "@/scripte/globalFunctions.js";
+import store from "@/store/store.js";
 
-
-// // Empfange die Mitglieds-ID als Prop
-// //Wird später verwendet, wenn die easyVereinMitgliedsID hier übergeben wird!
-// const props = defineProps({
-//   memberId: {
-//     type: Number,
-//     required: true,
-//   },
-// });a
-
-//const memberId = ref(205676911); //Marc
-const memberId = ref(209923010); //Moritz
-
-const member = ref(null);
+const member = store.getters.getMember;
+const artikelDetails = ref(null);
 
 
 onMounted(async () => {
-  // Initialisiere das Mitgliedsobjekt
-  member.value = { easyVereinMitglied_id: memberId.value, dataLoaded: false };
+  // ToDo: Experimentell, nur Testzweck
+  await store.dispatch('setShowAusgeliehenAbgeschlossen', {
+    idMitglied: member.easyVereinMitglied_id,
+    checkedStateAbgeschlossen: false
+  })
 
   // Rufe die asynchrone Funktion auf und warte auf das Ergebnis
-  await expansionForLeihvorgang(member.value, true);
+  await expansionForLeihvorgang(member, true);
+
+  artikelDetails.value = member.leihvorgaengeArtikelDetails
 
   // Überprüfe, ob member.value gefüllt ist
-  console.log('member nach expansionForLeihvorgang:', member.value);
+  console.log('member nach expansionForLeihvorgang:', member);
+
 });
 
-const artikelDetails = computed(() => {
-  return member.value && member.value.leihvorgaengeArtikelDetails
-      ? member.value.leihvorgaengeArtikelDetails
-      : [];
-});
+
 // const artikelDetails = member.value.leihvorgaengeArtikelDetails
 // Finde das Mitglied mit der übergebenen ID
 
@@ -57,8 +48,6 @@ const kebabs = [
   { title: 'Tausch', action: 'tausch', icon: 'mdi-swap-horizontal' },
 ];
 
-
-
 </script>
 
 
@@ -66,6 +55,8 @@ const kebabs = [
   <!-- Suchfeld -->
   <v-row>
     <v-col class="d-flex justify-end">
+      <span class="ml-2"><b>{{member.easyVereinMitglied_firstName}} {{member.easyVereinMitglied_familyName}}</b></span>
+      <v-spacer></v-spacer>
     <v-btn class="mb-3 mr-4" icon="mdi-close" max-height="10" max-width="10" color="transparent"></v-btn>
     </v-col>
   </v-row>

@@ -1,5 +1,7 @@
 <script setup>
 import {computed, onMounted, reactive, ref} from "vue";
+import { useDisplay } from 'vuetify';
+import { useRouter } from 'vue-router';
 import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
@@ -18,6 +20,8 @@ const searchMitglied = ref('');
 const leihvorgaengeMitgliederAbrufen = ref([]);
 const idInventarArtikel = ref('');
 const selectedMember = ref(null);
+const { smAndDown } = useDisplay();
+const router = useRouter();
 
 
 // Hier werden alle Mitglieder abgerufen
@@ -166,12 +170,25 @@ function showDialogNummerAendern(item, member, artikelDetails){
   })
 }
 
-function showDialogArtikelTausch(item, member){
+function showDialogArtikelTausch(item, member) {
   selectedMember.value = member;
   store.dispatch('setShowDialogArtikelTausch', {
     showDialog: true,
     artikelDetails: item,
   })
+}
+
+function handleExpansionPanelClick(member) {
+  if (smAndDown.value) {
+    // Auf Mobilgeräten zur neuen Seite navigieren
+    store.dispatch('setMember', member)
+    router.push({
+      name: 'm_leihvorgangverwalten', // Name der Route zu m_LeihvorgangVerwalten
+    });
+  } else {
+    // Auf Desktop-Geräten das Panel erweitern
+    expansionForLeihvorgang(member);
+  }
 }
 
 </script>
@@ -225,7 +242,7 @@ function showDialogArtikelTausch(item, member){
             :key="item.easyVereinMitglied_id"
             :value="item.easyVereinMitglied_id"
             class="mb-1">
-          <v-expansion-panel-title @click="expansionForLeihvorgang(item)">
+          <v-expansion-panel-title @click="handleExpansionPanelClick(item)">
             {{ item.easyVereinMitglied_firstName }} {{ item.easyVereinMitglied_familyName }}
             <template v-slot:actions="{ expanded }">
               <v-icon :color="!expanded ? 'orange' : ''"

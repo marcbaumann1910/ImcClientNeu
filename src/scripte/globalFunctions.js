@@ -5,15 +5,17 @@ async function expansionForLeihvorgang(member, reload = false) {
     //reload ist true, wenn diese Funktion von einer anderen aufgerufen wird
     //um ein erneutes Laden zu erzwingen
 
+    const memberID = member.easyVereinMitglied_id || member.value.easyVereinMitglied_id
+
     if (!member.dataLoaded || reload) {
         try {
-            store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: member.easyVereinMitglied_id}) //Damit die Standardwerte gesetzt werden
+            store.dispatch('setShowAusgeliehenAbgeschlossen', {idMitglied: memberID}) //Damit die Standardwerte gesetzt werden
 
             //Selektion-Kriterium ermitteln, anhand der Checkboxen
             //Der jeweilige Status der Checkbox ist im vuex-Store gespeichert und wird je idMitglied abgerufen
             //Standard im vuex-Store ist ausgeliehen = true, abgeschlossen = false
-            const checkedAusgeliehen = store.getters.getShowAusgeliehenAbgeschlossen(member.easyVereinMitglied_id).checkedStateAusgeliehen
-            const checkedAbgeschlossen = store.getters.getShowAusgeliehenAbgeschlossen(member.easyVereinMitglied_id).checkedStateAbgeschlossen
+            const checkedAusgeliehen = store.getters.getShowAusgeliehenAbgeschlossen(memberID).checkedStateAusgeliehen
+            const checkedAbgeschlossen = store.getters.getShowAusgeliehenAbgeschlossen(memberID).checkedStateAbgeschlossen
             //Beide Checkboxen gecheckt
             let selektionKriterium = '';
             if(checkedAusgeliehen && checkedAbgeschlossen){
@@ -34,7 +36,7 @@ async function expansionForLeihvorgang(member, reload = false) {
             }
 
             const response = await AuthenticationService.leihvorgangArtikel(
-                member.easyVereinMitglied_id,
+                memberID,
                 {IDinventarBuchungenPositionenStatus: selektionKriterium}
             );
 
@@ -76,14 +78,14 @@ async function expansionForLeihvorgang(member, reload = false) {
                 member.gesamtPreis = 0;
                 member.anzahlArtikel = 0;
             }
-
-            console.log(`Leihvorgänge für Mitglied ${member.easyVereinMitglied_id} erfolgreich`, member.leihvorgaengeArtikelDetails);
+            console.log(`Leihvorgänge für Mitglied ${memberID} erfolgreich`, member.leihvorgaengeArtikelDetails);
+            return member;
         } catch (error) {
-            console.log(`Abruf der Daten für Mitglied ${member.easyVereinMitglied_id} fehlgeschlagen`, error);
+            console.log(`Abruf der Daten für Mitglied ${memberID} fehlgeschlagen`, error);
+            return null;
         }
     }
 
-    return member;
 }
 async function fetchInventarExterneNummer(IDInventarKategorie){
     //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!
