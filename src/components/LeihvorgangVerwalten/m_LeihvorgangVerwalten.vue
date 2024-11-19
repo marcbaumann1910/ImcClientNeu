@@ -30,7 +30,6 @@ watch(member, (newVal) => {
 });
 
 onMounted(async () => {
-
   // Erweiterung der Leihvorgänge
   // Hier wird das updateMember aus expansionForLeihvorgang (wenn sich die Daten durch das Backend ändern)
   // verarbeitet und im Store gespeichert und an die lokale Kopie (localMember) übergeben!
@@ -47,8 +46,15 @@ onMounted(async () => {
 const kebabs = [
   { title: 'Rücknahme', action: 'ruecknahme', icon: 'mdi-arrow-down-thin-circle-outline' },
   { title: 'Nummer ändern', action: 'nummerAendern', icon: 'mdi-pencil' },
-  { title: 'Tausch', action: 'tausch', icon: 'mdi-swap-horizontal' },
+  { title: 'Tausch', action: showDialogArtikelTausch, icon: 'mdi-swap-horizontal' },
 ];
+
+async function showDialogArtikelTausch(item) {
+  store.dispatch('setShowDialogArtikelTausch', {
+    showDialog: true,
+    artikelDetails: item,
+  })
+}
 
 //Da ich in der Desktop-Ansicht mit checkboxen arbeite, übernehme ich die Logik über den vuex-Store auch in
 //mobilen Ansicht. Allerdings sind es hier keine Checkboxen, sondern Chips, weshalb ich den Zustand geklickt oder nicht
@@ -122,7 +128,7 @@ isVisibleIventarStatus;
 
   <v-text-field
       v-model="searchArtikel"
-      append-inner-icon="mdi-magnify"
+      prepend-inner-icon="mdi-magnify"
       density="compact"
       label="Artikel suchen"
       variant="solo"
@@ -168,7 +174,11 @@ isVisibleIventarStatus;
       </template>
 
       <v-list>
-        <v-list-item v-for="kebab in kebabs" :key="kebab.title" @click="navigate(kebab.route)">
+        <v-list-item
+            v-for="kebab in kebabs"
+            :key="kebab.title"
+            @click="() => kebab.action(itemArtikelDetails, member)"
+        >
           <v-list-item-title>
             <v-icon left class="mr-2" >{{ kebab.icon }}</v-icon>
             {{ kebab.title }}</v-list-item-title>
@@ -258,6 +268,9 @@ isVisibleIventarStatus;
       </v-col>
     </v-row>
   </v-card>
+
+  <DialogArtikelTausch :member="localMember"/>
+
 
   <!-- Aktionsbuttons -->
 <!--  <v-btn class="ml-4" min-width="335">Rücknahme</v-btn>-->

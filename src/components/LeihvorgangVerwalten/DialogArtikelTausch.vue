@@ -168,6 +168,7 @@ async function dialogSave(){
   textBemerkung.value = null;
   selectExterneInventarNummern.value = '';
   await expansionForLeihvorgang(props.member, true)
+  store.dispatch('setMember', props.member)//Wird für die m_LeihvorgangVerwalten benötigt, um Reaktivität zu gewährleisten
 }
 
 </script>

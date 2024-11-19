@@ -197,7 +197,7 @@ isVisibleIventarStatus;
 <!--    </div>-->
 
     <div>
-          <h1 class="mb-6">Hier können Sie die Leihvorgänge verwalten</h1>
+          <h1 class="mb-6 mobile-text-small">Leihvorgänge verwalten</h1>
     </div>
 
     <div>
@@ -213,7 +213,6 @@ isVisibleIventarStatus;
           color="red"
           label-color="primary"
           base-color="red"
-          bg-color="#303F9F"
       ></v-text-field>
     </div>
 
@@ -430,6 +429,37 @@ isVisibleIventarStatus;
 .hover:hover{
   cursor: pointer;
   transform: scale(1.1);
+}
+
+
+/* Textgröße für mobile Geräte */
+@media (max-width: 600px) {
+  .mobile-text-small {
+    font-size: 14px !important;
+  }
+}
+
+/* Textgröße für größere Geräte */
+@media (min-width: 601px) {
+  .mobile-text-small {
+    font-size: 16px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Textgröße für mobile Geräte in v-select */
+  :deep(.mobile-text-small) .v-field-label,
+  :deep(.mobile-text-small) .v-field__input {
+    font-size: 14px !important;
+  }
+}
+
+@media (min-width: 601px) {
+  /* Textgröße für größere Geräte in v-select */
+  :deep(.mobile-text-small) .v-field-label,
+  :deep(.mobile-text-small) .v-field__input {
+    font-size: 18px !important;
+  }
 }
 
 </style>
