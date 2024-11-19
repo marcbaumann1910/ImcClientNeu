@@ -270,7 +270,6 @@ async function dialogSave(){
                     label="Bemerkung (z.B. über den Zustand)"
                     v-model="textBemerkung"
                     variant="solo-filled"
-                    dense
                 ></v-text-field>
               </v-col>
             </v-row>
