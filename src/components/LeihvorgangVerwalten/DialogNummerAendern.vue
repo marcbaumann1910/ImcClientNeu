@@ -10,7 +10,6 @@ const artikelDetails = computed(() => store.getters.getShowDialogNummerAendern.a
 const IDinventarBuchungenPositionen = computed(() => store.getters.getShowDialogNummerAendern.artikelDetails.ibp_IDinventarBuchungenPositionen);
 
 
-
 const props = defineProps({
   member: Object,
 })
