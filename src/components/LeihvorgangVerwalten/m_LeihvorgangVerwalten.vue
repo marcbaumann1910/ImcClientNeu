@@ -5,6 +5,7 @@ import { useLeihvorgangVerwalten } from '@/composables/useLeihvorgangVerwalten.j
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";
+import DialogToolTip from "@/components/DialogToolTip.vue";
 import { checkStatusZustandArtikel,expansionForLeihvorgang,formatDate,isVisibleIventarStatus} from "@/scripte/globalFunctions.js";
 import store from "@/store/store.js";
 import cloneDeep from 'lodash/cloneDeep'; // Importiere cloneDeep für tiefe Kopien
@@ -13,6 +14,8 @@ const artikelDetails = ref(null);
 const checkedAusgeliehen = ref(true);
 const checkedAbgeschlossen = ref(false);
 const searchArtikel = ref('');
+// Reaktiver Zustand für den Dialog
+const showDialogTooltip = ref(false);
 
 //Holt das member Object aus dem vuex-Store
 const member = computed(() => store.getters.getMember);
@@ -123,6 +126,16 @@ const filteredArtikelDetails = computed(() => {
     return fullName.includes(searchArtikel.value.toLowerCase());
   });
 });
+
+
+const dialogTitle = ref('');
+const dialogText = ref('');
+// Methode zum Öffnen des Dialogs
+function openDialogToolTip(dialogTitleOpen, dialogTextOpen) {
+  showDialogTooltip.value = true;
+  dialogTitle.value = dialogTitleOpen;
+  dialogText.value = dialogTextOpen;
+}
 
 //globalFunctions
 isVisibleIventarStatus;
@@ -289,7 +302,14 @@ checkStatusZustandArtikel;
         <v-card-subtitle
             class="py-1 my-0 text-caption"
         >
-          <v-icon color="black" class="ml-2" v-if="itemArtikelDetails.ibp_Bemerkung">mdi-comment</v-icon>
+          <v-icon
+              color="black"
+              class="ml-2"
+              v-if="itemArtikelDetails.ibp_Bemerkung"
+              @click="openDialogToolTip('Bemerkung', itemArtikelDetails.ibp_Bemerkung)"
+          >
+            mdi-comment
+          </v-icon>
           {{itemArtikelDetails.ibp_Bemerkung}}
         </v-card-subtitle>
       </v-col>
@@ -299,7 +319,12 @@ checkStatusZustandArtikel;
   <DialogArtikelTausch :member="localMember"/>
   <DialogRuecknahme :member="localMember"/>
   <DialogNummerAendern :member="localMember"/>
-
+  <!-- Dialog für den vollständigen Text -->
+  <DialogToolTip
+      v-model="showDialogTooltip"
+      :dialogTitle="`${dialogTitle}`"
+      :dialogText="`${dialogText}`"
+  />
 
   <!-- Aktionsbuttons -->
 <!--  <v-btn class="ml-4" min-width="335">Rücknahme</v-btn>-->
@@ -310,11 +335,8 @@ checkStatusZustandArtikel;
 
 
 <style scoped>
-.truncate-text {
-  white-space: nowrap;       /* Verhindert Zeilenumbrüche */
-  overflow: hidden;          /* Versteckt den überlaufenden Text */
-  text-overflow: ellipsis;   /* Fügt ein Ellipsis hinzu */
-  display: block;            /* Ermöglicht die Anwendung von width/max-width */
-  max-width: 100%;           /* Begrenze die maximale Breite */
+
+.v-overlay__scrim {
+  background-color: rgba(255, 255, 255, 0.01) ; /* Passe die Transparenz an */
 }
 </style>

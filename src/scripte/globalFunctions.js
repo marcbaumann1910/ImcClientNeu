@@ -155,4 +155,21 @@ function checkStatusZustandArtikel(statusZustand){
     };
 }
 
-export { expansionForLeihvorgang, fetchInventarExterneNummer, formatDate, isVisibleIventarStatus, checkStatusZustandArtikel}
+// Methode zum Öffnen des Dialogs
+function openDialogToolTip(dialogTitleOpen, dialogTextOpen) {
+    return{
+        showDialogTooltip: true,
+        dialogTitle: dialogTitleOpen,
+        dialogText: dialogTextOpen,
+    }
+
+}
+
+export {
+    expansionForLeihvorgang,
+    fetchInventarExterneNummer,
+    formatDate,
+    isVisibleIventarStatus,
+    checkStatusZustandArtikel,
+    openDialogToolTip
+}
