@@ -104,6 +104,7 @@ async function dialogSave(){
   console.log('getShowAusgeliehenAbgeschlossen.idMitglied',store.getters.getShowAusgeliehenAbgeschlossen.idMitglied)
   selectedItem.value = null;
   textBemerkung.value = '';
+  store.dispatch('setMember', props.member)//Wird für die m_LeihvorgangVerwalten benötigt, um Reaktivität zu gewährleisten
   alert('Artikel-Rücknahme wurde gebucht')
 }
 
@@ -115,59 +116,104 @@ async function dialogSave(){
         v-model="showDialog"
         max-width="600"
     >
+    <v-container fluid>
+      <v-row>
+        <v-col>
+          <v-card
+          >
+            <v-card-title class="mobile-text-small pb-0">Rücknahme:</v-card-title>
+            <v-card-subtitle class="mobile-text-small pb-0">{{props.member.easyVereinMitglied_firstName}} {{props.member.easyVereinMitglied_familyName}}</v-card-subtitle>
+            <v-card-subtitle class="mobile-text-small">{{artikelDetails.ia_ArtikelBezeichnung}} | {{artikelDetails.konfektionsGroesse_Konfektionsgroesse}} | {{artikelDetails.farbe}}</v-card-subtitle>
+            <v-card-subtitle v-if="artikelDetails.ibp_externeInventarNummer" class="mobile-text-small">{{artikelDetails.ibp_externeInventarNummer}}</v-card-subtitle>
+            <v-card-text>
 
-      <v-card
-          prepend-icon="mdi-arrow-down-thin-circle-outline"
-          :title="`Rücknahme: ${artikelDetails.ia_ArtikelBezeichnung} | ${artikelDetails.konfektionsGroesse_Konfektionsgroesse} | ${artikelDetails.farbe}`"
-          :subtitle="`${memberName} | Inventar-Nummer: ${artikelDetails.ibp_externeInventarNummer}`"
-      >
-        <v-card-text>
-
-          <v-select
-              v-model="selectedItem"
-              :items="stateItems"
-              :item-title="i => i.Bezeichnung"
-              :item-value="i => i.IDInventarZustand"
-              label="Bitte den Zustand wählen"
-              persistent-hint
-              return-object
-              single-line
-              @update:modelValue="handleSelectionChange"
-          ></v-select>
+              <v-select
+                  class="mobile-text-small"
+                  v-model="selectedItem"
+                  :items="stateItems"
+                  :item-title="i => i.Bezeichnung"
+                  :item-value="i => i.IDInventarZustand"
+                  label="Bitte den Zustand wählen"
+                  persistent-hint
+                  return-object
+                  variant="solo-filled"
+                  @update:modelValue="handleSelectionChange"
+              ></v-select>
 
 
-         <v-text-field
-         label="Bemerkung (z.B. über den Zustand)"
-         v-model="textBemerkung"
-         >
+             <v-text-field
+             class="mobile-text-small"
+             label="Bemerkung (z.B. über den Zustand)"
+             v-model="textBemerkung"
+             variant="solo-filled"
+             >
 
-         </v-text-field>
+             </v-text-field>
 
-        </v-card-text>
+            </v-card-text>
 
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-
-          <v-btn
-              text="Schließen"
-              variant="plain"
-              @click="dialogClose"
-          ></v-btn>
-
-          <v-btn
-              color="primary"
-              text="Rücknahme ausführen"
-              variant="tonal"
-              @click="dialogSave()"
-          ></v-btn>
-        </v-card-actions>
-      </v-card>
+            <v-card-actions>
+              <v-container fluid class="mb-0 mt-0">
+                <v-row no-gutters>
+                  <v-col cols="12" sm="6" class="d-flex justify-end py-0 pr-1 mt-1">
+                    <v-btn
+                        block
+                        color="primary"
+                        text="Rücknahme"
+                        variant="flat"
+                        @click="dialogSave()"
+                    ></v-btn>
+                  </v-col>
+                  <v-col cols="12" sm="6" class="d-flex justify-end py-0 pr-1 mt-1">
+                    <v-btn
+                        block
+                        color="grey"
+                        text="Schließen"
+                        variant="tonal"
+                        @click="dialogClose"
+                    ></v-btn>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
     </v-dialog>
   </div>
 </template>
 
 <style scoped>
+
+/* Textgröße für mobile Geräte */
+@media (max-width: 600px) {
+  .mobile-text-small {
+    font-size: 14px !important;
+  }
+}
+
+/* Textgröße für größere Geräte */
+@media (min-width: 601px) {
+  .mobile-text-small {
+    font-size: 16px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Textgröße für mobile Geräte in v-select */
+  :deep(.mobile-text-small) .v-field-label,
+  :deep(.mobile-text-small) .v-field__input {
+    font-size: 14px !important;
+  }
+}
+
+@media (min-width: 601px) {
+  /* Textgröße für größere Geräte in v-select */
+  :deep(.mobile-text-small) .v-field-label,
+  :deep(.mobile-text-small) .v-field__input {
+    font-size: 16px !important;
+  }
+}
 
 </style>

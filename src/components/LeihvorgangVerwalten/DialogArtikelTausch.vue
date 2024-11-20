@@ -181,26 +181,14 @@ async function dialogSave(){
     >
       <v-card
       >
-        <v-btn v-if="!mdAndUp" icon="mdi-close" size="12px" class="ml-4 mt-2 pa-0" @click="dialogClose"></v-btn>
-        <div class="d-flex flex-column align-center">
-          <div class="d-flex align-center">
-            <!-- Icon -->
-        <!--<v-icon size="36px" class="desktop-only mr-0">mdi-swap-horizontal</v-icon>-->
-            <!-- Titel -->
-            <v-card-title class="mb-0 mobile-text-small">
-              {{ `Tausch: ${artikelDetails.ia_ArtikelBezeichnung} | ${artikelDetails.konfektionsGroesse_Konfektionsgroesse} | ${artikelDetails.farbe}` }}
-            </v-card-title>
-          </div>
-          <!-- Untertitel -->
-          <v-card-subtitle class="ml-0 mt-0 mobile-text-small">
-            {{ `${props.member.easyVereinMitglied_firstName} ${props.member.easyVereinMitglied_familyName}` }}
-          </v-card-subtitle>
-          <!-- Untertitel -->
-          <v-card-subtitle v-if="artikelDetails.ibp_externeInventarNummer"
-           class="ml-4 mt-0 mobile-text-small">
-            {{ `Inventar-Nummer: ${artikelDetails.ibp_externeInventarNummer}` }}
-          </v-card-subtitle>
+        <div class="d-flex justify-center align-center">
+          <v-card-title class="mobile-text-small">Artikel tauschen:</v-card-title>
+          <v-spacer></v-spacer>
+          <v-btn v-if="!mdAndUp" icon="mdi-close" size="12px" class="mr-4" @click="dialogClose"></v-btn>
         </div>
+        <v-card-subtitle class="mobile-text-small">{{props.member.easyVereinMitglied_firstName}} {{props.member.easyVereinMitglied_familyName}}</v-card-subtitle>
+        <v-card-subtitle class="mobile-text-small">{{artikelDetails.ia_ArtikelBezeichnung}} | {{artikelDetails.konfektionsGroesse_Konfektionsgroesse}} | {{artikelDetails.farbe}}</v-card-subtitle>
+        <v-card-subtitle class="mobile-text-small">{{artikelDetails.ibp_externeInventarNummer}}</v-card-subtitle>
 
         <v-card-text class="mb-0 pb-0">
           <v-container fluid>

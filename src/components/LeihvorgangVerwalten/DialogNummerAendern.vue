@@ -100,6 +100,7 @@ async function dialogSave(){
             >
               <v-card-title class="mobile-text-small">Nummer ändern:</v-card-title>
               <v-card-subtitle class="mobile-text-small">{{props.member.easyVereinMitglied_firstName}} {{props.member.easyVereinMitglied_familyName}}</v-card-subtitle>
+              <v-card-subtitle class="mobile-text-small">{{artikelDetails.ia_ArtikelBezeichnung}} | {{artikelDetails.konfektionsGroesse_Konfektionsgroesse}} | {{artikelDetails.farbe}}</v-card-subtitle>
               <v-card-subtitle class="mobile-text-small">{{artikelDetails.ibp_externeInventarNummer}}</v-card-subtitle>
               <v-card-text>
 
@@ -162,6 +163,13 @@ async function dialogSave(){
 </template>
 
 <style scoped>
+/* Textgröße für mobile Geräte */
+@media (max-width: 600px) {
+  .mobile-text-small {
+    font-size: 14px !important;
+  }
+}
+
 /* Textgröße für größere Geräte */
 @media (min-width: 601px) {
   .mobile-text-small {
