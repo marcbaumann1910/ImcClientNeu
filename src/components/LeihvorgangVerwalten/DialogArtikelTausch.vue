@@ -280,7 +280,7 @@ async function dialogSave(){
         <v-card-actions class="pt-0 mb-0 mt-0">
           <v-container fluid class="mb-0 mt-0">
             <v-row no-gutters>
-              <v-col cols="12" sm="6" class="d-flex justify-end py-0 mt-0">
+              <v-col cols="12" sm="6" class="d-flex justify-end py-0 mt-1">
                 <v-btn
                     block
                     color="primary"
