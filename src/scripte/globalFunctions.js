@@ -54,6 +54,7 @@ async function expansionForLeihvorgang(member, reload = false) {
                 ibp_IDinventarBuchungenPositionenStatus: item.IDinventarBuchungenPositionenStatus,
                 ibp_StatusDatum: item.StatusDatum,
                 iz_Bezeichnung: item.ZustandBezeichnung,
+                iz_IDInventarZustand: item.IDInventarZustand,
                 ibp_Bemerkung: item.Bemerkung,
                 ibp_GesamtPreis: item.GesamtPreis,
                 ibp_Count: item.AnzahlPositionen,
@@ -131,4 +132,27 @@ function isVisibleIventarStatus(statusBuchung) {
     }
 }
 
-export { expansionForLeihvorgang, fetchInventarExterneNummer, formatDate, isVisibleIventarStatus}
+function checkStatusZustandArtikel(statusZustand){
+    if(statusZustand === 4){
+        //4=beschädigt
+        //2=verschmutzt
+        return {
+            icon: "mdi-alert",
+            color: "red",
+        }
+    }
+    if(statusZustand === 5){
+        //4=beschädigt
+        //2=verschmutzt
+        return {
+            icon: "mdi-alert-circle",
+            color: "orange",
+        }
+    }
+    return {
+        icon: "mdi-check-bold",
+        color: "green",
+    };
+}
+
+export { expansionForLeihvorgang, fetchInventarExterneNummer, formatDate, isVisibleIventarStatus, checkStatusZustandArtikel}

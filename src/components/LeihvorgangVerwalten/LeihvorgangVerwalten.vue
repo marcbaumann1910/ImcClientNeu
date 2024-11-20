@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router';
 import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
-import { expansionForLeihvorgang, isVisibleIventarStatus } from "@/scripte/globalFunctions.js"
+import { expansionForLeihvorgang, isVisibleIventarStatus, checkStatusZustandArtikel } from "@/scripte/globalFunctions.js"
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";
 
@@ -182,6 +182,7 @@ function handleExpansionPanelClick(member) {
 }
 //globalFunctions
 isVisibleIventarStatus;
+checkStatusZustandArtikel;
 
 </script>
 
@@ -350,6 +351,12 @@ isVisibleIventarStatus;
                           class="mb-6"
                           v-if="!isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
                       >
+                        <v-icon
+                            class="mr-2 pb-1"
+                            :color="checkStatusZustandArtikel(itemArtikelDetails.iz_IDInventarZustand).color"
+                        >
+                          {{checkStatusZustandArtikel(itemArtikelDetails.iz_IDInventarZustand).icon}}
+                        </v-icon>
                         Zustand bei Rücknahme: {{ itemArtikelDetails.iz_Bezeichnung }}
                       </v-label>
 

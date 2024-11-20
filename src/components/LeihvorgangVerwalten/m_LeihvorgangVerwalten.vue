@@ -5,7 +5,7 @@ import { useLeihvorgangVerwalten } from '@/composables/useLeihvorgangVerwalten.j
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";
-import { expansionForLeihvorgang, formatDate, isVisibleIventarStatus } from "@/scripte/globalFunctions.js";
+import { checkStatusZustandArtikel,expansionForLeihvorgang,formatDate,isVisibleIventarStatus} from "@/scripte/globalFunctions.js";
 import store from "@/store/store.js";
 import cloneDeep from 'lodash/cloneDeep'; // Importiere cloneDeep für tiefe Kopien
 
@@ -126,6 +126,7 @@ const filteredArtikelDetails = computed(() => {
 
 //globalFunctions
 isVisibleIventarStatus;
+checkStatusZustandArtikel;
 
 </script>
 
@@ -256,8 +257,14 @@ isVisibleIventarStatus;
         <v-card-subtitle
             class="py-1 my-0 text-caption"
         >
-          <v-icon color="black" class="ml-0" v-if="itemArtikelDetails.ibp_Bemerkung">mdi-comment</v-icon>
-          {{itemArtikelDetails.ibp_Bemerkung}}
+          <v-icon
+              class="pb-1"
+              :color="checkStatusZustandArtikel(itemArtikelDetails.iz_IDInventarZustand).color"
+              v-if="itemArtikelDetails.iz_Bezeichnung"
+          >
+            {{checkStatusZustandArtikel(itemArtikelDetails.iz_IDInventarZustand).icon}}
+          </v-icon>
+          {{itemArtikelDetails.iz_Bezeichnung}}
         </v-card-subtitle>
       </v-col>
       <v-col cols="5" class="pa-0">
@@ -283,8 +290,8 @@ isVisibleIventarStatus;
         <v-card-subtitle
             class="py-1 my-0 text-caption"
         >
-          <v-icon color="black" class="ml-2" v-if="itemArtikelDetails.iz_Bezeichnung">mdi-checkbox-marked-circle</v-icon>
-          {{itemArtikelDetails.iz_Bezeichnung}}
+          <v-icon color="black" class="ml-0" v-if="itemArtikelDetails.ibp_Bemerkung">mdi-comment</v-icon>
+          {{itemArtikelDetails.ibp_Bemerkung}}
         </v-card-subtitle>
       </v-col>
     </v-row>
