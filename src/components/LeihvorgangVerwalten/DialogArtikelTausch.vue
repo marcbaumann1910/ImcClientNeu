@@ -179,9 +179,9 @@ async function dialogSave(){
         v-model="showDialog"
         max-width="600"
     >
-
       <v-card
       >
+        <v-btn v-if="!mdAndUp" icon="mdi-close" size="12px" class="ml-4 mt-2 pa-0" @click="dialogClose"></v-btn>
         <div class="d-flex flex-column align-center">
           <div class="d-flex align-center">
             <!-- Icon -->
@@ -192,7 +192,7 @@ async function dialogSave(){
             </v-card-title>
           </div>
           <!-- Untertitel -->
-          <v-card-subtitle class="ml-4 mt-0 mobile-text-small">
+          <v-card-subtitle class="ml-0 mt-0 mobile-text-small">
             {{ `${props.member.easyVereinMitglied_firstName} ${props.member.easyVereinMitglied_familyName}` }}
           </v-card-subtitle>
           <!-- Untertitel -->
