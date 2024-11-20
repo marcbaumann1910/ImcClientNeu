@@ -211,7 +211,7 @@ checkStatusZustandArtikel;
 
     <!-- Restlicher Inhalt -->
     <v-row>
-      <v-col cols="3">
+      <v-col cols="2">
         <v-avatar size="36px" class="ml-2 mt-2">
           <v-img
               alt="Avatar"
@@ -220,9 +220,9 @@ checkStatusZustandArtikel;
         </v-avatar>
       </v-col>
 
-      <v-col>
+      <v-col cols="10">
         <v-card-title>
-          {{itemArtikelDetails.ibp_externeInventarNummer}}
+            {{itemArtikelDetails.ibp_externeInventarNummer}}
         </v-card-title>
       </v-col>
     </v-row>
@@ -258,7 +258,6 @@ checkStatusZustandArtikel;
             class="py-1 my-0 text-caption"
         >
           <v-icon
-              class="pb-1"
               :color="checkStatusZustandArtikel(itemArtikelDetails.iz_IDInventarZustand).color"
               v-if="itemArtikelDetails.iz_Bezeichnung"
           >
@@ -290,7 +289,7 @@ checkStatusZustandArtikel;
         <v-card-subtitle
             class="py-1 my-0 text-caption"
         >
-          <v-icon color="black" class="ml-0" v-if="itemArtikelDetails.ibp_Bemerkung">mdi-comment</v-icon>
+          <v-icon color="black" class="ml-2" v-if="itemArtikelDetails.ibp_Bemerkung">mdi-comment</v-icon>
           {{itemArtikelDetails.ibp_Bemerkung}}
         </v-card-subtitle>
       </v-col>
@@ -311,5 +310,11 @@ checkStatusZustandArtikel;
 
 
 <style scoped>
-
+.truncate-text {
+  white-space: nowrap;       /* Verhindert Zeilenumbrüche */
+  overflow: hidden;          /* Versteckt den überlaufenden Text */
+  text-overflow: ellipsis;   /* Fügt ein Ellipsis hinzu */
+  display: block;            /* Ermöglicht die Anwendung von width/max-width */
+  max-width: 100%;           /* Begrenze die maximale Breite */
+}
 </style>
