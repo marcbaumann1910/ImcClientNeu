@@ -78,6 +78,7 @@ async function dialogSave(){
       IDInventarArtikel: store.getters.getShowDialogRuecknahmeArtikel.artikelDetails.ia_IDInventarArtikel,
       IDInventarBuchungen: store.getters.getShowDialogRuecknahmeArtikel.artikelDetails.ibp_IDInventarBuchungen,
       Menge: 1,
+      IDVerein: localStorage.idVerein,
     })
 
     if(artikelDetails.value.ia_externeInventarNummerPflicht === 1){
