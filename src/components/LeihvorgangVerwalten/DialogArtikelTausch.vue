@@ -136,7 +136,8 @@ async function dialogSave(){
       externeInventarNummer: textExterneInventarNummer.value || selectExterneInventarNummern.value, //neue, getauschte externeInventarNummer
       AusgeliehenBis: 'NULL',
       Bemerkung: textBemerkung.value,
-      IDInventarZustand: selectedItemZustand.value.IDInventarZustand
+      IDInventarZustand: selectedItemZustand.value.IDInventarZustand,
+      IDVerein: localStorage.idVerein
     })
 
     //Damit die Verfügbarkeit der externeInventarNummer upgedatet werden kann

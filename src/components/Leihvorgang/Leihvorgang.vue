@@ -120,6 +120,7 @@ async function leihvorgangBuchen(){
       cartItems: cartItems.value,
       IDMitglied: borrowMember.value.id,
       IDBenutzer: localStorage.idBenutzer,
+      IDVerein: localStorage.idVerein,
     });
     console.log('Erfolg leihvorgangBuchen', response.data);
 
