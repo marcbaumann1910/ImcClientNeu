@@ -1,5 +1,6 @@
 <script setup>
 import {computed, ref, watchEffect, onMounted} from 'vue'
+import { useDisplay } from "vuetify";
 import Mitglieder from "@/components/Mitglieder.vue";
 import WarenkorbDesktop from "@/components/Leihvorgang/WarenkorbDesktop.vue";
 import Artikel from "../Artikel.vue";
@@ -21,6 +22,7 @@ const snackbar = ref(false);
 const snackbarText = ref('')
 const snackbarColor = ref('error')
 const vChipColors = ref(['success', 'primary', 'primary']) //Steuerung der vChip Farben Anzeigenschritte
+const { smAndDown } = useDisplay();
 
 //Wenn das ausgewählte Mitglieder vom Benutzer entfernt wird, wird Komponente Mitglieder wieder geladen
 watchEffect(()=>{
@@ -233,21 +235,21 @@ function updateChipColors() {
               :color="vChipColors[0]"
           >
             <v-icon icon="mdi-numeric-1-circle" start></v-icon>
-            Mitglied auswählen
+            {{ smAndDown ? '': 'Mitglied auswählen' }}
           </v-chip>
           <v-chip
               class="flex-grow-1 vChipStep rounded-0 mr-1 justify-center text-h6"
               :color="vChipColors[1]"
           >
             <v-icon icon="mdi-numeric-2-circle" start></v-icon>
-            Artikel auswählen
+            {{ smAndDown ? '': 'Artikel auswählen' }}
           </v-chip>
           <v-chip
               class="flex-grow-1 vChipStep rounded-0 justify-center text-h6"
               :color="vChipColors[2]"
           >
             <v-icon icon="mdi-numeric-3-circle" start></v-icon>
-            Vorgang buchen
+            {{ smAndDown ? '': 'Vorgang buchen' }}
           </v-chip>
         </v-card>
 

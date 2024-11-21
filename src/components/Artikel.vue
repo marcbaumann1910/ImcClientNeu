@@ -108,8 +108,8 @@ console.log('germanColorToHex', germanColorToHex('grün'))
 
         <v-card-title class="d-flex align-center pe-2">
           <!-- Icon und Text in einer Zeile -->
-          <v-icon icon="mdi-wardrobe-outline" class="mr-2"></v-icon>
-          <span class="desktop-label d-none d-sm-inline">Inventar</span>
+<!--          <v-icon icon="mdi-wardrobe-outline" class="mr-2"></v-icon>-->
+<!--          <span class="desktop-label d-none d-sm-inline">Inventar</span>-->
 
           <!-- Spacer fügt Flex-Raum hinzu, damit das Suchfeld nach rechts ausgerichtet wird -->
           <v-spacer></v-spacer>
