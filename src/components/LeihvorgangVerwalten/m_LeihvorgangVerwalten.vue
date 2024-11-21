@@ -1,7 +1,6 @@
 <script setup>
 import {ref, computed, onMounted, watch} from 'vue'
 const imageUrl = process.env.VITE_API_URL
-import { useLeihvorgangVerwalten } from '@/composables/useLeihvorgangVerwalten.js';
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";

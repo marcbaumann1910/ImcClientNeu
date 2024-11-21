@@ -103,7 +103,7 @@ async function dialogSave(){
   await expansionForLeihvorgang(props.member, true)
   console.log('selectedItem', selectedItem.value.IDInventarZustand);
   console.log('getShowAusgeliehenAbgeschlossen.idMitglied',store.getters.getShowAusgeliehenAbgeschlossen.idMitglied)
-  selectedItem.value = null;
+  selectedItem.value = '';
   textBemerkung.value = '';
   store.dispatch('setMember', props.member)//Wird für die m_LeihvorgangVerwalten benötigt, um Reaktivität zu gewährleisten
   alert('Artikel-Rücknahme wurde gebucht')
