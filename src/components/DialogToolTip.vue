@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { defineEmits } from 'vue';
 
 // Definiere die Props, einschließlich `modelValue` für v-model
 const props = defineProps({

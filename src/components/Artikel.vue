@@ -10,7 +10,7 @@ const search = ref('');
 
 //Abrufen der Artikel-Daten vom Server
 onMounted(async () => {
-  const response = await AuthenticationService.artikel()
+  const response = await AuthenticationService.artikels(localStorage.getItem("idVerein"));
   items.value = response.data
 
 })

@@ -26,9 +26,9 @@ export default {
         console.log('reset-password-request: ', email);
         return Api.post('/reset-password-request', email);
     },
-    artikel() {
-        console.log('artikel: ');
-        return Api.get('/artikel');
+    artikels(idverein) {
+        console.log('artikel/:idVerein', idverein);
+        return Api.get(`/artikels/${idverein}`);
     },
     mitglieder() {
         console.log('mitglieder: ');
