@@ -275,7 +275,7 @@ function updateChipColors() {
             >
             zurück
           </v-btn>
-          <!--zurück mobil-->
+          <!--zurück mobil Button wird kleiner-->
           <v-btn
               v-if="currentPage>0 && smAndDown"
               class="mb-1"
@@ -296,7 +296,7 @@ function updateChipColors() {
               :disabled="!btnNextPageDisable">
             {{ btnText }}
           </v-btn>
-          <!--vorwärts mobil-->
+          <!--vorwärts mobil Button wird kleiner-->
           <v-btn
               v-if="smAndDown"
               class="mb-1"

@@ -83,7 +83,9 @@ const headers = ref([
     title: 'Lager',
     value: 'Bestand',
     sortable: true,
-    align: 'start'
+    align: 'start',
+    headerProps: { class: 'd-none d-sm-table-cell' }, // Nur ab sm sichtbar
+    cellProps: { class: 'd-none d-sm-table-cell' }, // Nur ab sm sichtbar
   },
   {
     title: 'Menge',
@@ -244,7 +246,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
             <!-- Spalte Lager -->
             <template #header.Bestand="{ column }">
               <span class="d-none d-sm-inline">Lager</span>
-              <v-icon class="d-inline d-sm-none">mdi-cart</v-icon>
+              <v-icon class="d-inline d-sm-none">mdi-warehouse</v-icon>
             </template>
             <template #item.Bestand="{ item }">
               <v-chip
@@ -275,7 +277,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
             <!-- Neue Spalte mit Menge -->
             <template #header.Menge="{ column }">
               <span class="d-none d-sm-inline">Menge</span>
-              <v-icon class="d-inline d-sm-none">mdi-numeric</v-icon>
+              <v-icon class="d-inline d-sm-none">mdi-cart</v-icon>
             </template>
             <template v-slot:item.Menge="{ item }">
               <v-row align="center">
@@ -284,7 +286,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
                      :items="getAvailableQuantities(item.Bestand)"
                      v-model="item.selectedQuantity"
                      dense
-                     solo
+                     variant="solo-filled"
                      hide-details
                      @update:modelValue="updateCart(item)"
                  >
