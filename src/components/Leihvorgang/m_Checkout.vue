@@ -107,7 +107,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
             <v-chip class="custom-chip mb-2 mt-4" outlined color="#3949AB" variant="flat">
               <!-- Minus Button -->
               <div @click="handleMinusClick(item.IDInventarArtikel, item.Menge)" class="hover px-2">
-                <v-icon size="16" class="mr-1">mdi-minus</v-icon>
+                <v-icon size="16" class="">mdi-minus</v-icon>
               </div>
 
               <!-- Vertikaler Divider -->
@@ -123,7 +123,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
 
               <!-- Plus Button -->
               <div @click="handlePlusClick(item.IDInventarArtikel, item.Menge, item.Bestand)" class="hover px-2">
-                <v-icon size="16" class="ml-1 mr-1">mdi-plus</v-icon>
+                <v-icon size="16" class="ml-1 mr-2">mdi-plus</v-icon>
               </div>
             </v-chip>
           </v-col>
@@ -137,7 +137,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
                     :content="store.getters.getExterneNummernCount(item.IDInventarArtikel)"
                 >
                   <v-icon
-                      class="mt-0 ml-1"
+                      class="mt-0 ml-2"
                       size="x-large"
                       @click="()=> showDialogForExterneID(item.Menge, item.IDInventarArtikel, item.ExterneInventarNummerPflicht, item.IDInventarKategorie)"
                   >mdi-keyboard-outline</v-icon>
@@ -145,7 +145,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
               </template>
               <template v-else>
                 <v-icon
-                    class="mt-0 ml-1"
+                    class="mt-0 ml-2"
                     size="x-large"
                     @click="()=> showDialogForExterneID(item.Menge, item.IDInventarArtikel, item.ExterneInventarNummerPflicht, item.IDInventarKategorie)"
                 >mdi-keyboard-outline</v-icon>
@@ -155,7 +155,11 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
           </v-col>
           <!-- Löschen -->
           <v-col cols="3">
-            <v-icon class="mt-4 ml-1" size="large">mdi-trash-can</v-icon>
+            <v-icon
+                class="mt-4 ml-1"
+                size="large"
+                @click="deleteItem(item.IDInventarArtikel)"
+            >mdi-trash-can</v-icon>
           </v-col>
         </v-row>
       </v-list>

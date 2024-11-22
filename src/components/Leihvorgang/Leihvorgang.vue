@@ -75,15 +75,24 @@ function previousPage() {
 //Gibt für die jeweilige Unterseite die Beschriftung für den Button zurück
 const btnText = computed(()=>{
   //Mitglieder
-  if(currentPage.value === 0){
+  if(currentPage.value === 0 && smAndDown.value){ //mobiles Gerät
+    return 'weiter';
+  }
+  if(currentPage.value === 0 && !smAndDown.value){ //Desktop Gerät
     return 'Artikel wählen';
   }
   //Artikel
-  if(currentPage.value === 1){
+  if(currentPage.value === 1 && smAndDown.value){ //mobiles Gerät
+    return 'weiter';
+  }
+  if(currentPage.value === 1 && !smAndDown.value){ //Desktop Gerät
     return 'zur Übersicht';
   }
   //Checkout
-  if(currentPage.value === 2) {
+  if(currentPage.value === 2 && smAndDown.value) { //mobiles Gerät
+    return  'buchen';
+  }
+  if(currentPage.value === 2 && !smAndDown.value) { //Desktop Gerät
     return  'Vorgang buchen';
   }
 });
@@ -257,12 +266,49 @@ function updateChipColors() {
 
         <!--Buttons zurück und Navigation vorwärts-->
         <v-card class="vCardButtons d-flex mb-2">
-          <v-btn color="grey" @click="previousPage" v-show="currentPage>0" > <v-icon class="mr-2">mdi-arrow-left-circle</v-icon>zurück</v-btn>
+        <!--zurück Desktop-->
+          <v-btn
+              v-if="currentPage>0 && !smAndDown"
+              color="grey"
+              prepend-icon="mdi-arrow-left-circle"
+              @click="previousPage"
+            >
+            zurück
+          </v-btn>
+          <!--zurück mobil-->
+          <v-btn
+              v-if="currentPage>0 && smAndDown"
+              class="mb-1"
+              prepend-icon="mdi-arrow-left-circle"
+              color="grey"
+              size="small"
+              @click="previousPage"
+          >
+            zurück
+          </v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="red darken-2" @click="nextPage" :disabled="!btnNextPageDisable">{{ btnText }}<v-icon class="ml-2">mdi-arrow-right-circle</v-icon></v-btn>
+        <!--vorwärts Desktop-->
+          <v-btn
+              v-if="!smAndDown"
+              color="red darken-2"
+              append-icon="mdi-arrow-right-circle"
+              @click="nextPage"
+              :disabled="!btnNextPageDisable">
+            {{ btnText }}
+          </v-btn>
+          <!--vorwärts mobil-->
+          <v-btn
+              v-if="smAndDown"
+              class="mb-1"
+              color="red darken-2"
+              size="small"
+              append-icon="mdi-arrow-right-circle"
+              @click="nextPage"
+              :disabled="!btnNextPageDisable"
+          >
+            {{ btnText }}
+          </v-btn>
         </v-card>
-
-
 
         <v-card class="vCardMitgliedSuchen w-100 pa-0 fill-height">
           <!-- Anzeige ausgewähltes Mitglied auf Desktops -->
