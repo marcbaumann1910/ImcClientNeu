@@ -15,6 +15,7 @@ import FlextTest from "@/components/FlextTest.vue";
 import Leihvorgang from "@/components/Leihvorgang/Leihvorgang.vue";
 import LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/LeihvorgangVerwalten.vue";
 import m_LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/m_LeihvorgangVerwalten.vue";
+import m_Checkout from "@/components/Leihvorgang/m_Checkout.vue";
 
 const routes = [
     {
@@ -109,6 +110,12 @@ const routes = [
         path: '/m.leihvorgangverwalten',
         name: 'm_leihvorgangverwalten',
         component: m_LeihvorgangVerwalten,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
+    },
+    {
+        path: '/m.checkout',
+        name: 'm_checkout',
+        component: m_Checkout,
         meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
 ];

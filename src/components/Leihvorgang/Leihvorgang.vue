@@ -9,6 +9,8 @@ import DialogExterneNummer from "@/components/Leihvorgang/DialogExterneNummer.vu
 import OverlayWaiting from "@/components/OverlayWaiting.vue";
 import store from "@/store/store.js"
 import AuthenticationService from "@/services/AuthenticationService.js";
+import {expansionForLeihvorgang} from "@/scripte/globalFunctions.js";
+import M_Checkout from "@/components/Leihvorgang/m_Checkout.vue";
 
 const isLoading = ref(false);
 const selectedMember = ref(null);
@@ -304,7 +306,8 @@ function updateChipColors() {
             <v-col cols="12">
               <Mitglieder v-if="currentPage === 0" @memberSelected="handleMemberSelect" />
               <Artikel v-if="currentPage === 1" />
-              <Checkout v-if="currentPage === 2" />
+              <m_Checkout v-if="currentPage === 2 && smAndDown"/>
+              <Checkout v-if="currentPage === 2 && !smAndDown"/>
             </v-col>
           </v-row>
         </v-card>
