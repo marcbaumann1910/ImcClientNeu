@@ -28,14 +28,8 @@ watch(items, (newVal, oldVal) => {
 })
 
 function handleClickUp(item) {
-  if (isNaN(item.selectedQuantity)) {
-    item.selectedQuantity = 1 // Setze auf 1, da wir erhöhen
-    updateCart(item);
-  } else {
-    //inputCount.value = parsedValue + 1
-    item.selectedQuantity += 1;
-    updateCart(item);
-  }
+  item.selectedQuantity += 1;
+  updateCart(item);
 }
 
 
@@ -43,19 +37,28 @@ function handleClickDown(item) {
   if(item.selectedQuantity <= 1){
     return;
   }
-
-  if (isNaN(item.selectedQuantity)) {
-    item.selectedQuantity = 1 // Setze auf 1, da wir erhöhen
-    updateCart(item);
-  } else {
-    //inputCount.value = parsedValue + 1
-    item.selectedQuantity -= 1;
-    updateCart(item);
-  }
+  item.selectedQuantity -= 1;
+  updateCart(item);
 }
 
 //Aktualisieren des Warenkorbs über vuex-Store
 function updateCart(item){
+  //Eingabe durch den Nutzer validieren und ggf. bei ungültiger Eingabe
+  //auf 1 Setzen
+  // Versuche, die Eingabe in eine Zahl zu konvertieren
+  let parsedValue = parseInt(item.selectedQuantity);
+
+  // Wenn die Eingabe keine gültige Zahl ist oder kleiner als 1, setze auf 1
+  if (isNaN(parsedValue) || parsedValue < 1) {
+    parsedValue = 1;
+  } else if (parsedValue > item.Bestand) {
+    // Wenn die Eingabe größer als der Bestand ist, setze auf den maximalen Bestand
+    parsedValue = parseInt(item.Bestand);
+  }
+
+  // Aktualisiere selectedQuantity und inputQuantity
+  item.selectedQuantity = parsedValue;
+
   //Auswahl wird aufbereitet und an vuex-Store übergeben
   if(item.selectedQuantity > 0) {
     const cartItem = {
@@ -347,7 +350,12 @@ console.log('germanColorToHex', germanColorToHex('grün'))
                         >mdi-chevron-up</v-icon
                         >
                       </span>
-                      <input type="text" v-model="item.selectedQuantity" class="inputCount" /><br /><br />
+                      <input
+                          type="text"
+                          v-model="item.selectedQuantity"
+                          class="inputCount"
+                          @input="updateCart(item)"
+                      /><br /><br />
                       <span>
                         <v-icon size="25" class="vLableUpDown" @click="handleClickDown(item)"
                         >mdi-chevron-down</v-icon
@@ -426,7 +434,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
 
 .vLableUpDown {
   font-size: 15px;
-  margin-left: -4.5px;
+  margin-left: -5px;
 }
 
 :hover .vLableUpDown {
@@ -435,8 +443,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
 
 .inputCount {
   font-size: 12px;
-  align-items: center;
-  justify-items: center;
+  text-align: center; /* Text innerhalb des Input-Feldes zentrieren */
   margin-left: -23%;
   margin-top: 0;
   margin-bottom: -110%;
