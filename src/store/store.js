@@ -15,6 +15,7 @@ const store = createStore({
         cartItemsAmount: 0, //Gesamtsumme aller Artikel
         borrowMember: [], //Mitglied
         showWarenkorbDesktop: true, //Anzeigensteuerung des Warenkorbs
+        showWarenkorbMobile: false, //Anzeigensteuerung des Warenkorbs
         showDialogExterneInventarNummer: {
             //Zeigt den Dialog zur Erfassung der Externen Nummern an.
             showDialog: false,
@@ -118,6 +119,10 @@ const store = createStore({
         setShowWarenkorbDesktop(state, value){
             //Speichert die Artikel für den Warenkorb
             state.showWarenkorbDesktop = value;
+        },
+        setShowWarenkorbMobile(state, value){
+            //Speichert die Artikel für den Warenkorb
+            state.showWarenkorbMobile = value;
         },
         calculateNewItemsAmount(state){
             //Ermittelt den Gesamtpreis aller im Warenkorb befindlichen Artikel
@@ -264,6 +269,9 @@ const store = createStore({
         setShowWarenkorbDesktop({ commit }, value) {
             commit('setShowWarenkorbDesktop', value);
         },
+        setShowWarenkorbMobile({ commit }, value) {
+            commit('setShowWarenkorbMobile', value);
+        },
         deleteItemFromCart({ commit }, item){
             commit('deleteItemFromCart', item);
         },
@@ -316,6 +324,7 @@ const store = createStore({
         },
         getBorrowMember: state => state.borrowMember,
         getShowWarenkorbDesktop: state => state.showWarenkorbDesktop,
+        getShowWarenkorbMobile: state => state.showWarenkorbMobile,
         getCartItemsAmount: state => state.cartItemsAmount,
         getShowDialogExterneInventarNummer: state => state.showDialogExterneInventarNummer,
         getExterneNummernForArtikel: (state) => (idArtikel) => {

@@ -1,13 +1,14 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useDisplay } from "vuetify";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import store from "@/store/store.js";
+import M_Checkout from "@/components/Leihvorgang/m_Checkout.vue";
 
 const drawer = ref(false);
+const { smAndDown } = useDisplay();
 console.log(store.getters.getShowWarenkorbDesktop);
-
-
 
 store.dispatch('setCartItemCount', 0)
 
@@ -76,6 +77,9 @@ function goLogin() {
 //Steuert über den vuex-Store die Anzeige des Warenkorbs in <Leihvorgang/>
 //da dieser über mehrere Komponenten gesteuert wird
 function showCartChange(){
+  if(smAndDown){
+    store.dispatch("setShowWarenkorbMobile", !store.getters.getShowWarenkorbMobile);
+  }
   store.dispatch("setShowWarenkorbDesktop", !store.getters.getShowWarenkorbDesktop);
   console.log(store.getters.getShowWarenkorbDesktop)
 }

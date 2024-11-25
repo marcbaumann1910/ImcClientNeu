@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref, watchEffect, onMounted} from 'vue'
+import {computed, ref, watchEffect, watch, onMounted} from 'vue'
 import { useDisplay } from "vuetify";
 import Mitglieder from "@/components/Mitglieder.vue";
 import WarenkorbDesktop from "@/components/Leihvorgang/WarenkorbDesktop.vue";
@@ -19,6 +19,7 @@ const currentPage = ref(0);
 const showCart = computed(()=> store.getters.getShowWarenkorbDesktop);
 const cartItems = computed(()=> store.getters.getCartItems)
 const borrowMember = computed(()=> store.getters.getBorrowMember)
+const showWarenkorbMobile = computed(()=> store.getters.getShowWarenkorbMobile)
 const user = computed(()=> store.getters.getUserData)
 const snackbar = ref(false);
 const snackbarText = ref('')
@@ -44,10 +45,16 @@ watchEffect(()=>{
 //   }
 // })
 
+//
+// //WarenkorbDesktop btn "zur Kasse" liefert true, wenn dieser geklickt wird
+// const props = defineProps({
+//   goToCheckout: Boolean,
+// })
 
-//WarenkorbDesktop btn "zur Kasse" liefert true, wenn dieser geklickt wird
-defineProps({
-  goToCheckout: Boolean,
+watch(showWarenkorbMobile, (newValue)=>{
+  if(newValue){
+    nextPage();
+  }
 })
 
 //Button aktivieren und deaktivieren
@@ -70,6 +77,13 @@ function previousPage() {
     currentPage.value--;
     updateChipColors(); //Steuerung der vChip Farben Anzeigenschritte
   }
+  //Wenn der mobile Warenkorb durch klicken auf das mdi-cart Symbol in der Navigationsleiste
+  //erfolgt und wieder zurücknavigiert wird, muss sichergestellt sein, dass der vuex-Store
+  //upgedatet wird, da sonst zweimal auf das Symbol Warenkorb geklickt werden muss
+  if(showWarenkorbMobile.value){
+    store.dispatch('setShowWarenkorbMobile', false)
+  }
+
 }
 
 //Gibt für die jeweilige Unterseite die Beschriftung für den Button zurück
@@ -232,7 +246,7 @@ function updateChipColors() {
     <OverlayWaiting v-if="isLoading"></OverlayWaiting>
     <DialogExterneNummer></DialogExterneNummer>
     <!-- @goToCheckout="nextPage" rufe die Funktion nextPage auf  -->
-    <WarenkorbDesktop v-if="showCart && $vuetify.display.mdAndUp" @goToCheckout="nextPage"/>
+    <WarenkorbDesktop v-if="showCart && !smAndDown" @goToCheckout="nextPage"/>
 
     <!-- Da v-show nicht funktioniert und die v-card mit dem Hauptinhalt nach rechts rückt sobald WarenkorbDesktop mit v-if aus dem DOM
      verschwindet, verwende ich in Abhängigkeit von showCart end oder center bei v-row justify-->
