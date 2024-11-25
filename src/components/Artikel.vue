@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
+import { useDisplay } from "vuetify";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import { germanColorToHex } from '@/utils/colorConverter.js'
 import store from "@/store/store.js"; //Wird benötigt um Farben (text) in RGB zu wandeln
@@ -7,13 +8,51 @@ import store from "@/store/store.js"; //Wird benötigt um Farben (text) in RGB z
 const imageUrl = process.env.VITE_API_URL
 const items = ref([]);
 const search = ref('');
+const { smAndDown } = useDisplay();
+const inputCount = ref(0);
 
 //Abrufen der Artikel-Daten vom Server
 onMounted(async () => {
   const response = await AuthenticationService.artikels(localStorage.getItem("idVerein"));
   items.value = response.data
 
+  //Stellt sicher, dass trotz einer Navigation zur Checkout-Seite
+  //die zuvor eingegeben Mengen in der Input-Box (mobile-Ansicht) wieder geladen werden
+  items.value.forEach(item => {
+    item.selectedQuantity = store.getters.getCartItemsCountByArtikelID(item.IDInventarArtikel);
+  })
 })
+
+watch(items, (newVal, oldVal) => {
+
+})
+
+function handleClickUp(item) {
+  if (isNaN(item.selectedQuantity)) {
+    item.selectedQuantity = 1 // Setze auf 1, da wir erhöhen
+    updateCart(item);
+  } else {
+    //inputCount.value = parsedValue + 1
+    item.selectedQuantity += 1;
+    updateCart(item);
+  }
+}
+
+
+function handleClickDown(item) {
+  if(item.selectedQuantity <= 1){
+    return;
+  }
+
+  if (isNaN(item.selectedQuantity)) {
+    item.selectedQuantity = 1 // Setze auf 1, da wir erhöhen
+    updateCart(item);
+  } else {
+    //inputCount.value = parsedValue + 1
+    item.selectedQuantity -= 1;
+    updateCart(item);
+  }
+}
 
 //Aktualisieren des Warenkorbs über vuex-Store
 function updateCart(item){
@@ -217,13 +256,21 @@ console.log('germanColorToHex', germanColorToHex('grün'))
             </template>
 
             <!-- Spalte Artikel -->
-            <template #header.ArtikelBezeichnung="{ column }">
-              <span class="d-none d-sm-inline">Artikel</span>
-              <v-icon class="d-inline d-sm-none">mdi-tshirt-crew</v-icon>
-            </template>
-            <template #item.ArtikelBezeichnung="{ item }">
-              <div class="artikel-column">  {{ item.ArtikelBezeichnung }} </div>
-            </template>
+              <template #header.ArtikelBezeichnung="{ column }">
+                <span class="d-none d-sm-inline">Artikel</span>
+                <v-icon class="d-inline d-sm-none">mdi-tshirt-crew</v-icon>
+              </template>
+              <template #item.ArtikelBezeichnung="{ item }">
+                <v-badge
+                    :content="`${parseInt(item.Bestand)}`"
+                    :color="item.Bestand>0 ? 'green' : 'red'"
+                    v-if="smAndDown"
+                >
+                <div class="artikel-column columnArtikelBezeichnung">  {{ item.ArtikelBezeichnung }} </div>
+                </v-badge>
+                <div v-else class="artikel-column ma-2">  {{ item.ArtikelBezeichnung }} </div>
+              </template>
+
 
             <!-- Spalte Konfektionsgroesse -->
             <template #header.Konfektionsgroesse="{ column }">
@@ -243,7 +290,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
               <span>{{ parseFloat(item.Preis).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} €</span>
             </template>
 
-            <!-- Spalte Lager -->
+            <!--Lager wird auf kleinen mobilen Geräten ausgeblendet, erfolgt über das Array headers[]-->
             <template #header.Bestand="{ column }">
               <span class="d-none d-sm-inline">Lager</span>
               <v-icon class="d-inline d-sm-none">mdi-warehouse</v-icon>
@@ -283,6 +330,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
               <v-row align="center">
                 <v-col class="d-flex align-center" cols="12">
                  <v-select
+                     v-if="!smAndDown"
                      :items="getAvailableQuantities(item.Bestand)"
                      v-model="item.selectedQuantity"
                      dense
@@ -290,8 +338,23 @@ console.log('germanColorToHex', germanColorToHex('grün'))
                      hide-details
                      @update:modelValue="updateCart(item)"
                  >
-
                  </v-select>
+                <!--Mengen Eingabe über Up and Down für mobile Geräte-->
+                  <template v-if="smAndDown">
+                    <div class="d-flex flex-column align-start">
+                      <span>
+                        <v-icon size="25" class="vLableUpDown" @click="handleClickUp(item)"
+                        >mdi-chevron-up</v-icon
+                        >
+                      </span>
+                      <input type="text" v-model="item.selectedQuantity" class="inputCount" /><br /><br />
+                      <span>
+                        <v-icon size="25" class="vLableUpDown" @click="handleClickDown(item)"
+                        >mdi-chevron-down</v-icon
+                        >
+                      </span>
+                    </div>
+                  </template>
                 </v-col>
               </v-row>
             </template>
@@ -361,6 +424,28 @@ console.log('germanColorToHex', germanColorToHex('grün'))
 
 }
 
+.vLableUpDown {
+  font-size: 15px;
+  margin-left: -4.5px;
+}
+
+:hover .vLableUpDown {
+  cursor: pointer;
+}
+
+.inputCount {
+  font-size: 12px;
+  align-items: center;
+  justify-items: center;
+  margin-left: -23%;
+  margin-top: 0;
+  margin-bottom: -110%;
+  width: 30px;
+  height: 18px;
+  border-radius: 3px;
+  border: 1px solid #181818;
+}
+
 .color-circle {
   width: 18px; /* Größe des Punktes */
   height: 18px;
@@ -406,6 +491,10 @@ console.log('germanColorToHex', germanColorToHex('grün'))
   .artikel-column {
     max-width: 80px; /* Schmalere Breite auf mobilen Geräten */
   }
+}
+
+.columnArtikelBezeichnung{
+  margin-left: -5%;
 }
 
 /* Standardbreite des Suchfelds */

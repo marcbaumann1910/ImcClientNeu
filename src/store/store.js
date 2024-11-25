@@ -1,5 +1,6 @@
 import {createStore} from 'vuex';
 import createPersistedState from 'vuex-persistedstate';
+import {id} from "vuetify/locale";
 
 //getters geben die Werte oder Object zurück
 //mutations: Hier lassen sich Änderungen an den Werten Objekten durchführen
@@ -303,6 +304,16 @@ const store = createStore({
         getUserData: state => state.userData,
         getCartItemCount: state => state.cartItemCount,
         getCartItems: state => state.cartItems,
+        getCartItemsCountByArtikelID: state => (idArtikel) => {
+            //Ruft zum jeweiligen Artikel in cartItems die Menge ab
+            //Wird z.B. verwendet um in m_Checkout die Menge des Artikel in der Inputbox anzuzeigen,
+            //auch wenn navigiert wird
+            const existingItems = state.cartItems.filter(cartItem => cartItem.IDInventarArtikel === idArtikel)
+            if(existingItems.length > 0){
+                return existingItems[0].Menge;
+            }
+            return 0;
+        },
         getBorrowMember: state => state.borrowMember,
         getShowWarenkorbDesktop: state => state.showWarenkorbDesktop,
         getCartItemsAmount: state => state.cartItemsAmount,
