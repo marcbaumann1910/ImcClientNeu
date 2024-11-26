@@ -239,8 +239,9 @@ checkStatusZustandArtikel;
           <v-expansion-panel-title @click="handleExpansionPanelClick(item)">
             {{ item.easyVereinMitglied_firstName }} {{ item.easyVereinMitglied_familyName }}
             <template v-slot:actions="{ expanded }">
-              <v-icon :color="!expanded ? 'orange' : ''"
-                      :icon="expanded ? 'mdi-pencil' : 'mdi-progress-clock'"></v-icon>
+              <v-icon
+                  :color="expanded ? 'black' : (item.inventarBuchung_abgeschlossen===true ? 'green' : 'orange')"
+                  :icon="expanded ? 'mdi-pencil' : 'mdi-progress-clock'"></v-icon>
             </template>
           </v-expansion-panel-title>
           <v-divider></v-divider>
