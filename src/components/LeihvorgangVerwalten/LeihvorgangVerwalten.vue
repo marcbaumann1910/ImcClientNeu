@@ -119,14 +119,16 @@ function filteredArtikelDetails(item) {
   }
 
   return item.leihvorgaengeArtikelDetails.filter((detail) => {
-    const artikelBezeichnung = detail.ia_ArtikelBezeichnung.toLowerCase();
-    const konfektionsGroesse = detail.konfektionsGroesse_Konfektionsgroesse.toLowerCase();
-    const farbe = detail.farbe.toLowerCase();
+    const artikelBezeichnung = (detail.ia_ArtikelBezeichnung || '').toLowerCase();
+    const konfektionsGroesse = (detail.konfektionsGroesse_Konfektionsgroesse || '').toLowerCase();
+    const farbe = (detail.farbe || '').toLowerCase();
+    const externeID = (detail.ibp_externeInventarNummer || '').toLowerCase();
 
     return (
         artikelBezeichnung.includes(lowerSearchTerm) ||
         konfektionsGroesse.includes(lowerSearchTerm) ||
-        farbe.includes(lowerSearchTerm)
+        farbe.includes(lowerSearchTerm) ||
+        externeID.includes(lowerSearchTerm)
     );
   });
 }
@@ -268,6 +270,7 @@ checkStatusZustandArtikel;
                 v-model="searchArtikels[item.easyVereinMitglied_id]"
                 :loading="loading"
                 append-inner-icon="mdi-magnify"
+                clearable
                 density="compact"
                 label="Artikel suchen"
                 variant="solo"
