@@ -12,20 +12,32 @@ console.log(store.getters.getShowWarenkorbDesktop);
 
 store.dispatch('setCartItemCount', 0)
 
+const current = ref(''); // set from this.$route
+
+
+function currentSelection(){
+  console.log('current', current)
+}
 
 const items = [
-  {title: 'Dashboard', subtitle: '', route: '/dashboard', icon: 'mdi-view-dashboard'},
-  {title: 'Leihvorgang', subtitle: '', route: '/leihvorgang', icon: 'mdi-handshake'},
-  {title: '', subtitle: 'buchen', route: '/leihvorgang', icon: 'mdi-handshake'},
-  {title: '', subtitle: 'verwalten', route: '/leihvorgangverwalten', icon: 'mdi-handshake'},
-  {title: 'Artikel', subtitle: '', route: '/artikel', icon: 'mdi-file-document'},
-  {title: 'Mitglieder', subtitle: '', route: '/mitglieder', icon: 'mdi-account-multiple'},
-  {title: 'Abrechnung', subtitle: '', route: '/abrechnung', icon: 'mdi-currency-eur'},
-  {title: 'Registrierung', subtitle: '', route: '/register', icon: 'mdi-account-plus'},
-  {title: 'Testing', subtitle: '', route: '/testing', icon: 'mdi-ab-testing'},
-  {title: 'Mobil', subtitle: '', route: '/m.checkout', icon: 'mdi-cellphone'},
+  { title: 'Dashboard', route: '/dashboard', icon: 'mdi-view-dashboard' },
+  {
+    title: 'Leihvorgang',
+    icon: 'mdi-handshake',
+    active: false, // Wichtig für v-model
+    children: [
+      { title: 'Buchen', route: '/leihvorgang', icon: 'mdi-book' },
+      { title: 'Verwalten', route: '/leihvorgangverwalten', icon: 'mdi-cog' },
+    ],
+  },
+  { title: 'Artikel', route: '/artikel', icon: 'mdi-file-document' },
+  { title: 'Mitglieder', route: '/mitglieder', icon: 'mdi-account-multiple' },
+  { title: 'Abrechnung', route: '/abrechnung', icon: 'mdi-currency-eur' },
+  { title: 'Registrierung', route: '/register', icon: 'mdi-account-plus' },
+  { title: 'Testing', route: '/testing', icon: 'mdi-ab-testing' },
+  { title: 'Mobil', route: '/m.checkout', icon: 'mdi-cellphone' },
+];
 
-]
 
 const kebabs = [
   {title: 'Mein Profil', route: '/profile', icon: 'mdi-account'},
@@ -147,27 +159,46 @@ function showCartChange(){
   <!--  image="https://cdn.vuetifyjs.com/images/backgrounds/bg-2.jpg"-->
   <v-navigation-drawer
       v-model="drawer"
-      :location="$vuetify.display.mobile ? 'top' : undefined" temporary
+      :location="$vuetify.display.mobile ? 'top' : undefined"
+      temporary
   >
-    <v-list>
-      <v-list-item
-          dense v-for="item in items"
-          :key="item.title"
-          @click="navigate(item.route)">
-        <v-list-item-title
-            class="mb-0"
-            v-if="item.title">
-          <v-icon class="mr-2">{{ item.icon }}</v-icon>
-          {{ item.title }}
-        </v-list-item-title>
-        <v-list-item-subtitle
-            class="ml-9 mt-0"
-            v-if="!item.title"
+    <v-list nav dense density="compact" class="pa-0 ma-0">
+      <template v-for="(item, index) in items" :key="index">
+        <!-- Gruppe für Items mit Unterelementen -->
+        <v-list-group
+            v-if="item.children"
+            v-model="item.active"
+            :prepend-icon="item.icon"
+        >
+          <template #activator="{ props }">
+            <v-list-item v-bind="props">
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+            </v-list-item>
+          </template>
+
+          <!-- Unterelemente -->
+          <v-list-item
+              v-for="(child, i) in item.children"
+              :key="`child-${index}-${i}`"
+              @click="navigate(child.route)"
+          >
+              <v-list-item-title>{{ child.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list-group>
+
+        <!-- Einzelne Items ohne Unterelemente -->
+        <v-list-item
+            v-else
+            :key="`item-${index}`"
             @click="navigate(item.route)"
-        >{{item.subtitle}}</v-list-item-subtitle>
-      </v-list-item>
+            :prepend-icon="item.icon"
+        >
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+        </v-list-item>
+      </template>
     </v-list>
   </v-navigation-drawer>
+
 </template>
 
 
