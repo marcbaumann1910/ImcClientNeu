@@ -89,8 +89,9 @@ function goLogin() {
 //Steuert über den vuex-Store die Anzeige des Warenkorbs in <Leihvorgang/>
 //da dieser über mehrere Komponenten gesteuert wird
 function showCartChange(){
-  if(smAndDown){
+  if(smAndDown.value){
     store.dispatch("setShowWarenkorbMobile", !store.getters.getShowWarenkorbMobile);
+    return;
   }
   store.dispatch("setShowWarenkorbDesktop", !store.getters.getShowWarenkorbDesktop);
   console.log(store.getters.getShowWarenkorbDesktop)
@@ -172,7 +173,7 @@ function showCartChange(){
         >
           <template #activator="{ props }">
             <v-list-item v-bind="props">
-              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-title class="text-black">{{ item.title }}</v-list-item-title>
             </v-list-item>
           </template>
 
@@ -182,7 +183,7 @@ function showCartChange(){
               :key="`child-${index}-${i}`"
               @click="navigate(child.route)"
           >
-              <v-list-item-title>{{ child.title }}</v-list-item-title>
+              <v-list-item-title class="text-black">{{ child.title }}</v-list-item-title>
           </v-list-item>
         </v-list-group>
 

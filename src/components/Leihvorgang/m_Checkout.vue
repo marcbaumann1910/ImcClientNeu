@@ -163,6 +163,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
           </v-col>
         </v-row>
       </v-list>
+      <span v-if="item.ExterneInventarNummerPflicht" class="font-weight-bold text-caption ml-2" >Externe Nummer muss erfasst werden</span>
     </v-card>
   </v-container>
 </template>
