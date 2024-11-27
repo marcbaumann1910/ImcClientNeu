@@ -1,5 +1,6 @@
 import axios from 'axios';
 import router from "@/router/index.js";
+import store from "@/store/store.js";
 
 const api = axios.create({
     //baseURL: 'http://localhost:3000/', // Basis-URL des Backend-Servers
@@ -14,7 +15,7 @@ const api = axios.create({
 api.interceptors.request.use(
     (config) => {
         if(config.url !== '/login' && config.url !== '/register'){ //An diese Pfade werden Tokens gesendet!!!
-            const accessToken = localStorage.getItem('accessToken');
+            const accessToken = store.getters.getAccessToken;
             if(accessToken){
                 console.log('accessToken:', accessToken);
                 config.headers['Authorization'] = `Bearer ${accessToken}`;
@@ -49,7 +50,8 @@ api.interceptors.response.use(
                     });
 
                     // Speichere den neuen Access Token
-                    localStorage.setItem('accessToken', response.data.accessToken);
+                    store.commit('setAccessToken', response.data.accessToken);
+                    // localStorage.setItem('accessToken', response.data.accessToken);
 
                     // Aktualisiere den Authorization Header mit dem neuen Access Token
                     originalRequest.headers['Authorization'] = `Bearer ${response.data.accessToken}`;

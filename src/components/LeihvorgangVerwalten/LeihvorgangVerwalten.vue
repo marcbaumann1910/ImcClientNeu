@@ -190,7 +190,7 @@ checkStatusZustandArtikel;
 
 <template>
 
-  <v-container>
+  <v-container max-width="1250">
 <!--    <div>-->
 <!--      <v-card class="d-flex justify-center mb-10" color="primary">-->
 <!--        <v-card-item>-->
@@ -240,8 +240,8 @@ checkStatusZustandArtikel;
             {{ item.easyVereinMitglied_firstName }} {{ item.easyVereinMitglied_familyName }}
             <template v-slot:actions="{ expanded }">
               <v-icon
-                  :color="expanded ? 'black' : (item.inventarBuchung_abgeschlossen===true ? 'green' : 'orange')"
-                  :icon="expanded ? 'mdi-pencil' : 'mdi-progress-clock'"></v-icon>
+                  :color="expanded ? 'black' : (item.inventarBuchung_abgeschlossen==='true' ? 'green' : 'orange')"
+                  :icon="expanded ? 'mdi-pencil' : (item.inventarBuchung_abgeschlossen==='true' ? 'mdi-progress-check' : 'mdi-progress-clock')"></v-icon>
             </template>
           </v-expansion-panel-title>
           <v-divider></v-divider>

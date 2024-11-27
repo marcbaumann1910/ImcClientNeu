@@ -8,6 +8,7 @@ import {id} from "vuetify/locale";
 
 const store = createStore({
     state: {
+        accessToken: null,
         isUserLoggedIn: !!localStorage.getItem('accessToken'), // initialer Zustand basierend auf localStorage
         userData: {}, // Hier werden die Benutzerdaten gespeichert
         cartItemCount: 0, //Warenkorb Anzahl Einträge
@@ -48,11 +49,14 @@ const store = createStore({
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
         createPersistedState({
-            paths: ['cartItems','userData', 'cartItemCount', 'member'], // persistieren der gewünschten Objekten
+            paths: ['cartItems','userData', 'cartItemCount'], // persistieren der gewünschten Objekten
             storage: window.sessionStorage, // Verwendung von sessionStorage statt localStorage
         }),
     ],
     mutations: {
+        setAccessToken(state, token) {
+            state.accessToken = token;
+        },
         setUserLoggedIn(state, status) {
             state.isUserLoggedIn = status;
         },
@@ -247,6 +251,9 @@ const store = createStore({
 
     },
     actions: {
+        setAccessToken({ commit }, token) {
+            commit('setAccessToken', token);
+        },
         login({ commit }, userData) {
             commit('setUserLoggedIn', true);
             commit('setUserData', userData);
@@ -308,6 +315,7 @@ const store = createStore({
 
     },
     getters: {
+        getAccessToken: state => state.accessToken,
         isUserLoggedIn: state => state.isUserLoggedIn,
         getUserData: state => state.userData,
         getCartItemCount: state => state.cartItemCount,

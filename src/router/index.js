@@ -16,6 +16,7 @@ import Leihvorgang from "@/components/Leihvorgang/Leihvorgang.vue";
 import LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/LeihvorgangVerwalten.vue";
 import m_LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/m_LeihvorgangVerwalten.vue";
 import m_Checkout from "@/components/Leihvorgang/m_Checkout.vue";
+import store from "@/store/store.js";
 
 const routes = [
     {
@@ -125,10 +126,10 @@ const router = createRouter({
     routes
 });
 
-// Füge eine Navigation Guard hinzu
+// Fügt einen Navigation Guard hinzu
 router.beforeEach((to, from, next) => {
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = store.getters.getAccessToken;
 
     if (requiresAuth && !accessToken) {
         // Falls die Route eine Authentifizierung erfordert, aber kein Access Token vorhanden ist

@@ -167,10 +167,11 @@ async function login(){
         }
     )
     //Speichern der des accessToken und des refreshToken
-    localStorage.setItem('accessToken', response.data.accessToken);
-    localStorage.setItem('refreshToken', response.data.refreshToken);
+    await store.dispatch('setAccessToken', response.data.accessToken);
+    // localStorage.setItem('accessToken', response.data.accessToken);
+    // localStorage.setItem('refreshToken', response.data.refreshToken);
 
-    //Speichern der Benutzerdaten und des accessToken im Vuex-Store
+    //Speichern der Benutzerdaten im Vuex-Store
     store.dispatch('login', response.data.userResponse);
 
     //Die von Backend erhaltenen User-Daten in den localStorage schreiben
