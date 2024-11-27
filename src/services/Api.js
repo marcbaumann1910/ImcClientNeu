@@ -41,12 +41,8 @@ api.interceptors.response.use(
 
              try {
                     // Hole einen neuen Access Token
-                    const response = await axios.post(`${process.env.VITE_API_URL}/token/refresh`, {}, {
-                        headers: {
-                            'Authorization': `Bearer ${refreshToken}`
-                        }
-                    });
-
+                    const response = await api.post(`${process.env.VITE_API_URL}token/refresh`);
+                    console.log('response.data.accessToken', response.data.accessToken)
                     // Speichere den neuen Access Token
                     store.commit('setAccessToken', response.data.accessToken);
                     // localStorage.setItem('accessToken', response.data.accessToken);
