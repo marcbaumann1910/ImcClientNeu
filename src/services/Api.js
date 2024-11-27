@@ -8,7 +8,7 @@ const api = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
-
+    withCredentials: true, // Wichtig: Ermöglicht das Senden von Cookies mit Anfragen
 });
 
 // Interceptor für das Hinzufügen des Access Tokens bei jeder Anfrage
@@ -39,9 +39,7 @@ api.interceptors.response.use(
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true; // Verhindere Endlosschleifen
 
-            const refreshToken = localStorage.getItem('refreshToken');
-            if (refreshToken) {
-                try {
+             try {
                     // Hole einen neuen Access Token
                     const response = await axios.post(`${process.env.VITE_API_URL}/token/refresh`, {}, {
                         headers: {
@@ -66,7 +64,6 @@ api.interceptors.response.use(
                     }
 
                 }
-            }
 
         return Promise.reject(error);
     }

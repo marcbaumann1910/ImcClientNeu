@@ -58,10 +58,8 @@ async function navigate(route) {
     try {
       //refreshToken in der Datenbank als ungültig markieren
       console.log('localStorage', localStorage)
-      const refreshToken = localStorage.getItem('refreshToken')
-      const accessToken = localStorage.getItem('accessToken')
+      const accessToken = store.getters.getAccessToken
       const response = await AuthenticationService.logout({
-        refreshToken: refreshToken,
         accessToken: accessToken
       });
       console.log('VuexStore bevor dispatch',store.getters.getUserData.idBenutzer);
