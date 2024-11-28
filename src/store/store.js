@@ -258,6 +258,9 @@ const store = createStore({
             commit('setUserLoggedIn', true);
             commit('setUserData', userData);
         },
+        setUserData({ commit }, userData) {
+            commit('setUserData', userData);
+        },
         logout({ commit }) {
             commit('logout');
         },
