@@ -45,7 +45,6 @@ api.interceptors.response.use(
                     console.log('response.data.accessToken', response.data.accessToken)
                     // Speichere den neuen Access Token
                     store.commit('setAccessToken', response.data.accessToken);
-                    // localStorage.setItem('accessToken', response.data.accessToken);
 
                     // Aktualisiere den Authorization Header mit dem neuen Access Token
                     originalRequest.headers['Authorization'] = `Bearer ${response.data.accessToken}`;
