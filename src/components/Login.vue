@@ -175,12 +175,12 @@ async function login(){
     await store.dispatch('login', response.data.userResponse);
 
     //Die von Backend erhaltenen User-Daten in den localStorage schreiben
-    for (const user in response.data.userResponse) {
-      if (response.data.userResponse.hasOwnProperty(user)) {
-        console.log('for user:', user, response.data.userResponse[user]);
-        localStorage.setItem(user, response.data.userResponse[user]);
-      }
-    }
+    // for (const user in response.data.userResponse) {
+    //   if (response.data.userResponse.hasOwnProperty(user)) {
+    //     console.log('for user:', user, response.data.userResponse[user]);
+    //     localStorage.setItem(user, response.data.userResponse[user]);
+    //   }
+    // }
 
     //Benutzerdaten werden anstelle im localStorage jetzt im vuex-Store gespeichert
     await store.dispatch('setUserData', response.data.userResponse);

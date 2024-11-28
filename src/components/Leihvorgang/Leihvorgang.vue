@@ -146,8 +146,8 @@ async function leihvorgangBuchen(){
     response = await AuthenticationService.leihvorgangBuchen({
       cartItems: cartItems.value,
       IDMitglied: borrowMember.value.id,
-      IDBenutzer: localStorage.idBenutzer,
-      IDVerein: localStorage.idVerein,
+      IDBenutzer: store.getters.getUserData.idBenutzer,
+      IDVerein: store.getters.getUserData.idVerein,
     });
     console.log('Erfolg leihvorgangBuchen', response.data);
 

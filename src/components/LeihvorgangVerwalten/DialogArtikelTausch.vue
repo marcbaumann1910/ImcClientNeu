@@ -129,7 +129,7 @@ async function dialogSave(){
       ALT_IDinventarBuchungenPositionen: artikelDetails.value.ibp_IDinventarBuchungenPositionen, //ursprüngliche IDinventarBuchungenPositionen
       ALT_IDInventarArtikel: artikelDetails.value.ia_IDInventarArtikel, //ursprüngliche IDInventarArtikel
       ALT_IDInventarBuchungen: artikelDetails.value.ibp_IDInventarBuchungen, //ursprüngliche IDInventarBuchungen
-      IDBenutzer: localStorage.idBenutzer, //ID des Benutzers der die Buchung durchführt
+      IDBenutzer: store.getters.getUserData.idBenutzer, //ID des Benutzers der die Buchung durchführt
       IDInventarArtikel: selectedItemNewChoose.value.IDInventarArtikel, //neue, getauschte IDInventarArtikel
       Menge: 1,
       Preis: selectedItemNewChoose.value.Preis, //neuer, getauschter Preis
@@ -137,7 +137,7 @@ async function dialogSave(){
       AusgeliehenBis: 'NULL',
       Bemerkung: textBemerkung.value,
       IDInventarZustand: selectedItemZustand.value.IDInventarZustand,
-      IDVerein: localStorage.idVerein
+      IDVerein: store.getters.getUserData.idVerein
     })
 
     //Damit die Verfügbarkeit der externeInventarNummer upgedatet werden kann

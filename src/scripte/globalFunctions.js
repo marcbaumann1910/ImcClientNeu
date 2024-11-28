@@ -106,7 +106,7 @@ async function expansionForLeihvorgang(member, reload = false) {
 async function fetchInventarExterneNummer(IDInventarKategorie){
     //Abruf der Daten inventarExterneNummern, um diese in der Select-Auswahl anzuzeigen!
     try{
-        const response = await AuthenticationService.leihvorgangInventarExterneNummern(IDInventarKategorie, localStorage.idVerein)
+        const response = await AuthenticationService.leihvorgangInventarExterneNummern(IDInventarKategorie, store.getters.getUserData.idVerein)
         console.log('inventarExterneNummern:', response.data)
         return response.data;
     }catch(err){

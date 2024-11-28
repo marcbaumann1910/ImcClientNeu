@@ -13,7 +13,7 @@ const inputCount = ref(0);
 
 //Abrufen der Artikel-Daten vom Server
 onMounted(async () => {
-  const response = await AuthenticationService.artikels(localStorage.getItem("idVerein"));
+  const response = await AuthenticationService.artikels(store.getters.getUserData.idVerein);
   items.value = response.data
 
   //Stellt sicher, dass trotz einer Navigation zur Checkout-Seite

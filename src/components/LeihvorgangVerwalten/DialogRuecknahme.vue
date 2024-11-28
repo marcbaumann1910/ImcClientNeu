@@ -74,11 +74,11 @@ async function dialogSave(){
       IDinventarBuchungenPositionen: store.getters.getShowDialogRuecknahmeArtikel.IDinventarBuchungenPositionen,
       bemerkung: store.getters.getShowDialogRuecknahmeArtikel.bemerkung,
       artikelZustand: store.getters.getShowDialogRuecknahmeArtikel.artikelZustand,
-      IDBenutzer: localStorage.idBenutzer, //ID des Benutzers der die Buchung durchführt
+      IDBenutzer: store.getters.getUserData.idBenutzer, //ID des Benutzers der die Buchung durchführt
       IDInventarArtikel: store.getters.getShowDialogRuecknahmeArtikel.artikelDetails.ia_IDInventarArtikel,
       IDInventarBuchungen: store.getters.getShowDialogRuecknahmeArtikel.artikelDetails.ibp_IDInventarBuchungen,
       Menge: 1,
-      IDVerein: localStorage.idVerein,
+      IDVerein: store.getters.getUserData.idVerein,
     })
 
     if(artikelDetails.value.ia_externeInventarNummerPflicht === 1){
