@@ -1,6 +1,7 @@
 import axios from 'axios';
 import router from "@/router/index.js";
 import store from "@/store/store.js";
+import {buildUrl} from '@/scripte/globalFunctions.js'
 
 const api = axios.create({
     //baseURL: 'http://localhost:3000/', // Basis-URL des Backend-Servers
@@ -41,7 +42,11 @@ api.interceptors.response.use(
 
              try {
                     // Hole einen neuen Access Token
-                    const response = await api.post(`${process.env.VITE_API_URL}token/refresh`);
+                 console.log('process.env.VITE_API_URL', process.env.VITE_API_URL)
+                 //Da es Probleme mit dem anfügen eines Slash (/) an die VITE_API_URL
+                 //und ich das Problem nicht identifizieren kann, werde hier ggf. der Slash entfernt
+                 const url = await buildUrl('token/refresh')
+                 const response = await api.post(`${url}`);
                     console.log('response.data.accessToken', response.data.accessToken)
                     // Speichere den neuen Access Token
                     store.commit('setAccessToken', response.data.accessToken);
