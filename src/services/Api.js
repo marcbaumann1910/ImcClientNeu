@@ -2,6 +2,7 @@ import axios from 'axios';
 import router from "@/router/index.js";
 import store from "@/store/store.js";
 import {buildUrl} from '@/scripte/globalFunctions.js'
+//import { notifyError, notifySuccess } from '@/utils/notifications'; // Benachrichtigungs-Utility
 
 const api = axios.create({
     //baseURL: 'http://localhost:3000/', // Basis-URL des Backend-Servers
@@ -30,24 +31,30 @@ api.interceptors.request.use(
     }
 )
 
-api.interceptors.response.use(
-    (response) => {
-        return response;
-    },
+Api.interceptors.response.use(
+    response => response, // Bei Erfolg einfach zurückgeben
     async (error) => {
-        // Wenn der Access Token abgelaufen ist (z.B. 401 Unauthorized), versuche, den Token zu erneuern
         const originalRequest = error.config;
-        if (error.response.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true; // Verhindere Endlosschleifen
 
-             try {
-                    // Hole einen neuen Access Token
-                 console.log('process.env.VITE_API_URL', process.env.VITE_API_URL)
-                 //Da es Probleme mit dem anfügen eines Slash (/) an die VITE_API_URL
-                 //und ich das Problem nicht identifizieren kann, werde hier ggf. der Slash entfernt
-                 const url = await buildUrl('token/refresh')
-                 const response = await api.post(`${url}`);
-                    console.log('response.data.accessToken', response.data.accessToken)
+        if (!originalRequest) {
+            // Wenn keine ursprüngliche Anfrage vorhanden ist, lehne den Fehler ab
+            return Promise.reject(error);
+        }
+
+        if (error.response) {
+            const { status } = error.response;
+
+            // Handle 401 Unauthorized
+            if (status === 401 && !originalRequest._retry) {
+                originalRequest._retry = true; // Verhindere Endlosschleifen
+
+                try {
+                    // Erneuere den Access Token
+                    console.log('Erneuere Access Token');
+                    const url = await buildUrl('token/refresh'); // Deine Funktion zur URL-Erstellung
+                    const response = await api.post(`${url}`);
+                    console.log('Neuer Access Token:', response.data.accessToken);
+
                     // Speichere den neuen Access Token
                     store.commit('setAccessToken', response.data.accessToken);
 
@@ -56,14 +63,47 @@ api.interceptors.response.use(
 
                     // Sende die ursprüngliche Anfrage erneut mit dem neuen Access Token
                     return api(originalRequest);
-                } catch (error) {
-                        console.error('Error refreshing token:', error);
-                        localStorage.removeItem('accessToken');
-                        localStorage.removeItem('refreshToken');
-                        await router.push('/login');
-                    }
-
+                } catch (tokenRefreshError) {
+                    console.error('Fehler beim Erneuern des Tokens:', tokenRefreshError);
+                    // Lösche Tokens aus dem Speicher
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('refreshToken');
+                    // Leite den Benutzer zur Login-Seite weiter
+                    await router.push('/login');
+                    return Promise.reject(tokenRefreshError);
                 }
+            }
+
+            // Handle 429 Too Many Requests
+            if (status === 429) {
+                notifyError('Zu viele Anfragen. Bitte versuche es später erneut.');
+                return Promise.reject(error);
+            }
+
+            // Handle andere spezifische Fehler
+            switch (status) {
+                case 400:
+                    notifyError('Ungültige Anfrage. Bitte überprüfe deine Eingaben.');
+                    break;
+                case 403:
+                    notifyError('Zugriff verweigert. Du hast keine Berechtigung für diese Aktion.');
+                    break;
+                case 404:
+                    notifyError('Die angeforderte Ressource wurde nicht gefunden.');
+                    break;
+                case 500:
+                    notifyError('Serverfehler. Bitte versuche es später erneut.');
+                    break;
+                default:
+                    notifyError('Ein unbekannter Fehler ist aufgetreten.');
+            }
+        } else if (error.request) {
+            // Die Anfrage wurde gemacht, aber keine Antwort erhalten
+            notifyError('Keine Antwort vom Server erhalten. Bitte überprüfe deine Netzwerkverbindung.');
+        } else {
+            // Ein Fehler beim Einrichten der Anfrage trat auf
+            notifyError('Fehler beim Einrichten der Anfrage.');
+        }
 
         return Promise.reject(error);
     }
