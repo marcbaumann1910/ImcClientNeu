@@ -95,9 +95,11 @@ function showCartChange(){
   console.log(store.getters.getShowWarenkorbDesktop)
 }
 
+
 </script>
 
 <template>
+
   <!-- App Bar -->
   <v-app-bar class="mb-6" color="secondary" prominent>
 

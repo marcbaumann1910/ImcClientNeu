@@ -2,7 +2,7 @@ import axios from 'axios';
 import router from "@/router/index.js";
 import store from "@/store/store.js";
 import {buildUrl} from '@/scripte/globalFunctions.js'
-//import { notifyError, notifySuccess } from '@/utils/notifications'; // Benachrichtigungs-Utility
+import { notifyError } from '@/scripte/notifications.js'; // globale Benachrichtigungen
 
 const api = axios.create({
     //baseURL: 'http://localhost:3000/', // Basis-URL des Backend-Servers
@@ -31,7 +31,7 @@ api.interceptors.request.use(
     }
 )
 
-Api.interceptors.response.use(
+api.interceptors.response.use(
     response => response, // Bei Erfolg einfach zurückgeben
     async (error) => {
         const originalRequest = error.config;

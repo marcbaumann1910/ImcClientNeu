@@ -186,9 +186,15 @@ function handleExpansionPanelClick(member) {
 isVisibleIventarStatus;
 checkStatusZustandArtikel;
 
+import Notifications from '@/components/Notifications.vue';
+import { notifyError, notifySuccess } from '@/scripte/notifications';
+import App from "@/App.vue";
+
 </script>
 
 <template>
+
+    <Notifications />
 
   <v-container max-width="1250">
 <!--    <div>-->

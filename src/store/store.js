@@ -46,6 +46,7 @@ const store = createStore({
         },
         showAusgeliehenAbgeschlossen: [],
         member: [],
+        notifications: [],
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
         createPersistedState({
@@ -247,6 +248,12 @@ const store = createStore({
         },
         member(state, member){
             state.member = member;
+        },
+        setNotification(state, notification){
+            state.notifications.push(notification);
+        },
+        removeNotification(state, notificationId){
+            state.notifications = state.notifications.filter(n => n.id !== notificationId);
         }
 
     },
@@ -314,6 +321,12 @@ const store = createStore({
         },
         setMember({ commit }, member){
             commit('member', member)
+        },
+        setNotification({ commit }, notification) {
+            commit('setNotification', notification);
+        },
+        removeNotification({ commit }, notificationId) {
+            commit('removeNotification', notificationId);
         }
 
     },
@@ -375,6 +388,7 @@ const store = createStore({
         getShowDialogNummerAendern: (state) => state.showDialogNummerAendern,
         getShowDialogArtikelTausch: (state) => state.showDialogArtikelTausch,
         getMember: state => state.member,
+        getNotifications: state => state.notifications,
     },
 
 
