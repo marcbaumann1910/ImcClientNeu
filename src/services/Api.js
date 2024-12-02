@@ -109,6 +109,7 @@ api.interceptors.response.use(
     }
 );
 
+
 console.log('API Base URL:', api.defaults.baseURL);
 
 export default api;
