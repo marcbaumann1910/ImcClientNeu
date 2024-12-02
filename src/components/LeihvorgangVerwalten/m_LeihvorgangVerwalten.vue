@@ -204,7 +204,12 @@ checkStatusZustandArtikel;
       <v-toolbar-title class="ml-2">{{itemArtikelDetails.ia_ArtikelBezeichnung}}</v-toolbar-title>
       <v-menu>
       <template v-slot:activator="{ props }">
-        <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
+        <v-btn
+            v-if="isVisibleIventarStatus(itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus)"
+            icon="mdi-dots-vertical"
+            variant="text"
+            v-bind="props"
+        ></v-btn>
       </template>
 
       <v-list>
