@@ -67,8 +67,7 @@ const store = createStore({
         logout(state) {
             state.isUserLoggedIn = false;
             state.userData = {};
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
+            state.accessToken = null;
         },
         setCartItemCount(state, cartItemCount) {
             state.cartItemCount = cartItemCount;

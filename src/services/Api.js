@@ -1,11 +1,10 @@
 import axios from 'axios';
 import router from "@/router/index.js";
 import store from "@/store/store.js";
-import {buildUrl} from '@/scripte/globalFunctions.js'
-import { notifyError } from '@/scripte/notifications.js'; // globale Benachrichtigungen
+import {buildUrl} from '@/scripte/globalFunctions.js';
+import { notifyError } from '@/scripte/notifications.js'; // Globale Benachrichtigungen
 
 const api = axios.create({
-    //baseURL: 'http://localhost:3000/', // Basis-URL des Backend-Servers
     baseURL: process.env.VITE_API_URL,
     headers: {
         'Content-Type': 'application/json',
@@ -13,23 +12,57 @@ const api = axios.create({
     withCredentials: true, // Wichtig: Ermöglicht das Senden von Cookies mit Anfragen
 });
 
+// Variable, um den Status der Token-Erneuerung zu verfolgen
+api.isRefreshing = false;
+api.refreshSubscribers = [];
+
+// Funktion, um Abonnenten zu benachrichtigen, wenn der Access Token erneuert wurde
+function onAccessTokenFetched(accessToken) {
+    api.refreshSubscribers.forEach((callback) => callback(accessToken));
+    api.refreshSubscribers = [];
+}
+
+// Funktion, um Anfragen zu sammeln, die auf den neuen Access Token warten
+function addRefreshSubscriber(callback) {
+    api.refreshSubscribers.push(callback);
+}
+
 // Interceptor für das Hinzufügen des Access Tokens bei jeder Anfrage
 api.interceptors.request.use(
-    (config) => {
-        if(config.url !== '/login' && config.url !== '/register'){ //An diese Pfade werden Tokens gesendet!!!
+    async (config) => {
+        if (config.url !== '/login' && config.url !== '/register' && config.url !== '/token/refresh') {
             const accessToken = store.getters.getAccessToken;
-            if(accessToken){
-                console.log('accessToken:', accessToken);
+
+            if (accessToken) {
                 config.headers['Authorization'] = `Bearer ${accessToken}`;
+            } else {
+                if (!api.isRefreshing) {
+                    api.isRefreshing = true;
+                    try {
+                        const newAccessToken = await api.refreshAccessToken();
+                        onAccessTokenFetched(newAccessToken);
+                    } catch (error) {
+                        return Promise.reject(error);
+                    } finally {
+                        api.isRefreshing = false;
+                    }
+                }
+
+                return new Promise((resolve) => {
+                    addRefreshSubscriber((accessToken) => {
+                        config.headers['Authorization'] = `Bearer ${accessToken}`;
+                        resolve(config);
+                    });
+                });
             }
         }
         return config;
     },
     (error) => {
-        console.log('Promise.reject(error)', error)
+        console.log('Promise.reject(error)', error);
         return Promise.reject(error);
     }
-)
+);
 
 api.interceptors.response.use(
     response => response, // Bei Erfolg einfach zurückgeben
@@ -51,23 +84,18 @@ api.interceptors.response.use(
                 try {
                     // Erneuere den Access Token
                     console.log('Erneuere Access Token');
-                    const url = await buildUrl('token/refresh'); // Deine Funktion zur URL-Erstellung
-                    const response = await api.post(`${url}`);
-                    console.log('Neuer Access Token:', response.data.accessToken);
-
-                    // Speichere den neuen Access Token
-                    store.commit('setAccessToken', response.data.accessToken);
+                    const newAccessToken = await api.refreshAccessToken();
+                    console.log('Neuer Access Token:', newAccessToken);
 
                     // Aktualisiere den Authorization Header mit dem neuen Access Token
-                    originalRequest.headers['Authorization'] = `Bearer ${response.data.accessToken}`;
+                    originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
 
                     // Sende die ursprüngliche Anfrage erneut mit dem neuen Access Token
                     return api(originalRequest);
                 } catch (tokenRefreshError) {
                     console.error('Fehler beim Erneuern des Tokens:', tokenRefreshError);
                     // Lösche Tokens aus dem Speicher
-                    localStorage.removeItem('accessToken');
-                    localStorage.removeItem('refreshToken');
+                    store.commit('setAccessToken', null);
                     // Leite den Benutzer zur Login-Seite weiter
                     await router.push('/login');
                     return Promise.reject(tokenRefreshError);
@@ -109,6 +137,36 @@ api.interceptors.response.use(
     }
 );
 
+// Funktion zum Erneuern des Access Tokens als Methode des 'api' Objekts
+api.refreshAccessToken = async function() {
+    try {
+        console.log('Starte Token-Erneuerung...');
+        const url = await buildUrl('token/refresh');
+
+        // Verwende eine separate Axios-Instanz ohne Interceptors
+        const refreshApi = axios.create({
+            baseURL: process.env.VITE_API_URL,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            withCredentials: true,
+        });
+
+        const response = await refreshApi.post(`${url}`);
+        const newAccessToken = response.data.accessToken;
+        console.log('Neuer Access Token erhalten:', newAccessToken);
+
+        // Speichere den neuen Access Token im Vuex Store
+        store.commit('setAccessToken', newAccessToken);
+
+        return newAccessToken;
+    } catch (error) {
+        console.error('Fehler beim Erneuern des Tokens:', error);
+        // Leite den Benutzer zur Login-Seite weiter
+        await router.push('/login');
+        throw error;
+    }
+}
 
 console.log('API Base URL:', api.defaults.baseURL);
 

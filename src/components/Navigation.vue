@@ -47,7 +47,7 @@ const kebabs = [
 
 const router = useRouter()
 //Prüft ob der User eingeloggt ist oder nicht
-const isUserLoggedIn = computed(() => store.getters.isUserLoggedIn);
+const isUserLoggedIn = computed(() => !!store.getters.getAccessToken);
 
 //Ist für die Navigation zuständig und ruft die entsprechende route auf, die durch das Click-Event ausgelöst wird
 async function navigate(route) {

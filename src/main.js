@@ -1,3 +1,5 @@
+// main.js
+
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router'; // Importiere den Router
@@ -7,7 +9,8 @@ import '@mdi/font/css/materialdesignicons.css'; // Optional: Für die Verwendung
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import store from './store/store';
-import {grey} from "vuetify/util/colors"; // Importiere den Store
+import { grey } from 'vuetify/util/colors'; // Importiere den Store
+import api from './services/Api.js'; // Importiere die 'api' Instanz
 
 const vuetify = createVuetify({
     components,
@@ -36,9 +39,23 @@ const vuetify = createVuetify({
     },
 });
 
-const app = createApp(App);
+async function initializeApp() {
+    try {
+        // Versuche, den Access Token zu erneuern
+        await api.refreshAccessToken();
+        console.log('Access Token erfolgreich erneuert.');
+    } catch (error) {
+        console.error('Fehler beim Erneuern des Access Tokens:', error);
+        // Optional: Leite zur Login-Seite weiter
+        await router.push('/login');
+    } finally {
+        const app = createApp(App);
 
-app.use(router); // Verwende den Router
-app.use(vuetify);
-app.use(store);
-app.mount('#app');
+        app.use(router); // Verwende den Router
+        app.use(vuetify);
+        app.use(store);
+        app.mount('#app');
+    }
+}
+
+initializeApp();
