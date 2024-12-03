@@ -4,15 +4,17 @@ import { useRouter } from 'vue-router'
 import { useDisplay } from "vuetify";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import store from "@/store/store.js";
-import M_Checkout from "@/components/Leihvorgang/m_Checkout.vue";
 
 const drawer = ref(false);
 const { smAndDown } = useDisplay();
+const current = ref(''); // set from this.$route
+const isLoggedIn = computed(() => !!store.getters.getAccessToken);
+
 console.log(store.getters.getShowWarenkorbDesktop);
 
 store.dispatch('setCartItemCount', 0)
 
-const current = ref(''); // set from this.$route
+
 
 
 function currentSelection(){
@@ -104,8 +106,8 @@ function showCartChange(){
   <v-app-bar class="mb-6" color="secondary" prominent>
 
     <div class="nav-icon-wrapper d-flex flex-column align-items-center">
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <span class="span">Menü</span>
+      <v-app-bar-nav-icon v-if="isLoggedIn" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <span v-if="isLoggedIn" class="span">Menü</span>
     </div>
     <v-toolbar-title class="toolbarTitle">IMS Willstätter Hexen</v-toolbar-title>
     <v-spacer></v-spacer>
