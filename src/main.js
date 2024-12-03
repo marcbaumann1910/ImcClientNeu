@@ -9,7 +9,6 @@ import '@mdi/font/css/materialdesignicons.css'; // Optional: Für die Verwendung
 import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import store from './store/store';
-import { grey } from 'vuetify/util/colors'; // Importiere den Store
 import api from './services/Api.js'; // Importiere die 'api' Instanz
 
 const vuetify = createVuetify({

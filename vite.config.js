@@ -4,6 +4,9 @@ import vue from '@vitejs/plugin-vue';
 import dotenv from 'dotenv';
 
 export default defineConfig(({ mode }) => {
+
+  console.log('Vite Build Mode:', mode);
+
   // Lade die entsprechende .env-Datei basierend auf dem Modus (development/production)
   dotenv.config({
     path: mode === 'production' ? '.env.production' : '.env',
@@ -15,7 +18,14 @@ export default defineConfig(({ mode }) => {
       sourcemap: false, // Deaktiviert Source Maps auf dem Entwicklungsserver
     },
     build: {
-      sourcemap: false, // Deaktiviert Source Maps im Build-Prozess
+      sourcemap: false,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+        },
+      },
     },
     plugins: [
       vue(),

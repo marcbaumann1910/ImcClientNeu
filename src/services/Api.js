@@ -34,7 +34,8 @@ api.interceptors.request.use(
 
         // Entfernt die Query-Parameter aus der URL
         const url = config.url.split('?')[0];
-
+        // Da bei reset-password noch ein token angefügt ist, wird hier sichergestellt
+        // das die Route extrahiert wird um eine Anfrage an das Backend zusenden
         const isExcluded = [
             '/login',
             '/register',
