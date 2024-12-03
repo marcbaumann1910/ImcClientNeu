@@ -38,24 +38,35 @@ const vuetify = createVuetify({
         },
     },
 });
+const app = createApp(App);
+app.use(router);
+app.use(vuetify);
+app.use(store);
 
-async function initializeApp() {
+// Wartet, bis der Router bereit ist, bevor die App gemountet wird
+router.isReady().then(async () => {
     try {
-        // Versuche, den Access Token zu erneuern
-        await api.refreshAccessToken();
-        console.log('Access Token erfolgreich erneuert.');
+        // Jetzt ist der Router bereit, du kannst auf die aktuelle Route zugreifen
+        const currentRoute = router.currentRoute.value;
+        const requiresAuth = currentRoute.matched.some(record => record.meta.requiresAuth);
+
+        if (requiresAuth) {
+            // Versuche, den Access Token zu erneuern
+            await api.refreshAccessToken();
+            console.log('Access Token erfolgreich erneuert.');
+        }
     } catch (error) {
         console.error('Fehler beim Erneuern des Access Tokens:', error);
-        // Optional: Leite zur Login-Seite weiter
-        await router.push('/login');
-    } finally {
-        const app = createApp(App);
+        // Leite nur weiter, wenn die Route geschützt ist
+        const currentRoute = router.currentRoute.value;
+        const requiresAuth = currentRoute.matched.some(record => record.meta.requiresAuth);
 
-        app.use(router); // Verwende den Router
-        app.use(vuetify);
-        app.use(store);
+        if (requiresAuth) {
+            await router.push('/login');
+        }
+    } finally {
+        // Jetzt kannst du die App mounten
         app.mount('#app');
     }
-}
+});
 
-initializeApp();

@@ -7,17 +7,13 @@ const valid = ref(false);
 const visible = ref(false);
 const isLoading = ref(false);
 const formNames = ref(null);
-const snackbar = ref(false);
-const snackbarText = ref('')
-const snackbarColor = ref('error')
+import { notifyError, notifySuccess } from '@/scripte/notifications.js';
+import Notifications from "@/components/Notifications.vue"; // Globale Benachrichtigungen
 
 async function resetPassword() {
 
   if (txtEmail.value === '' || txtEmail.value.length === 0) {
-      snackbarText.value = 'Email-Adresse muss angegeben werden';
-      snackbarColor.value = "error"
-      snackbar.value = true;
-      console.log('im if block')
+      notifyError('Email-Adresse muss angegeben werden');
       return;
   }
 
@@ -28,38 +24,17 @@ async function resetPassword() {
 
     console.log('response in try',response);
 
+    notifySuccess('Wenn die angegebene E-Mail-Adresse in unserem System vorhanden ist,\nhaben wir Ihnen eine E-Mail mit weiteren Anweisungen zum Zurücksetzen des Passworts gesendet.');
+
   }catch (err){
   }
-    snackbarText.value = 'Wenn die angegebene E-Mail-Adresse in unserem System vorhanden ist,\nhaben wir Ihnen eine E-Mail mit weiteren Anweisungen zum Zurücksetzen des Passworts gesendet.';
-    snackbarColor.value = "success"
-    snackbar.value = true;
-
+    notifySuccess('Wenn die angegebene E-Mail-Adresse in unserem System vorhanden ist,\nhaben wir Ihnen eine E-Mail mit weiteren Anweisungen zum Zurücksetzen des Passworts gesendet.');
 }
 </script>
 
 <template>
 <v-app>
-  <v-snackbar
-      v-model="snackbar"
-      multi-line
-      location="top"
-      timeout="10000"
-      :color="snackbarColor"
-  >
-    {{ snackbarText }}
-
-    <template v-slot:actions >
-      <v-btn
-          color="black"
-          variant="text"
-          @click="snackbar = false"
-          style="background-color: white; text-transform: none;"
-      >
-        Schließen
-      </v-btn>
-    </template>
-
-  </v-snackbar>
+   <Notifications/>
 
   <v-form ref="formNames" v-model="valid" lazy-validation>
 

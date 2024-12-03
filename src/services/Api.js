@@ -30,7 +30,20 @@ function addRefreshSubscriber(callback) {
 // Interceptor für das Hinzufügen des Access Tokens bei jeder Anfrage
 api.interceptors.request.use(
     async (config) => {
-        if (config.url !== '/login' && config.url !== '/register' && config.url !== '/token/refresh') {
+        console.log('Angeforderte URL:', config.url);
+
+        // Entfernt die Query-Parameter aus der URL
+        const url = config.url.split('?')[0];
+
+        const isExcluded = [
+            '/login',
+            '/register',
+            '/token/refresh',
+            '/reset-password-request',
+            '/reset-password',
+        ].some(excludedUrl => url === excludedUrl);
+
+        if (!isExcluded) {
             const accessToken = store.getters.getAccessToken;
 
             if (accessToken) {
@@ -162,8 +175,17 @@ api.refreshAccessToken = async function() {
         return newAccessToken;
     } catch (error) {
         console.error('Fehler beim Erneuern des Tokens:', error);
-        // Leite den Benutzer zur Login-Seite weiter
-        await router.push('/login');
+
+        // Prüft, ob die aktuelle Route Authentifizierung erfordert
+        const currentRoute = router.currentRoute.value; // Für Vue Router 4 (Vue 3)
+
+        const requiresAuth = currentRoute.matched.some(record => record.meta.requiresAuth);
+
+        if (requiresAuth) {
+            // Leite nur weiter, wenn die Route geschützt ist
+            await router.push('/login');
+        }
+
         throw error;
     }
 }

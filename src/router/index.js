@@ -28,7 +28,8 @@ const routes = [
     {
         path: '/register',
         name: 'register',
-        component: Register
+        component: Register,
+        meta: { requiresAuth: false }
     },
     {
         path: '/testing',
@@ -69,12 +70,15 @@ const routes = [
     {
         path: '/login',
         name: 'login',
-        component: Login
+        component: Login,
+        meta: { requiresAuth: false }
+
     },
     {
         path: '/logout',
         name: 'logout',
         component: Logout,
+        meta: { requiresAuth: false }
 
     },
     {
@@ -87,13 +91,14 @@ const routes = [
         path: '/reset-password',
         name: 'reset-password',
         component: ResetPassword,
+        meta: { requiresAuth: false }
 
     },
     {
         path: '/reset-password-request',
         name: 'reset-password-request',
         component: ResetPasswordRequest,
-
+        meta: { requiresAuth: false }
     },
     {
         path: '/flextest',

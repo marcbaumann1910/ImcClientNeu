@@ -10,9 +10,9 @@ const txtPasswortRepaet = ref('')
 const valid = ref(false);
 const visible = ref(false);
 const isLoading = ref(false);
-const snackbar = ref(false);
-const snackbarText = ref('')
-const snackbarColor = ref('error')
+import { notifyError, notifySuccess } from '@/scripte/notifications.js';
+import Notifications from "@/components/Notifications.vue";
+
 
 const rules = {
     password: [
@@ -30,24 +30,19 @@ async function resetPassword() {
   //holt den Token aus der URL
   const token = route.query.token;
 
-
-
   if(!token)
   {
-    snackbarText.value = 'Passwort kann nicht geändert werden!'
-    snackbar.value = true;
+    notifyError('Passwort kann nicht geändert werden!');
     return;
   }
 
   if(txtPasswort.value === '' || txtPasswortRepaet.value === '') {
-    snackbarText.value = 'Es muss ein Passwort angegeben werden!';
-    snackbar.value = true;
+    notifyError('Es muss ein Passwort angegeben werden!');
     return;
   }
 
   if (txtPasswort.value !== txtPasswortRepaet.value) {
-    snackbarText.value = 'Passwörter stimmen nicht überein';
-    snackbar.value = true;
+    notifyError('Passwörter stimmen nicht überein');
     return;
   }
 
@@ -61,25 +56,19 @@ async function resetPassword() {
 
     if(response.status !== 200){
       if(response.data.message === ''){
-        snackbarText.value = 'Passwort wurde erfolgreich geändert\nSie werden weitergeleitet';
-        snackbarColor.value = "error"
-        snackbar.value = true;
+        notifyError('Passwort konnte nicht geändert werden');
       }
     }
 
     if(response.status === 200){
-      snackbarText.value = 'Passwort wurde erfolgreich geändert\nSie werden weitergeleitet';
-      snackbarColor.value = "success"
-      snackbar.value = true;
+      notifySuccess('Passwort wurde erfolgreich geändert\nSie werden weitergeleitet');
       //sleep
       await new Promise(resolve => setTimeout(resolve, 3000));
       router.push('/login');
     }
 
   }catch(err){
-    snackbarText.value = 'Passwort konnte nicht geändert werden';
-    snackbarColor.value = "error"
-    snackbar.value = true;
+    notifyError('Passwort konnte nicht geändert werden');
     console.log(err);
   }
 
@@ -89,26 +78,8 @@ async function resetPassword() {
 <template>
 <v-app>
 
-  <v-snackbar
-      v-model="snackbar"
-      multi-line
-      location="top"
-      :color="snackbarColor"
-  >
-    {{ snackbarText }}
+  <Notifications/>
 
-    <template v-slot:actions >
-      <v-btn
-      color="black"
-      variant="text"
-      @click="snackbar = false"
-      style="background-color: white; text-transform: none;"
-      >
-      Schließen
-      </v-btn>
-    </template>
-
-  </v-snackbar>
   <v-form ref="formNames" v-model="valid" lazy-validation>
    <v-card class="mx-auto pa-12 pb-8 mt-16"
            elevation="8"
