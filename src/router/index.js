@@ -134,14 +134,32 @@ const router = createRouter({
 // Fügt einen Navigation Guard hinzu
 router.beforeEach((to, from, next) => {
     const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-    const accessToken = store.getters.getAccessToken;
 
-    if (requiresAuth && !accessToken) {
-        // Falls die Route eine Authentifizierung erfordert, aber kein Access Token vorhanden ist
-        next({ name: 'login' });
+    if (store.getters.getIsAuthLoading) {
+        // Warte, bis die Authentifizierung abgeschlossen ist
+        const unwatch = store.watch(
+            (state) => state.isAuthLoading,
+            (newValue) => {
+                if (!newValue) {
+                    unwatch();
+                    checkAuth();
+                }
+            }
+        );
     } else {
-        // Weiter zur gewünschten Route
-        next();
+        checkAuth();
+    }
+
+    function checkAuth() {
+        const accessToken = store.getters.getAccessToken;
+
+        if (requiresAuth && !accessToken) {
+            // Falls die Route eine Authentifizierung erfordert, aber kein Access Token vorhanden ist
+            next({ name: 'login' });
+        } else {
+            // Weiter zur gewünschten Route
+            next();
+        }
     }
 });
 

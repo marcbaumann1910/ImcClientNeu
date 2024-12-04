@@ -9,6 +9,7 @@ import {id} from "vuetify/locale";
 const store = createStore({
     state: {
         accessToken: null,
+        isAuthLoading: true, //Steuert den Router-Guard in /router/index.js
         isUserLoggedIn: !!localStorage.getItem('accessToken'), // initialer Zustand basierend auf localStorage
         userData: {}, // Hier werden die Benutzerdaten gespeichert
         cartItemCount: 0, //Warenkorb Anzahl Einträge
@@ -57,6 +58,9 @@ const store = createStore({
     mutations: {
         setAccessToken(state, token) {
             state.accessToken = token;
+        },
+        setIsAuthLoading(state, isLoading) {
+            state.isAuthLoading = isLoading;
         },
         setUserLoggedIn(state, status) {
             state.isUserLoggedIn = status;
@@ -260,6 +264,9 @@ const store = createStore({
         setAccessToken({ commit }, token) {
             commit('setAccessToken', token);
         },
+        setIsAuthLoading({ commit }, isLoading) {
+            commit('setIsAuthLoading', isLoading);
+        },
         login({ commit }, userData) {
             commit('setUserLoggedIn', true);
             commit('setUserData', userData);
@@ -331,6 +338,7 @@ const store = createStore({
     },
     getters: {
         getAccessToken: state => state.accessToken,
+        getIsAuthLoading: state => state.isAuthLoading,
         isUserLoggedIn: state => state.isUserLoggedIn,
         getUserData: state => state.userData,
         getCartItemCount: state => state.cartItemCount,

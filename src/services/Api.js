@@ -153,6 +153,7 @@ api.interceptors.response.use(
 
 // Funktion zum Erneuern des Access Tokens als Methode des 'api' Objekts
 api.refreshAccessToken = async function() {
+    await store.dispatch('setIsAuthLoading', true);
     try {
         console.log('Starte Token-Erneuerung...');
         const url = await buildUrl('token/refresh');
@@ -170,24 +171,24 @@ api.refreshAccessToken = async function() {
         const newAccessToken = response.data.accessToken;
         console.log('Neuer Access Token erhalten:', newAccessToken);
 
-        // Speichere den neuen Access Token im Vuex Store
+        // Speichere den neuen Access Token im Store
         store.commit('setAccessToken', newAccessToken);
 
         return newAccessToken;
     } catch (error) {
         console.error('Fehler beim Erneuern des Tokens:', error);
 
-        // Prüft, ob die aktuelle Route Authentifizierung erfordert
-        const currentRoute = router.currentRoute.value; // Für Vue Router 4 (Vue 3)
-
-        const requiresAuth = currentRoute.matched.some(record => record.meta.requiresAuth);
-
-        if (requiresAuth) {
-            // Leite nur weiter, wenn die Route geschützt ist
-            await router.push('/login');
+        // Überprüfe, ob der Fehler auf fehlenden oder ungültigen Refresh Token zurückzuführen ist
+        if (error.response && [401, 403].includes(error.response.status)) {
+            // Kein gültiger Refresh Token vorhanden, Benutzer ist nicht eingeloggt
+            // Das ist in Ordnung, wir können den Fehler ignorieren
+            console.log('Kein gültiger Refresh Token vorhanden. Benutzer ist nicht eingeloggt.');
+        } else {
+            // Handle andere Fehler
+            console.error('Ein unerwarteter Fehler ist aufgetreten:', error);
         }
-
-        throw error;
+    } finally {
+        await store.dispatch('setIsAuthLoading', false);
     }
 }
 
