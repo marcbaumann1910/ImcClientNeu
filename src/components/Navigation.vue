@@ -10,6 +10,11 @@ const { smAndDown } = useDisplay();
 const current = ref(''); // set from this.$route
 const isLoggedIn = computed(() => !!store.getters.getAccessToken);
 
+const isAdmin = computed(()=> store.getters.getUserData.isAdmin);
+
+console.log('isAdmin', isAdmin.value)
+
+
 console.log(store.getters.getShowWarenkorbDesktop);
 
 store.dispatch('setCartItemCount', 0)
@@ -22,22 +27,23 @@ function currentSelection(){
 }
 
 const items = [
-  { title: 'Dashboard', route: '/dashboard', icon: 'mdi-view-dashboard' },
+  { title: 'Dashboard', route: '/dashboard', icon: 'mdi-view-dashboard', requiresAdmin: false },
   {
     title: 'Leihvorgang',
     icon: 'mdi-handshake',
+    requiresAdmin: false,
     active: false, // Wichtig für v-model
     children: [
       { title: 'Buchen', route: '/leihvorgang', icon: 'mdi-book' },
       { title: 'Verwalten', route: '/leihvorgangverwalten', icon: 'mdi-cog' },
     ],
   },
-  { title: 'Artikel', route: '/artikel', icon: 'mdi-file-document' },
-  { title: 'Mitglieder', route: '/mitglieder', icon: 'mdi-account-multiple' },
-  { title: 'Abrechnung', route: '/abrechnung', icon: 'mdi-currency-eur' },
-  { title: 'Registrierung', route: '/register', icon: 'mdi-account-plus' },
-  { title: 'Testing', route: '/testing', icon: 'mdi-ab-testing' },
-  { title: 'Mobil', route: '/m.checkout', icon: 'mdi-cellphone' },
+  { title: 'Artikel', route: '/artikel', icon: 'mdi-file-document', requiresAdmin: true },
+  { title: 'Mitglieder', route: '/mitglieder', icon: 'mdi-account-multiple', requiresAdmin: true },
+  { title: 'Abrechnung', route: '/abrechnung', icon: 'mdi-currency-eur',requiresAdmin: false },
+  { title: 'Registrierung', route: '/register', icon: 'mdi-account-plus', requiresAdmin: false },
+  { title: 'Testing', route: '/testing', icon: 'mdi-ab-testing', requiresAdmin: true },
+  { title: 'Mobil', route: '/m.checkout', icon: 'mdi-cellphone', requiresAdmin: true },
 ];
 
 
@@ -192,6 +198,7 @@ function showCartChange(){
         <!-- Einzelne Items ohne Unterelemente -->
         <v-list-item
             v-else
+            v-show="!item.requiresAdmin || isAdmin"
             :key="`item-${index}`"
             @click="navigate(item.route)"
             :prepend-icon="item.icon"
