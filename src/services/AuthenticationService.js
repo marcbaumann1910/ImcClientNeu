@@ -89,6 +89,14 @@ export default {
     leihvorgangInventarExterneNummernFreigeben(data) {
         console.log('leihvorgangInventarExterneNummernFreigeben:', data);
         return Api.patch('/leihvorgangverwalten/inventarexternenummernupdatefreigeben', data);
+    },
+    abrechnungsDaten(jahr) {
+        console.log('abrechnungsDaten:', jahr);
+        if (!jahr) {
+            //Beim Initialaufruf gibt es kein Jahr, weshalb hier das aktuelle Jahr gesetzt wird
+            jahr = new Date().getFullYear();
+        }
+        return Api.get(`/abrechnungsdaten/${jahr}`);
     }
 
 };
