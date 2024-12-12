@@ -1,4 +1,5 @@
 import Api from '@/services/Api.js';
+import store from "@/store/store.js";
 
 export default {
 
@@ -96,7 +97,11 @@ export default {
             //Beim Initialaufruf gibt es kein Jahr, weshalb hier das aktuelle Jahr gesetzt wird
             jahr = new Date().getFullYear();
         }
-        return Api.get(`/abrechnungsdaten/${jahr}`);
+                return Api.get(`/abrechnungsdaten/${jahr}`,{
+            params: {
+                idVerein: store.getters.getUserData.idVerein
+            }
+        });
     }
 
 };
