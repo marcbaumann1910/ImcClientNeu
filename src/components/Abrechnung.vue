@@ -28,10 +28,10 @@ function getAbrechnungsDaten() {
   else{
     jahr = selectAbrechnungsJahr.value;
   }
-  console.log('jahr',jahr)
+  //console.log('jahr',jahr)
   const filtered =  abrechnungsJahr.value.filter(item => item.AbrechnungsJahr === jahr);
 
-  console.log('filtered',filtered);
+  //console.log('filtered',filtered);
   return filtered;
 }
 
@@ -59,10 +59,13 @@ async function loadData(){
   <!--Es soll eine Filterfunktion bzw. Auswahlfunktion nach Jahr geben, sowie eine Suchfunktion nach Mitglied  -->
   <!--Mit Klick auf das Mitglied, soll auf eine neue Seite navigiert werden, wo die Detailansicht verfügbar ist, auch in mobil  -->
   <v-container max-width="1250">
-    <h3 class="pa-0">Abrechnung</h3>
+    <h3 class="pa-0">Abrechnung
+      {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].AbrechnungsJahr : '' }}
+    </h3>
 
     <div class="mt-1">
       <v-row>
+      <!--offen, nicht abgerechnete Vorgänge-->
         <v-col cols="12" sm="6" md="4" class="text-start">
           <v-card v-if="smAndDown" class="">
             <v-card-title class="text-center">
@@ -70,12 +73,13 @@ async function loadData(){
               {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].sumOffen.replace('.',',') + ' €' : '' }}
             </v-card-title>          </v-card>
           <v-card v-else min-height="57">
+            <v-card-subtitle class="mt-1">offen</v-card-subtitle>
             <v-card-title>
               {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].sumOffen.replace('.',',') + ' €' : '' }}
             </v-card-title>
           </v-card>
         </v-col>
-
+        <!--abgerechnete Vorgänge-->
         <v-col cols="12" sm="6" md="4" class="text-start">
           <v-card v-if="smAndDown" >
             <v-card-title class="text-center">
@@ -83,12 +87,13 @@ async function loadData(){
               {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].sumAbgerechnet.replace('.',',') + ' €' : '' }}
             </v-card-title>               </v-card>
           <v-card v-else min-height="57">
+            <v-card-subtitle class="mt-1">abrechnet</v-card-subtitle>
             <v-card-title>
               {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].sumAbgerechnet.replace('.',',') + ' €' : '' }}
             </v-card-title>
           </v-card>
         </v-col>
-
+        <!--Select nach Abrechnungsjahr-->
         <v-col cols="12" sm="6" md="4" class="text-start">
           <v-select
               class="text"
@@ -106,11 +111,11 @@ async function loadData(){
     </div>
 
     <v-text-field>Suche</v-text-field>
-
+    <!--v-cards je Mitlgied-->
       <v-card
           v-for="item in abrechnungsDaten"
           :key="item.id"
-          class="my-2 pb-2"
+          class="mt-2 mb-2"
 
       >
         <v-toolbar height="40" class="vToolbar align-center">
@@ -136,8 +141,11 @@ async function loadData(){
           <!--offener Betrag-->
           <v-col cols="12" sm="6" md="4" class="text-start">
             <v-card-title>
-              <v-icon class="mr-2">mdi-cash-register</v-icon>
-                {{ Math.round(((item.offenerBetrag) *100) /100).toFixed(2) }} €
+              <v-icon size="25" class="mr-1">mdi-timer-sand</v-icon>
+                {{ Math.round(((item.offenerBetrag) *100) /100).toFixed(2).replace('.',',') }} €
+              <v-icon size="25" class="mr-1">mdi-cash-check</v-icon>
+              {{ Math.round(((item.sumAbgerechnet) *100) /100).toFixed(2).replace('.',',') }} €
+
             </v-card-title>
           </v-col>
           <!--Anzahl Positionen-->
@@ -148,6 +156,21 @@ async function loadData(){
             </v-card-title>
           </v-col>
         </v-row>
+
+        <v-toolbar height="40" class="mt-2">
+          <!--Title ist nur das, damit das icon rechts positioniert ist -->
+          <v-toolbar-title class="mt-1">{{item.AbrechnungsJahr}}</v-toolbar-title>
+          <v-menu>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                  icon="mdi-text-search"
+                  variant="text"
+                  v-bind="props"
+                  class="text-white"
+              ></v-btn>
+            </template>
+          </v-menu>
+        </v-toolbar>
       </v-card>
 
   </v-container>
