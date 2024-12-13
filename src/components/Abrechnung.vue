@@ -118,7 +118,7 @@ async function loadData(){
           class="mt-2 mb-2"
 
       >
-        <v-toolbar height="40" class="vToolbar align-center">
+        <v-toolbar height="40" class="vToolbarOben align-center">
          <!--Title ist nur das, damit das icon rechts positioniert ist -->
           <v-toolbar-title class="ma-2 text-white">{{item.AbrechnungsJahr}}</v-toolbar-title>
           <v-menu>
@@ -147,33 +147,41 @@ async function loadData(){
               {{ Math.round(((item.sumAbgerechnet) *100) /100).toFixed(2).replace('.',',') }} €
             </v-card-title>
             <v-card-subtitle>
+              <v-icon size="12" class="mr-1">mdi-currency-eur</v-icon>
               <span class="mr-11">offen</span>
-              <span class="ml-10">abgerechnet</span>
+              <v-icon size="12" class="ml-7">mdi-currency-eur</v-icon>
+              <span class="ml-1">abgerechnet</span>
             </v-card-subtitle>
           </v-col>
-
           <!--Anzahl Positionen-->
-          <v-col cols="12" sm="6" md="4" class="text-start">
+          <v-col cols="12" sm="6" md="4" class="text-starts">
             <v-card-title>
-              <v-icon class="mr-2">mdi-counter</v-icon>
-              {{item.anzahlPositionen}}
+              <v-icon size="25" class="mr-1">mdi-timer-sand</v-icon>
+              {{item.anzahlPositionen}} St.
+              <v-icon size="25" class="mr-1">mdi-cash-check</v-icon>
+              {{item.countAbgerechnet}} St.
             </v-card-title>
+            <v-card-subtitle>
+              <v-icon size="12" class="mr-1">mdi-counter</v-icon>
+              <span class="mr-11">offen</span>
+              <v-icon size="12" class="ml-0">mdi-counter</v-icon>
+              <span class="ml-1">abgerechnet</span>
+            </v-card-subtitle>
           </v-col>
         </v-row>
 
-        <v-toolbar height="40" class="mt-2">
-          <!--Title ist nur das, damit das icon rechts positioniert ist -->
-          <v-toolbar-title class="mt-1">{{item.AbrechnungsJahr}}</v-toolbar-title>
+        <v-toolbar height="40" class="vToolbarUnten mt-2">
+          <v-toolbar-title></v-toolbar-title>
           <v-menu>
             <template v-slot:activator="{ props }">
               <v-btn
-                  icon="mdi-text-search"
                   variant="text"
                   v-bind="props"
                   class="text-white"
-              ></v-btn>
+              >abrechnen</v-btn>
             </template>
           </v-menu>
+          <v-toolbar-title></v-toolbar-title>
         </v-toolbar>
       </v-card>
 
@@ -185,8 +193,12 @@ async function loadData(){
 
 <style scoped>
 
-.vToolbar{
+.vToolbarOben{
   background:linear-gradient(90deg,  #1A237E 15%,  #1976D2 85%);
+}
+
+.vToolbarUnten{
+  background-color: #455A64;
 }
 
 .text {
