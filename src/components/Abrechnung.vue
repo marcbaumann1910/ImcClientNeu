@@ -87,7 +87,7 @@ async function loadData(){
               {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].sumAbgerechnet.replace('.',',') + ' €' : '' }}
             </v-card-title>               </v-card>
           <v-card v-else min-height="57">
-            <v-card-subtitle class="mt-1">abrechnet</v-card-subtitle>
+            <v-card-subtitle class="mt-1">abgerechnet</v-card-subtitle>
             <v-card-title>
               {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].sumAbgerechnet.replace('.',',') + ' €' : '' }}
             </v-card-title>
@@ -119,7 +119,6 @@ async function loadData(){
 
       >
         <v-toolbar height="40" class="vToolbarOben align-center">
-         <!--Title ist nur das, damit das icon rechts positioniert ist -->
           <v-toolbar-title class="ma-2 text-white">{{item.AbrechnungsJahr}}</v-toolbar-title>
           <v-menu>
             <template v-slot:activator="{ props }">
@@ -171,6 +170,7 @@ async function loadData(){
         </v-row>
 
         <v-toolbar height="40" class="vToolbarUnten mt-2">
+          <!--Title ist nur da, damit der Button zentriert ist -->
           <v-toolbar-title></v-toolbar-title>
           <v-menu>
             <template v-slot:activator="{ props }">
@@ -181,6 +181,7 @@ async function loadData(){
               >abrechnen</v-btn>
             </template>
           </v-menu>
+          <!--Title ist nur da, damit der Button zentriert ist -->
           <v-toolbar-title></v-toolbar-title>
         </v-toolbar>
       </v-card>
