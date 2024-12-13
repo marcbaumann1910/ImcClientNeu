@@ -145,9 +145,13 @@ async function loadData(){
                 {{ Math.round(((item.offenerBetrag) *100) /100).toFixed(2).replace('.',',') }} €
               <v-icon size="25" class="mr-1">mdi-cash-check</v-icon>
               {{ Math.round(((item.sumAbgerechnet) *100) /100).toFixed(2).replace('.',',') }} €
-
             </v-card-title>
+            <v-card-subtitle>
+              <span class="mr-11">offen</span>
+              <span class="ml-10">abgerechnet</span>
+            </v-card-subtitle>
           </v-col>
+
           <!--Anzahl Positionen-->
           <v-col cols="12" sm="6" md="4" class="text-start">
             <v-card-title>
