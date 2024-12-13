@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, computed} from 'vue'
 import { useDisplay } from "vuetify";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import { notifyError, notifySuccess } from '@/scripte/notifications.js';
@@ -8,11 +8,25 @@ const abrechnungsDaten = ref([]);
 const abrechnungsJahr = ref([]);
 const { smAndDown } = useDisplay();
 const selectAbrechnungsJahr = ref();
+const searchMitglied = ref();
 
 onMounted(()=>{
   loadData()
   selectAbrechnungsJahr.value = new Date().getFullYear();
 })
+
+const filderdMitglieder = computed(() => {
+  if (!searchMitglied.value) {
+    // Wenn kein Suchbegriff eingegeben wurde, gib alle Mitglieder zurück
+    return abrechnungsDaten.value;
+  }
+  // Ansonsten filtere die Mitglieder basierend auf dem Suchbegriff
+  return abrechnungsDaten.value.filter((item) => {
+    const fullName = `${item.firstName} ${item.familyName} ${item.city}`.toLowerCase();
+    return fullName.includes(searchMitglied.value.toLowerCase());
+  });
+});
+
 
 function getAbrechnungsDaten() {
 
@@ -110,10 +124,21 @@ async function loadData(){
       </v-row>
     </div>
 
-    <v-text-field>Suche</v-text-field>
+    <v-text-field
+        v-model="searchMitglied"
+        class="search-field mt-2"
+        label="Suche Mitglied"
+        prepend-inner-icon="mdi-magnify"
+        clearable
+        hide-details
+        single-line
+        color="red"
+        label-color="primary"
+        base-color="red"
+    ></v-text-field>
     <!--v-cards je Mitlgied-->
       <v-card
-          v-for="item in abrechnungsDaten"
+          v-for="item in filderdMitglieder"
           :key="item.id"
           class="mt-2 mb-2"
 
@@ -199,7 +224,7 @@ async function loadData(){
 }
 
 .vToolbarUnten{
-  background-color: #546E7A;
+  background:linear-gradient(90deg,  #263238 15%,  #546E7A 85%);
 }
 
 .text {
