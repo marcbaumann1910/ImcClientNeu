@@ -102,6 +102,11 @@ export default {
                 idVerein: store.getters.getUserData.idVerein
             }
         });
+    },
+    abrechnungNachMitglied(data) {
+        //Übergabe einer MitgliederID, Backend übernimmt die komplette Abrechnung nach Jahr
+        console.log('abrechnung/mitglied:', data);
+        return Api.patch('/abrechnung/mitglied', data);
     }
 
 };

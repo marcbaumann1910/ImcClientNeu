@@ -15,6 +15,7 @@ onMounted(()=>{
   selectAbrechnungsJahr.value = new Date().getFullYear();
 })
 
+//Suche nach Mitgliedern
 const filderdMitglieder = computed(() => {
   if (!searchMitglied.value) {
     // Wenn kein Suchbegriff eingegeben wurde, gib alle Mitglieder zurück
