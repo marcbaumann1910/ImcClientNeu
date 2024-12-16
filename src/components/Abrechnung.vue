@@ -4,11 +4,13 @@ import { useDisplay } from "vuetify";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import { notifyError, notifySuccess } from '@/scripte/notifications.js';
 import Notifications from "@/components/Notifications.vue";
+import OverlayWaiting from "@/components/OverlayWaiting.vue";
 const abrechnungsDaten = ref([]);
 const abrechnungsJahr = ref([]);
 const { smAndDown } = useDisplay();
 const selectAbrechnungsJahr = ref();
 const searchMitglied = ref();
+const inProgress = ref(false);
 
 onMounted(()=>{
   loadData()
@@ -62,12 +64,33 @@ async function loadData(){
   }
 }
 
+async function createInvoice(idMitglied){
+
+  try{
+    inProgress.value = true;
+    const response = await AuthenticationService.abrechnungNachMitglied({
+      idMitglied: idMitglied,
+      jahr: selectAbrechnungsJahr.value || new Date().getFullYear(), //Sollte noch kein Jahr ausgewählt worden sein, ist es das aktuelle Jahr
+    })
+    await loadData();
+    console.log('response createInvoice', response)
+    notifySuccess('Die Rechnung wurde erfolgreich erstellt')
+  }catch(error){
+    notifyError('Die Rechnung konnte nicht erstellt werden');
+    console.log('Fehler: Rechnung konnte nicht erstellt werden')
+  }finally {
+    inProgress.value = false;
+  }
+
+}
+
 </script>
 
 
 <template>
   <Notifications/>
 
+  <OverlayWaiting v-if="inProgress"></OverlayWaiting>
 
   <!--Hier sollen alle Abrechnungsfähigen Artikel, zusammengefasst unter dem Mitglied aufgeführt werden  -->
   <!--Die Gesamtsumme der Abrechnungspositionen soll angezeigt werden  -->
@@ -167,7 +190,7 @@ async function loadData(){
           <v-col cols="12" sm="6" md="4" class="text-start">
             <v-card-title>
               <v-icon size="25" class="mr-1">mdi-timer-sand</v-icon>
-                {{ Math.round(((item.offenerBetrag) *100) /100).toFixed(2).replace('.',',') }} €
+                {{ Math.round(((item.sumOffen) *100) /100).toFixed(2).replace('.',',') }} €
               <v-icon size="25" class="mr-1">mdi-cash-check</v-icon>
               {{ Math.round(((item.sumAbgerechnet) *100) /100).toFixed(2).replace('.',',') }} €
             </v-card-title>
@@ -204,6 +227,7 @@ async function loadData(){
                   variant="text"
                   v-bind="props"
                   class="text-white"
+                  @click="createInvoice(item.id)"
               >abrechnen</v-btn>
             </template>
           </v-menu>
