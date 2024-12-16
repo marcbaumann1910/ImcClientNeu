@@ -74,7 +74,7 @@ async function createInvoice(idMitglied){
     })
     await loadData();
     console.log('response createInvoice', response)
-    notifySuccess('Die Rechnung wurde erfolgreich erstellt')
+    notifySuccess(`Die Rechnung wurde erfolgreich erstellt. RG-Nr. ${response.data.newInvoiceID}`)
   }catch(error){
     notifyError('Die Rechnung konnte nicht erstellt werden');
     console.log('Fehler: Rechnung konnte nicht erstellt werden')
