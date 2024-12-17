@@ -17,6 +17,7 @@ onMounted(()=>{
   selectAbrechnungsJahr.value = new Date().getFullYear();
 })
 
+
 //Suche nach Mitgliedern
 const filderdMitglieder = computed(() => {
   if (!searchMitglied.value) {
@@ -291,7 +292,6 @@ async function createInvoice(idMitglied){
   display: inline-flex;
   align-items: center;
   margin-right: 10px;
-  margin-bottom: 10px;
 }
 
 .icon-margin {
