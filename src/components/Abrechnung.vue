@@ -74,7 +74,7 @@ async function createInvoice(idMitglied){
     })
     await loadData();
     console.log('response createInvoice', response)
-    notifySuccess(`Die Rechnung wurde erfolgreich erstellt. RG-Nr. ${response.data.newInvoiceID}`)
+    notifySuccess(`Die Rechnung wurde erfolgreich erstellt. ${response.data.newInvoiceID}`)
   }catch(error){
     notifyError('Die Rechnung konnte nicht erstellt werden');
     console.log('Fehler: Rechnung konnte nicht erstellt werden')
@@ -205,7 +205,7 @@ async function createInvoice(idMitglied){
           <v-col cols="12" sm="6" md="4" class="text-starts">
             <v-card-title>
               <v-icon size="25" class="mr-1">mdi-timer-sand</v-icon>
-              {{item.anzahlPositionen}} St.
+              {{item.countOffen}} St.
               <v-icon size="25" class="mr-1">mdi-cash-check</v-icon>
               {{item.countAbgerechnet}} St.
             </v-card-title>
@@ -217,8 +217,26 @@ async function createInvoice(idMitglied){
             </v-card-subtitle>
           </v-col>
         </v-row>
+       <!--PDF Symbol und Links zur Rechnung-->
 
-        <v-toolbar height="40" class="vToolbarUnten mt-2">
+        <v-card class="bg-grey-lighten-4 mt-2">
+          <div class="rechnungs-container">
+            <div
+                v-for="(rg, index) in item.RechnungData"
+                :key="index"
+                class="rechnungs-item"
+            >
+              <v-icon color="red" class="icon-margin">mdi-file-pdf-box</v-icon>
+              <a :href="rg.RechnungPfad" target="_blank">{{ rg.RechnungID }}</a>
+            </div>
+          </div>
+        </v-card>
+
+
+
+
+
+        <v-toolbar height="40" class="vToolbarUnten mt-0">
           <!--Title ist nur da, damit der Button zentriert ist -->
           <v-toolbar-title></v-toolbar-title>
           <v-menu>
@@ -261,5 +279,24 @@ async function createInvoice(idMitglied){
     font-size: 16px; /* Verkleinerte Schriftgröße auf kleineren Bildschirmen */
   }
 }
+
+.rechnungs-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 10px;
+}
+
+.rechnungs-item {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.icon-margin {
+  margin-right: 5px;
+}
+
 
 </style>
