@@ -14,8 +14,6 @@ const selectAbrechnungsJahr = ref();
 const searchMitglied = ref();
 const inProgress = ref(false);
 const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
-const showDialogYesNoCancelResponse = computed(()=> store.getters .getShowDialogYesNoCancel.response)
-
 
 onMounted(()=>{
   loadData()
@@ -75,7 +73,8 @@ async function createInvoice(idMitglied){
   const result = await store.dispatch('setShowDialogYesNoCancel', {
     showDialog: true,
     title: 'Abrechnung',
-    text: 'Möchten die Abrechnung durchführen ?'
+    text: 'Möchten die Abrechnung durchführen ?',
+    showButtonOK: true
   });
 
   if(result === 'no' || result === 'cancel'){

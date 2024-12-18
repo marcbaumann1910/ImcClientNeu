@@ -51,7 +51,8 @@ const store = createStore({
             text: '',
             showButtonYes: true,
             showButtonNo: true,
-            showButtonCancel: false
+            showButtonCancel: false,
+            showButtonOK: false
         },
         dialogResolver: null,
         showAusgeliehenAbgeschlossen: [],
@@ -306,10 +307,11 @@ const store = createStore({
                 state.showDialogYesNoCancel.showButtonCancel = value.showButtonCancel;
             }
 
-            if(value.response === undefined || value.response === ''){
-                state.showDialogYesNoCancel.response = value.response;
+            if(value.showButtonOK === undefined || value.showButtonOK === ''){
+                //Wird kein Wert übergeben, Standard wiederherstellen
+                state.showDialogYesNoCancel.showButtonOK = false;
             }else{
-                state.showDialogYesNoCancel.response = value.response;
+                state.showDialogYesNoCancel.showButtonOK = value.showButtonOK;
             }
         },
         setDialogResolver(state, resolver) {

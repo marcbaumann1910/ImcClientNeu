@@ -8,6 +8,30 @@ const dialogText = computed(()=> store.getters.getShowDialogYesNoCancel.text)
 const dialogYesVisible = computed(()=> store.getters.getShowDialogYesNoCancel.showButtonYes)
 const dialogNoVisible = computed(()=> store.getters.getShowDialogYesNoCancel.showButtonNo)
 const dialogCancelVisible = computed(()=> store.getters.getShowDialogYesNoCancel.showButtonCancel)
+const dialogOKVisible = computed(()=> store.getters.getShowDialogYesNoCancel.showButtonOK)
+
+//Wenn nur die Anzeige des OK Button gewünscht ist, reich die Übergabe showButtonOK: true.
+//Der Rest erledigt diese Funktion
+if(dialogOKVisible){
+  store.dispatch('setShowDialogYesNoCancel',{
+    showDialog: true,
+    title: store.getters.getShowDialogYesNoCancel.title,
+    text: store.getters.getShowDialogYesNoCancel.text,
+    showButtonYes: false,
+    showButtonNo: false,
+    showButtonCancel: false,
+    showButtonOK: true
+  })
+}
+
+function onOKClick(){
+  closeDialog();
+  const resolver = store.state.dialogResolver;
+  // if (resolver) {
+  //   resolver('ok');
+  //   store.commit('setDialogResolver', null);
+  // }
+}
 
 function onYesClick() {
   closeDialog();
@@ -50,6 +74,7 @@ function closeDialog() {
       <v-card-subtitle class="mt-2">{{dialogTitle}}</v-card-subtitle>
       <v-card-title class="">{{ dialogText }}</v-card-title>
       <v-card-actions>
+        <v-btn v-if="dialogOKVisible" color="success" variant="flat" @click="onOKClick">OK</v-btn>
         <v-btn v-if="dialogYesVisible" color="success" variant="flat" @click="onYesClick">Ja</v-btn>
         <v-btn v-if="dialogNoVisible" color="error" variant="flat" @click="onNoClick">Nein</v-btn>
         <v-btn v-if="dialogCancelVisible" @click="onCancelClick" variant="flat">Abbrechen</v-btn>
