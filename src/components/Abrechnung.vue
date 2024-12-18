@@ -68,13 +68,24 @@ async function loadData(){
   }
 }
 
-async function createInvoice(idMitglied){
+async function createInvoice(idMitglied, sumOffen){
+
+  const wert = Number(sumOffen); // oder parseFloat(sumOffen)
+
+  if(wert === 0 || wert === 0.00){
+    const result = await store.dispatch('setShowDialogYesNoCancel', {
+      showDialog: true,
+      title: 'Abrechnung',
+      text: 'Keine Positionen zum abrechnen!',
+      showButtonOK: true
+    });
+    return
+  }
 
   const result = await store.dispatch('setShowDialogYesNoCancel', {
     showDialog: true,
     title: 'Abrechnung',
-    text: 'Möchten die Abrechnung durchführen ?',
-    showButtonOK: true
+    text: 'Möchten die Abrechnung durchführen ?'
   });
 
   if(result === 'no' || result === 'cancel'){
@@ -261,7 +272,7 @@ async function createInvoice(idMitglied){
                   variant="text"
                   v-bind="props"
                   class="text-white"
-                  @click="createInvoice(item.id)"
+                  @click="createInvoice(item.id, item.sumOffen)"
               >abrechnen</v-btn>
             </template>
           </v-menu>

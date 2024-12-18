@@ -12,7 +12,7 @@ const dialogOKVisible = computed(()=> store.getters.getShowDialogYesNoCancel.sho
 
 //Wenn nur die Anzeige des OK Button gewünscht ist, reich die Übergabe showButtonOK: true.
 //Der Rest erledigt diese Funktion
-if(dialogOKVisible){
+if(dialogOKVisible.value){
   store.dispatch('setShowDialogYesNoCancel',{
     showDialog: true,
     title: store.getters.getShowDialogYesNoCancel.title,
