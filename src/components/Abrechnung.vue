@@ -124,7 +124,7 @@ async function createInvoice(idMitglied, sumOffen){
   <!--Es soll eine Filterfunktion bzw. Auswahlfunktion nach Jahr geben, sowie eine Suchfunktion nach Mitglied  -->
   <!--Mit Klick auf das Mitglied, soll auf eine neue Seite navigiert werden, wo die Detailansicht verfügbar ist, auch in mobil  -->
   <v-container max-width="1250">
-    <h3 class="pa-0">Abrechnung
+    <h3 class="mobile-text-small pa-0">Abrechnung
       {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].AbrechnungsJahr : '' }}
     </h3>
 
@@ -301,9 +301,33 @@ async function createInvoice(idMitglied, sumOffen){
   font-size: 20px; /* Standardgröße für größere Bildschirme */
 }
 
+/* Textgröße für mobile Geräte */
 @media (max-width: 600px) {
-  .text {
-    font-size: 16px; /* Verkleinerte Schriftgröße auf kleineren Bildschirmen */
+  .mobile-text-small {
+    font-size: 16px !important;
+  }
+}
+
+/* Textgröße für größere Geräte */
+@media (min-width: 601px) {
+  .mobile-text-small {
+    font-size: 24px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Textgröße für mobile Geräte in v-select */
+  :deep(.mobile-text-small) .v-field-label,
+  :deep(.mobile-text-small) .v-field__input {
+    font-size: 16px !important;
+  }
+}
+
+@media (min-width: 601px) {
+  /* Textgröße für größere Geräte in v-select */
+  :deep(.mobile-text-small) .v-field-label,
+  :deep(.mobile-text-small) .v-field__input {
+    font-size: 24px !important;
   }
 }
 
@@ -323,6 +347,7 @@ async function createInvoice(idMitglied, sumOffen){
 .icon-margin {
   margin-right: 5px;
 }
+
 
 
 </style>
