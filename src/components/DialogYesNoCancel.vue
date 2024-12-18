@@ -72,7 +72,7 @@ function closeDialog() {
   <v-dialog v-model="show" max-width="400px">
     <v-card>
       <v-card-subtitle class="mt-2">{{dialogTitle}}</v-card-subtitle>
-      <v-card-title class="">{{ dialogText }}</v-card-title>
+      <v-card-title class="mobile-text-small">{{ dialogText }}</v-card-title>
       <v-card-actions>
         <v-btn v-if="dialogOKVisible" color="success" variant="flat" @click="onOKClick">OK</v-btn>
         <v-btn v-if="dialogYesVisible" color="success" variant="flat" @click="onYesClick">Ja</v-btn>
@@ -82,3 +82,38 @@ function closeDialog() {
     </v-card>
   </v-dialog>
 </template>
+
+<style scoped>
+
+
+ /* Textgröße für mobile Geräte */
+ @media (max-width: 600px) {
+   .mobile-text-small {
+     font-size: 14px !important;
+   }
+ }
+
+ /* Textgröße für größere Geräte */
+ @media (min-width: 601px) {
+   .mobile-text-small {
+     font-size: 20px !important;
+   }
+ }
+
+ @media (max-width: 600px) {
+   /* Textgröße für mobile Geräte in v-select */
+   :deep(.mobile-text-small) .v-field-label,
+   :deep(.mobile-text-small) .v-field__input {
+     font-size: 14px !important;
+   }
+ }
+
+ @media (min-width: 601px) {
+   /* Textgröße für größere Geräte in v-select */
+   :deep(.mobile-text-small) .v-field-label,
+   :deep(.mobile-text-small) .v-field__input {
+     font-size: 20px !important;
+   }
+ }
+
+</style>
