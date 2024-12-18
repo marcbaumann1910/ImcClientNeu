@@ -3,23 +3,42 @@ import {computed, ref} from 'vue';
 import store from "@/store/store.js";
 
 const show = computed(()=> store.getters.getShowDialogYesNoCancel.showDialog);
+const dialogTitle = computed(()=> store.getters.getShowDialogYesNoCancel.title)
+const dialogText = computed(()=> store.getters.getShowDialogYesNoCancel.text)
+const dialogYesVisible = computed(()=> store.getters.getShowDialogYesNoCancel.showButtonYes)
+const dialogNoVisible = computed(()=> store.getters.getShowDialogYesNoCancel.showButtonNo)
+const dialogCancelVisible = computed(()=> store.getters.getShowDialogYesNoCancel.showButtonCancel)
 
 function onYesClick() {
-  store.dispatch("setShowDialogYesNoCancel", {
-    response: "yes"
-  });
+  closeDialog();
+  const resolver = store.state.dialogResolver;
+  if (resolver) {
+    resolver('yes');
+    store.commit('setDialogResolver', null);
+  }
 }
 
 function onNoClick() {
-  store.dispatch("setShowDialogYesNoCancel", {
-    response: "no"
-  });
+  closeDialog();
+  const resolver = store.state.dialogResolver;
+  if (resolver) {
+    resolver('no');
+    store.commit('setDialogResolver', null);
+  }
 }
 
 function onCancelClick() {
-  store.dispatch("setShowDialogYesNoCancel", {
-    response: "cancel"
-  });
+  closeDialog();
+  const resolver = store.state.dialogResolver;
+  if (resolver) {
+    resolver('cancel');
+    store.commit('setDialogResolver', null);
+  }
+}
+
+function closeDialog() {
+  // Mutation aufrufen, um showDialog = false zu setzen
+  store.commit('setShowDialogYesNoCancel', { showDialog: false });
 }
 
 // Mache openDialog von außen aufrufbar
@@ -28,11 +47,12 @@ function onCancelClick() {
 <template>
   <v-dialog v-model="show" max-width="400px">
     <v-card>
-      <v-card-title class="text-h5">Aktion wirklich ausführen?</v-card-title>
+      <v-card-subtitle class="mt-2">{{dialogTitle}}</v-card-subtitle>
+      <v-card-title class="">{{ dialogText }}</v-card-title>
       <v-card-actions>
-        <v-btn color="primary" variant="flat" @click="onYesClick">Ja</v-btn>
-        <v-btn color="error" variant="flat" @click="onNoClick">Nein</v-btn>
-        <v-btn @click="onCancelClick" variant="flat">Abbrechen</v-btn>
+        <v-btn v-if="dialogYesVisible" color="success" variant="flat" @click="onYesClick">Ja</v-btn>
+        <v-btn v-if="dialogNoVisible" color="error" variant="flat" @click="onNoClick">Nein</v-btn>
+        <v-btn v-if="dialogCancelVisible" @click="onCancelClick" variant="flat">Abbrechen</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

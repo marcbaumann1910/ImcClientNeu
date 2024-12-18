@@ -72,16 +72,13 @@ async function loadData(){
 
 async function createInvoice(idMitglied){
 
-  await store.dispatch('setShowDialogYesNoCancel', {
+  const result = await store.dispatch('setShowDialogYesNoCancel', {
     showDialog: true,
-    title: 'TEST',
-    text: 'TEST TEST',
-    showButtonYes: true,
-    showButtonNo: true,
-    showButtonCancel: false,
+    title: 'Abrechnung',
+    text: 'Möchten die Abrechnung durchführen ?'
   });
 
-  if(showDialogYesNoCancelResponse === 'no' || showDialogYesNoCancelResponse === 'cancel'){
+  if(result === 'no' || result === 'cancel'){
     return;
   }
 

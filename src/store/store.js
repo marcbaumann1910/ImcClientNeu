@@ -51,9 +51,9 @@ const store = createStore({
             text: '',
             showButtonYes: true,
             showButtonNo: true,
-            showButtonCancel: false,
-            response: '',
+            showButtonCancel: false
         },
+        dialogResolver: null,
         showAusgeliehenAbgeschlossen: [],
         member: [],
         notifications: [],
@@ -260,7 +260,7 @@ const store = createStore({
         },
         setShowDialogYesNoCancel(state, value){
 
-            if(value.showDialog !== undefined || value.showDialog !== ''){
+            if(value.showDialog === undefined || value.showDialog === ''){
                 //Wird kein Wert übergeben, gehe ich davon aus, dass der Dialog geschlossen werden soll
                 state.showDialogYesNoCancel.showDialog = false;
             }
@@ -268,7 +268,7 @@ const store = createStore({
                 state.showDialogYesNoCancel.showDialog = value.showDialog;
             }
 
-            if(value.title !== undefined || value.title !== ''){
+            if(value.title === undefined || value.title === ''){
                 state.showDialogYesNoCancel.title = '';
             }
             else{
@@ -276,14 +276,14 @@ const store = createStore({
 
             }
 
-            if(value.text !== undefined || value.text !== ''){
+            if(value.text === undefined || value.text === ''){
                 state.showDialogYesNoCancel.text = '';
             }
             else{
                 state.showDialogYesNoCancel.text = value.text;
             }
 
-            if(value.showButtonYes !== undefined || value.showButtonYes !== ''){
+            if(value.showButtonYes === undefined || value.showButtonYes === ''){
                 //Wird kein Wert übergeben, Standard wiederherstellen
                 state.showDialogYesNoCancel.showButtonYes = true;
             }else{
@@ -291,7 +291,7 @@ const store = createStore({
 
             }
 
-            if(value.showButtonNo !== undefined || value.showButtonNo !== ''){
+            if(value.showButtonNo === undefined || value.showButtonNo === ''){
                 //Wird kein Wert übergeben, Standard wiederherstellen
                 state.showDialogYesNoCancel.showButtonNo = true;
             }else
@@ -299,18 +299,21 @@ const store = createStore({
                 state.showDialogYesNoCancel.showButtonNo = value.showButtonNo;
             }
 
-            if(value.showButtonCancel !== undefined || value.showButtonCancel !== ''){
+            if(value.showButtonCancel === undefined || value.showButtonCancel === ''){
                 //Wird kein Wert übergeben, Standard wiederherstellen
                 state.showDialogYesNoCancel.showButtonCancel = false;
             }else{
                 state.showDialogYesNoCancel.showButtonCancel = value.showButtonCancel;
             }
 
-            if(value.response !== undefined || value.response !== ''){
+            if(value.response === undefined || value.response === ''){
                 state.showDialogYesNoCancel.response = value.response;
             }else{
                 state.showDialogYesNoCancel.response = value.response;
             }
+        },
+        setDialogResolver(state, resolver) {
+            state.dialogResolver = resolver;
         },
         member(state, member){
             state.member = member;
@@ -389,7 +392,12 @@ const store = createStore({
             commit('setShowDialogArtikelTausch', value)
         },
         setShowDialogYesNoCancel({ commit }, value){
-            commit('setShowDialogYesNoCancel', value)
+            return new Promise((resolve) => {
+                // Mutation aufrufen, um die Dialogwerte zu setzen
+                commit('setShowDialogYesNoCancel', value);
+                // Den Resolver im State speichern, damit der Dialog ihn später aufrufen kann
+                commit('setDialogResolver', resolve);
+            });
         },
         setMember({ commit }, member){
             commit('member', member)
