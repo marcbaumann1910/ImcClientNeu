@@ -5,12 +5,17 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 import { notifyError, notifySuccess } from '@/scripte/notifications.js';
 import Notifications from "@/components/Notifications.vue";
 import OverlayWaiting from "@/components/OverlayWaiting.vue";
+import DialogYesNoCancel from "@/components/DialogYesNoCancel.vue"
+import store from "@/store/store.js";
 const abrechnungsDaten = ref([]);
 const abrechnungsJahr = ref([]);
 const { smAndDown } = useDisplay();
 const selectAbrechnungsJahr = ref();
 const searchMitglied = ref();
 const inProgress = ref(false);
+const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
+const showDialogYesNoCancelResponse = computed(()=> store.getters .getShowDialogYesNoCancel.response)
+
 
 onMounted(()=>{
   loadData()
@@ -67,6 +72,19 @@ async function loadData(){
 
 async function createInvoice(idMitglied){
 
+  await store.dispatch('setShowDialogYesNoCancel', {
+    showDialog: true,
+    title: 'TEST',
+    text: 'TEST TEST',
+    showButtonYes: true,
+    showButtonNo: true,
+    showButtonCancel: false,
+  });
+
+  if(showDialogYesNoCancelResponse === 'no' || showDialogYesNoCancelResponse === 'cancel'){
+    return;
+  }
+
   try{
     inProgress.value = true;
     const response = await AuthenticationService.abrechnungNachMitglied({
@@ -92,6 +110,7 @@ async function createInvoice(idMitglied){
   <Notifications/>
 
   <OverlayWaiting v-if="inProgress"></OverlayWaiting>
+  <DialogYesNoCancel v-if="showDialogYesNoCancel"></DialogYesNoCancel>
 
   <!--Hier sollen alle Abrechnungsfähigen Artikel, zusammengefasst unter dem Mitglied aufgeführt werden  -->
   <!--Die Gesamtsumme der Abrechnungspositionen soll angezeigt werden  -->

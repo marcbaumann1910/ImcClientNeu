@@ -1,37 +1,28 @@
 <script setup>
-import { ref } from 'vue';
+import {computed, ref} from 'vue';
+import store from "@/store/store.js";
 
-const show = ref(false);
-
-function openDialog() {
-  show.value = true;
-}
-
-function closeDialog() {
-  show.value = false;
-}
+const show = computed(()=> store.getters.getShowDialogYesNoCancel.showDialog);
 
 function onYesClick() {
-  closeDialog();
-  // Emitte das Ergebnis "yes"
-  // Die aufrufende Komponente kann darauf reagieren
-  emit('confirm', 'yes');
+  store.dispatch("setShowDialogYesNoCancel", {
+    response: "yes"
+  });
 }
 
 function onNoClick() {
-  closeDialog();
-  emit('confirm', 'no');
+  store.dispatch("setShowDialogYesNoCancel", {
+    response: "no"
+  });
 }
 
 function onCancelClick() {
-  closeDialog();
-  emit('confirm', 'cancel');
+  store.dispatch("setShowDialogYesNoCancel", {
+    response: "cancel"
+  });
 }
 
-const emit = defineEmits(['confirm']);
-
 // Mache openDialog von außen aufrufbar
-defineExpose({ openDialog });
 </script>
 
 <template>
