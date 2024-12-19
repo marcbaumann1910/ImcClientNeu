@@ -123,7 +123,6 @@ async function createInvoiceAllMember() {
     return;
   }
 
-
   const result = await store.dispatch('setShowDialogYesNoCancel', {
     showDialog: true,
     title: 'Abrechnung',
