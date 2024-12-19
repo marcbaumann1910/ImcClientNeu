@@ -7,6 +7,7 @@ import Notifications from "@/components/Notifications.vue";
 import OverlayWaiting from "@/components/OverlayWaiting.vue";
 import DialogYesNoCancel from "@/components/DialogYesNoCancel.vue"
 import store from "@/store/store.js";
+import { useRouter } from 'vue-router'
 const abrechnungsDaten = ref([]);
 const abrechnungsJahr = ref([]);
 const { smAndDown } = useDisplay();
@@ -14,12 +15,16 @@ const selectAbrechnungsJahr = ref();
 const searchMitglied = ref();
 const inProgress = ref(false);
 const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
+const router = useRouter()
 
 onMounted(()=>{
   loadData()
   selectAbrechnungsJahr.value = new Date().getFullYear();
 })
 
+function navigateToAbrechnungDetails(){
+  router.push({name: 'abrechnungDetails'})
+}
 
 //Suche nach Mitgliedern
 const filderdMitglieder = computed(() => {
@@ -265,12 +270,14 @@ async function createInvoiceAllMember() {
           <v-toolbar-title class="ma-2 text-white">{{item.AbrechnungsJahr}}</v-toolbar-title>
           <v-menu>
             <template v-slot:activator="{ props }">
-              <v-btn
-                  icon="mdi-text-search"
-                  variant="text"
-                  v-bind="props"
-                  class="text-white"
-              ></v-btn>
+                <v-btn
+                    icon="mdi-text-search"
+                    variant="text"
+                    v-bind="props"
+                    class="text-white"
+                    @click="navigateToAbrechnungDetails"
+                ></v-btn>
+
             </template>
           </v-menu>
         </v-toolbar>
