@@ -107,7 +107,67 @@ async function createInvoice(idMitglied, sumOffen){
   }finally {
     inProgress.value = false;
   }
+}
 
+async function createInvoiceAllMember() {
+  //Filterung der abzurechnenden Kunden
+  const billingMembers = abrechnungsDaten.value.filter(fi => Number(fi.countOffen) > 0);
+
+  if(billingMembers.length === 0){
+    const result = await store.dispatch('setShowDialogYesNoCancel', {
+      showDialog: true,
+      title: 'Abrechnung',
+      text: `Keine Mitglieder zum abrechnen!`,
+      showButtonOK: true
+    });
+    return;
+  }
+
+
+  const result = await store.dispatch('setShowDialogYesNoCancel', {
+    showDialog: true,
+    title: 'Abrechnung',
+    text: `Möchten Sie ${billingMembers.length} Mitglieder abrechnen ?`
+  });
+
+  //Berechnung der benötigen Schritte für die Fortschrittsanzeige
+  let percentValueStep = ((1/billingMembers.length) * 100);
+  percentValueStep = Math.round(percentValueStep * 100) / 100
+  let percentValue = percentValueStep;
+
+  if (result === 'no' || result === 'cancel') {
+    return;
+  }
+
+  let response = '';
+  try {
+    inProgress.value = true;
+    for (const billingMember of billingMembers) {
+
+          await store.dispatch('setProgressWaiting', {percentValue: percentValue, percent: true})
+
+          response = await AuthenticationService.abrechnungNachMitglied({
+            idMitglied: billingMember.id,
+            jahr: selectAbrechnungsJahr.value || new Date().getFullYear(), //Sollte noch kein Jahr ausgewählt worden sein, ist es das aktuelle Jahr
+          })
+          console.log('response createInvoice', response)
+
+          percentValue += percentValueStep;
+      }
+
+    notifySuccess(`Die Rechnungen wurden erfolgreich erstellt.`)
+
+  }catch(error)
+    {
+      notifyError('Die Rechnungen konnten nicht erstellt werden');
+      console.log('Fehler: Die Rechnungen konnten nicht erstellt werden')
+    }
+    finally
+    {
+      await loadData();
+      inProgress.value = false;
+      await store.dispatch('setProgressWaiting', {percentValue: 0, percent: false})
+    }
 }
 
 </script>
@@ -128,6 +188,11 @@ async function createInvoice(idMitglied, sumOffen){
       {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].AbrechnungsJahr : '' }}
     </h3>
 
+    <v-label class="hover mt-2 text-indigo-darken-4" @click="createInvoiceAllMember" >
+      <v-icon class="mr-2" color="indigo darken-4">mdi-cash-register</v-icon>
+      Alle Mitglieder abrechnen
+    </v-label>
+
     <div class="mt-1">
       <v-row>
       <!--offen, nicht abgerechnete Vorgänge-->
@@ -136,13 +201,15 @@ async function createInvoice(idMitglied, sumOffen){
             <v-card-title class="text-center">
               <v-icon size="25">mdi-timer-sand</v-icon>
               {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].sumOffen.replace('.',',') + ' €' : '' }}
-            </v-card-title>          </v-card>
+            </v-card-title>
+          </v-card>
           <v-card v-else min-height="57">
             <v-card-subtitle class="mt-1">offen</v-card-subtitle>
             <v-card-title>
               {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].sumOffen.replace('.',',') + ' €' : '' }}
             </v-card-title>
           </v-card>
+          <!--Alle Mitglieder abrechnen-->
         </v-col>
         <!--abgerechnete Vorgänge-->
         <v-col cols="12" sm="6" md="4" class="text-start">
@@ -150,7 +217,8 @@ async function createInvoice(idMitglied, sumOffen){
             <v-card-title class="text-center">
               <v-icon size="25">mdi-cash-check</v-icon>
               {{ getAbrechnungsDaten().length > 0 ? getAbrechnungsDaten()[0].sumAbgerechnet.replace('.',',') + ' €' : '' }}
-            </v-card-title>               </v-card>
+            </v-card-title>
+          </v-card>
           <v-card v-else min-height="57">
             <v-card-subtitle class="mt-1">abgerechnet</v-card-subtitle>
             <v-card-title>
@@ -269,6 +337,7 @@ async function createInvoice(idMitglied, sumOffen){
           <v-menu>
             <template v-slot:activator="{ props }">
               <v-btn
+                  prepend-icon="mdi-cash-register"
                   variant="text"
                   v-bind="props"
                   class="text-white"
@@ -348,6 +417,10 @@ async function createInvoice(idMitglied, sumOffen){
   margin-right: 5px;
 }
 
+.hover:hover{
+  cursor: pointer;
+  transform: scale(1.1);
 
+}
 
 </style>

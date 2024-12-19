@@ -1,14 +1,33 @@
-<script setup lang="ts">
+<script setup>
+import {computed, ref} from 'vue'
+import store from "@/store/store.js";
+//Über den Store kann ein progress Circle veranlasst werden.
+//Im Store muss percent als true und in percentValue der entsprechende Wert übergeben werden
+const percent = computed(()=> store.getters.getProgressWaiting.percent)
+const percentValue = computed(()=> store.getters.getProgressWaiting.percentValue)
 
 </script>
 
 <template>
     <v-overlay :model-value="true" absolute class="loading-overlay">
       <v-progress-circular
+          v-if="percent"
+          :model-value="percentValue"
+          :rotate="180"
+          :size="100"
+          :width="15"
+          color="pink"
+      >
+        {{ percentValue }}
+      </v-progress-circular>
+
+      <v-progress-circular
+          v-else
           indeterminate
           color="primary"
           size="64"
       ></v-progress-circular>
+
     </v-overlay>
 </template>
 

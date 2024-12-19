@@ -58,6 +58,7 @@ const store = createStore({
         showAusgeliehenAbgeschlossen: [],
         member: [],
         notifications: [],
+        progressWaiting:{percentValue: 0, percent: false}
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
         createPersistedState({
@@ -325,6 +326,10 @@ const store = createStore({
         },
         removeNotification(state, notificationId){
             state.notifications = state.notifications.filter(n => n.id !== notificationId);
+        },
+        setProgressWaiting(state, value){
+            state.progressWaiting.percentValue = value.percentValue;
+            state.progressWaiting.percent = value.percent;
         }
 
     },
@@ -409,6 +414,9 @@ const store = createStore({
         },
         removeNotification({ commit }, notificationId) {
             commit('removeNotification', notificationId);
+        },
+        setProgressWaiting({ commit }, value){
+            commit('setProgressWaiting', value)
         }
 
     },
@@ -473,6 +481,7 @@ const store = createStore({
         getShowDialogYesNoCancel: (state) => state.showDialogYesNoCancel,
         getMember: state => state.member,
         getNotifications: state => state.notifications,
+        getProgressWaiting: state => state.progressWaiting,
     },
 
 
