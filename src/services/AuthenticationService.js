@@ -93,13 +93,22 @@ export default {
     },
     abrechnungsDaten(jahr) {
         console.log('abrechnungsDaten:', jahr);
-        if (!jahr) {
+        if (!jahr || jahr === '') {
             //Beim Initialaufruf gibt es kein Jahr, weshalb hier das aktuelle Jahr gesetzt wird
             jahr = new Date().getFullYear();
         }
                 return Api.get(`/abrechnungsdaten/${jahr}`,{
             params: {
                 idVerein: store.getters.getUserData.idVerein
+            }
+        });
+    },
+    abrechnungsDetails(data) {
+        console.log('abrechnungsDaten:', data);
+
+        return Api.get(`/abrechnungsdetails/${data.jahr}`,{
+            params: {
+                idMitglied: data.idMitglied
             }
         });
     },

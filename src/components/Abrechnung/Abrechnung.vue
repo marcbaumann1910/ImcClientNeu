@@ -22,8 +22,11 @@ onMounted(()=>{
   selectAbrechnungsJahr.value = new Date().getFullYear();
 })
 
-function navigateToAbrechnungDetails(){
-  router.push({name: 'abrechnungDetails'})
+function navigateToAbrechnungDetails(item){
+  router.push({name: 'abrechnungDetails', query: {
+    jahr: selectAbrechnungsJahr.value || new Date().getFullYear(), //Falls noch kein Jahr gewählt wurde, dann das aktuelle Jahr
+    idMitglied: item.id
+  }});
 }
 
 //Suche nach Mitgliedern
@@ -90,7 +93,7 @@ async function createInvoice(idMitglied, sumOffen){
   const result = await store.dispatch('setShowDialogYesNoCancel', {
     showDialog: true,
     title: 'Abrechnung',
-    text: 'Möchten die Abrechnung durchführen ?'
+    text: 'Möchten Sie die Abrechnung durchführen ?'
   });
 
   if(result === 'no' || result === 'cancel'){
@@ -148,15 +151,15 @@ async function createInvoiceAllMember() {
     inProgress.value = true;
     for (const billingMember of billingMembers) {
 
-          await store.dispatch('setProgressWaiting', {percentValue: percentValue, percent: true})
-
           response = await AuthenticationService.abrechnungNachMitglied({
             idMitglied: billingMember.id,
             jahr: selectAbrechnungsJahr.value || new Date().getFullYear(), //Sollte noch kein Jahr ausgewählt worden sein, ist es das aktuelle Jahr
           })
           console.log('response createInvoice', response)
 
-          percentValue += percentValueStep;
+      //Übergibt den aktuellen Prozentwert des Fortschritts über vuex an die OverlayWaiting Komponente
+      await store.dispatch('setProgressWaiting', {percentValue: percentValue, percent: true})
+      percentValue += percentValueStep;
       }
 
     notifySuccess(`Die Rechnungen wurden erfolgreich erstellt.`)
@@ -275,7 +278,7 @@ async function createInvoiceAllMember() {
                     variant="text"
                     v-bind="props"
                     class="text-white"
-                    @click="navigateToAbrechnungDetails"
+                    @click="navigateToAbrechnungDetails(item)"
                 ></v-btn>
 
             </template>

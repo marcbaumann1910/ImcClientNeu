@@ -6,6 +6,8 @@ import store from "@/store/store.js";
 const percent = computed(()=> store.getters.getProgressWaiting.percent)
 const percentValue = computed(()=> store.getters.getProgressWaiting.percentValue)
 
+
+
 </script>
 
 <template>
@@ -14,7 +16,7 @@ const percentValue = computed(()=> store.getters.getProgressWaiting.percentValue
           v-if="percent"
           :model-value="percentValue"
           :rotate="180"
-          :size="100"
+          :size="120"
           :width="15"
           color="pink"
       >
