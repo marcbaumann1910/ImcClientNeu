@@ -5,10 +5,12 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 import { formatDate } from '@/scripte/globalFunctions.js'
 import store from "@/store/store.js";
 import DialogYesNoCancel from "@/components/DialogYesNoCancel.vue";
+import OverlayWaiting from "@/components/OverlayWaiting.vue";
 const imageUrl = process.env.VITE_API_URL
 const route = useRoute();
 const abrechnungDetails = ref([]);
 const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
+const inProgress = ref(false);
 
 
 
@@ -49,7 +51,7 @@ async function loadData(){
   }
 }
 
-async function abrechnen(){
+async function abrechnen(IDinventarBuchungenPositionen, idMitglied, abrechnungsJahr){
   const result = await store.dispatch('setShowDialogYesNoCancel', {
     showDialog: true,
     title: 'Abrechnungsdetails',
@@ -59,6 +61,47 @@ async function abrechnen(){
   if(result === 'no' || result === 'cancel'){
     return;
   }
+
+  if(!IDinventarBuchungenPositionen || IDinventarBuchungenPositionen===""){
+    store.dispatch('setShowDialogYesNoCancel', {
+      showDialog: true,
+      title: 'Abrechnungsdetails',
+      text: 'Fehler InventarPosition: Keinen Wert übergeben',
+      showButtonOK: true
+    })
+    return;
+  }
+  console.log("IDinventarBuchungenPositionen:", IDinventarBuchungenPositionen)
+
+  try{
+    inProgress.value = true;
+    const respone = await AuthenticationService.abrechnungNachMitglied({
+      idMitglied: route.query.idMitglied,
+      jahr: route.query.jahr,
+      inventarPosID: IDinventarBuchungenPositionen,
+    })
+
+    loadData();
+
+    store.dispatch('setShowDialogYesNoCancel', {
+      showDialog: true,
+      title: 'Abrechnungsdetails',
+      text: 'Rechnung wurde erfolgreich erstellt',
+      showButtonOK: true
+    })
+
+  }catch(error){
+    store.dispatch('setShowDialogYesNoCancel', {
+      showDialog: true,
+      title: 'Abrechnungsdetails',
+      text: 'Fehler beim erstellen der Rechnung',
+      showButtonOK: true
+    })
+    console.log("Fehler beim erstellen der Rechnung", error)
+  }finally {
+    inProgress.value = false;
+  }
+
 }
 
 async function verkauf(){
@@ -93,6 +136,7 @@ async function stornieren(){
   <v-container>
 
     <DialogYesNoCancel v-if="showDialogYesNoCancel"></DialogYesNoCancel>
+    <OverlayWaiting v-if="inProgress"></OverlayWaiting>
 
     <h1>Abrechnung Details</h1>
 
@@ -149,9 +193,9 @@ async function stornieren(){
         <!--Buttons-->
         <v-col cols="12" sm="6" md="4" class="">
           <div class="d-flex flex-column align-items-center">
-            <v-btn class="ma-2" max-width="300" color="green" @click="abrechnen()">Abrechnen</v-btn>
-            <v-btn class="mx-2 mb-2" max-width="300" color="secondary" @click="verkauf()">Verkauf</v-btn>
+            <v-btn class="ma-2" max-width="300" color="green" @click="abrechnen(item.IDinventarBuchungenPositionen, item.IDMitglied, item.AbrechnungsJahr)">Abrechnen</v-btn>
             <v-btn class="mx-2 mb-2" max-width="300" color="red" @click="stornieren()">Stornieren</v-btn>
+            <v-btn v-if="item.verkaufbar===1" class="mx-2 mb-2" max-width="300" color="secondary" @click="verkauf()">Verkauf</v-btn>
           </div>
         </v-col>
       </v-row>

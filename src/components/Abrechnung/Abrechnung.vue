@@ -17,9 +17,16 @@ const inProgress = ref(false);
 const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
 const router = useRouter()
 
-onMounted(()=>{
+onMounted(()=> {
   loadData()
   selectAbrechnungsJahr.value = new Date().getFullYear();
+  try {
+    AuthenticationService.abrechnungInsert();
+    console.log("Abrechnung Insert erfolgreich!")
+
+  }catch(err) {
+    console.log("Abrechnung Insert ist fehlgeschlagen!")
+  }
 })
 
 function navigateToAbrechnungDetails(item){

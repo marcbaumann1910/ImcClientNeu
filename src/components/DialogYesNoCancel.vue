@@ -96,7 +96,7 @@ function closeDialog() {
  /* Textgröße für größere Geräte */
  @media (min-width: 601px) {
    .mobile-text-small {
-     font-size: 20px !important;
+     font-size: 16px !important;
    }
  }
 
@@ -112,7 +112,7 @@ function closeDialog() {
    /* Textgröße für größere Geräte in v-select */
    :deep(.mobile-text-small) .v-field-label,
    :deep(.mobile-text-small) .v-field__input {
-     font-size: 20px !important;
+     font-size: 16px !important;
    }
  }
 

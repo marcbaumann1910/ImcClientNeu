@@ -116,6 +116,11 @@ export default {
         //Übergabe einer MitgliederID, Backend übernimmt die komplette Abrechnung nach Jahr
         console.log('abrechnung/mitglied:', data);
         return Api.post('/abrechnung/mitglied', data);
+    },
+    abrechnungInsert() {
+        //Übergabe einer MitgliederID, Backend übernimmt die komplette Abrechnung nach Jahr
+        console.log('abrechnungInsert:');
+        return Api.patch('/abrechnunginsert');
     }
 
 };
