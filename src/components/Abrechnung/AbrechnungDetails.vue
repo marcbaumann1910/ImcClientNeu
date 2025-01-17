@@ -11,6 +11,7 @@ const route = useRoute();
 const abrechnungDetails = ref([]);
 const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
 const inProgress = ref(false);
+const btnDisabled = ref(false);
 
 
 
@@ -49,6 +50,10 @@ async function loadData(){
   }catch(error){
     console.log('FEHLER: Abruf der Abrechnung Details',error)
   }
+}
+
+function buttonDisabled(abrechenbar){
+    btnDisabled.value = !abrechenbar;
 }
 
 async function abrechnen(IDinventarBuchungenPositionen, idMitglied, abrechnungsJahr){
@@ -193,9 +198,9 @@ async function stornieren(){
         <!--Buttons-->
         <v-col cols="12" sm="6" md="4" class="">
           <div class="d-flex flex-column align-items-center">
-            <v-btn class="ma-2" max-width="300" color="green" @click="abrechnen(item.IDinventarBuchungenPositionen, item.IDMitglied, item.AbrechnungsJahr)">Abrechnen</v-btn>
-            <v-btn class="mx-2 mb-2" max-width="300" color="red" @click="stornieren()">Stornieren</v-btn>
-            <v-btn v-if="item.verkaufbar===1" class="mx-2 mb-2" max-width="300" color="secondary" @click="verkauf()">Verkauf</v-btn>
+            <v-btn :disabled="!item.abrechenbar" class="ma-2" max-width="300" color="green" @click="abrechnen(item.IDinventarBuchungenPositionen, item.IDMitglied, item.AbrechnungsJahr)">Abrechnen</v-btn>
+            <v-btn :disabled="!item.abrechenbar" class="mx-2 mb-2" max-width="300" color="red" @click="stornieren()">Stornieren</v-btn>
+            <v-btn :disabled="!item.verkaufbar || !item.abrechenbar" class="mx-2 mb-2" max-width="300" color="secondary" @click="verkauf()">Verkauf</v-btn>
           </div>
         </v-col>
       </v-row>
