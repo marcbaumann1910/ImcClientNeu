@@ -117,10 +117,10 @@ export default {
         console.log('abrechnung/mitglied:', data);
         return Api.post('/abrechnung/mitglied', data);
     },
-    abrechnungInsert() {
-        //Übergabe einer MitgliederID, Backend übernimmt die komplette Abrechnung nach Jahr
-        console.log('abrechnungInsert:');
-        return Api.patch('/abrechnunginsert');
+    abrechnungStorno(idAbrechnung) {
+        //Übergabe idAbrechnung, Backend storniert die entsprechende Position
+        console.log('abrechnungsdetails/storno:', idAbrechnung);
+        return Api.patch(`/abrechnungsdetails/storno/${idAbrechnung}`);
     }
 
 };

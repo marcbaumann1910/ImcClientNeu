@@ -111,12 +111,12 @@
 
 
         <v-card-text class="text-center">
-          <router-link
-              class="text-blue text-decoration-none"
-              :to="{ name: 'register' }"
-          >
-            Jetzt registrieren <v-icon icon="mdi-chevron-right"></v-icon>
-          </router-link>
+<!--          <router-link-->
+<!--              class="text-blue text-decoration-none"-->
+<!--              :to="{ name: 'register' }"-->
+<!--          >-->
+<!--            Jetzt registrieren <v-icon icon="mdi-chevron-right"></v-icon>-->
+<!--          </router-link>-->
         </v-card-text>
       </v-card>
 

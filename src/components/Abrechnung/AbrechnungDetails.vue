@@ -6,6 +6,8 @@ import { formatDate } from '@/scripte/globalFunctions.js'
 import store from "@/store/store.js";
 import DialogYesNoCancel from "@/components/DialogYesNoCancel.vue";
 import OverlayWaiting from "@/components/OverlayWaiting.vue";
+import Notifications from "@/components/Notifications.vue";
+import { notifyError, notifySuccess } from '@/scripte/notifications.js';
 const imageUrl = process.env.VITE_API_URL
 const route = useRoute();
 const abrechnungDetails = ref([]);
@@ -50,10 +52,6 @@ async function loadData(){
   }catch(error){
     console.log('FEHLER: Abruf der Abrechnung Details',error)
   }
-}
-
-function buttonDisabled(abrechenbar){
-    btnDisabled.value = !abrechenbar;
 }
 
 async function abrechnen(IDinventarBuchungenPositionen, idMitglied, abrechnungsJahr){
@@ -121,7 +119,7 @@ async function verkauf(){
   }
 }
 
-async function stornieren(){
+async function stornieren(idAbrechnung){
 
   const result = await store.dispatch('setShowDialogYesNoCancel', {
     showDialog: true,
@@ -132,6 +130,21 @@ async function stornieren(){
   if(result === 'no' || result === 'cancel'){
     return;
   }
+
+  if(!idAbrechnung || idAbrechnung === ''){
+    console.log("idAbrechnung ist leer")
+  }
+
+  try{
+    const response = AuthenticationService.abrechnungStorno(idAbrechnung);
+    console.log(`Die Abrechnungsposition ${idAbrechnung} wurde storniert`)
+    loadData();
+    notifySuccess(`Die Abrechnungsposition ${idAbrechnung} wurde storniert`)
+  }catch(error){
+    console.log(`Die Abrechnungsposition ${idAbrechnung} konnte nicht storniert werden`)
+    notifyError(`Die Abrechnungsposition ${idAbrechnung} konnte nicht storniert werden`);
+  }
+
 }
 
 </script>
@@ -142,6 +155,7 @@ async function stornieren(){
 
     <DialogYesNoCancel v-if="showDialogYesNoCancel"></DialogYesNoCancel>
     <OverlayWaiting v-if="inProgress"></OverlayWaiting>
+    <Notifications/>
 
     <h1>Abrechnung Details</h1>
 
@@ -180,8 +194,11 @@ async function stornieren(){
               ></v-img>
             </v-avatar>
             <v-card-subtitle><b>{{item.externeInventarNummer}}</b></v-card-subtitle>
-            <v-card-subtitle>{{item.AbrechnungStatus}}</v-card-subtitle>
-            <v-card-subtitle>{{formatDate(item.StatusDatum)}}</v-card-subtitle>
+            <v-card-subtitle>Status:</v-card-subtitle>
+            <v-card-subtitle><b>{{item.AbrechnungStatus}}</b></v-card-subtitle>
+            <v-card-subtitle>Statusdatum:</v-card-subtitle>
+            <v-card-subtitle><b>{{formatDate(item.StatusDatum)}}</b></v-card-subtitle>
+
           </div>
 
         </v-col>
@@ -198,9 +215,9 @@ async function stornieren(){
         <!--Buttons-->
         <v-col cols="12" sm="6" md="4" class="">
           <div class="d-flex flex-column align-items-center">
-            <v-btn :disabled="!item.abrechenbar" class="ma-2" max-width="300" color="green" @click="abrechnen(item.IDinventarBuchungenPositionen, item.IDMitglied, item.AbrechnungsJahr)">Abrechnen</v-btn>
-            <v-btn :disabled="!item.abrechenbar" class="mx-2 mb-2" max-width="300" color="red" @click="stornieren()">Stornieren</v-btn>
-            <v-btn :disabled="!item.verkaufbar || !item.abrechenbar" class="mx-2 mb-2" max-width="300" color="secondary" @click="verkauf()">Verkauf</v-btn>
+            <v-btn :disabled="!item.abrechenbar" class="ma-2" color="green" @click="abrechnen(item.IDinventarBuchungenPositionen, item.IDMitglied, item.AbrechnungsJahr)">Abrechnen</v-btn>
+            <v-btn :disabled="!item.abrechenbar" class="mx-2 mb-2"  color="red" @click="stornieren(item.IDAbrechnung)">Stornieren</v-btn>
+            <v-btn :disabled="!item.verkaufbar || !item.abrechenbar" class="mx-2 mb-2" color="secondary" @click="verkauf()">Verkauf</v-btn>
           </div>
         </v-col>
       </v-row>

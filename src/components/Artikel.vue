@@ -269,7 +269,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
                     :color="item.Bestand>0 ? 'green' : 'red'"
                     v-if="smAndDown"
                 >
-                <div class="artikel-column columnArtikelBezeichnung">  {{ item.ArtikelBezeichnung }} </div>
+                <div class="artikel-column columnArtikelBezeichnung ma-2">  {{ item.ArtikelBezeichnung }} </div>
                 </v-badge>
                 <div v-else class="artikel-column ma-2">  {{ item.ArtikelBezeichnung }} </div>
               </template>
