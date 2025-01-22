@@ -25,14 +25,15 @@ onMounted(()=> {
     console.log("Abrechnung Insert erfolgreich!")
 
   }catch(err) {
-    console.log("Abrechnung Insert ist fehlgeschlagen!")
+    console.log("Abrechnung Insert ist fehlgeschlagen!",err)
   }
 })
 
 function navigateToAbrechnungDetails(item){
   router.push({name: 'abrechnungDetails', query: {
     jahr: selectAbrechnungsJahr.value || new Date().getFullYear(), //Falls noch kein Jahr gewählt wurde, dann das aktuelle Jahr
-    idMitglied: item.id
+    idMitglied: item.id,
+    nameMitglied: `${item.firstName} ${item.familyName}`
   }});
 }
 

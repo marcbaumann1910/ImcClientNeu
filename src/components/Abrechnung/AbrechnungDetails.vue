@@ -34,6 +34,12 @@ onMounted(()=>{
     console.log('Kein jahr erhalten!')
     return;
   }
+
+  if(!route.query.nameMitglied || !route.query.nameMitglied === ''){
+    console.log('Kein nameMitglied erhalten!')
+    return;
+  }
+
   loadData()
 })
 
@@ -160,7 +166,7 @@ async function stornieren(idAbrechnung){
     <h1>Abrechnung Details</h1>
 
     <v-card class="" max-width="400">
-      <v-card-title >Name Mitglied</v-card-title>
+      <v-card-title >{{ route.query.nameMitglied }}</v-card-title>
     </v-card>
 
     <v-card
@@ -194,10 +200,9 @@ async function stornieren(idAbrechnung){
               ></v-img>
             </v-avatar>
             <v-card-subtitle><b>{{item.externeInventarNummer}}</b></v-card-subtitle>
-            <v-card-subtitle>Status:</v-card-subtitle>
-            <v-card-subtitle><b>{{item.AbrechnungStatus}}</b></v-card-subtitle>
+            <v-card-subtitle>Status: <b>{{item.AbrechnungStatus}}</b></v-card-subtitle>
             <v-card-subtitle>Statusdatum:</v-card-subtitle>
-            <v-card-subtitle><b>{{formatDate(item.StatusDatum)}}</b></v-card-subtitle>
+            <v-card-subtitle>Statusdatum:<b>{{formatDate(item.StatusDatum)}}</b></v-card-subtitle>
 
           </div>
 

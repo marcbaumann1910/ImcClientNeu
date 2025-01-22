@@ -121,6 +121,11 @@ export default {
         //Übergabe idAbrechnung, Backend storniert die entsprechende Position
         console.log('abrechnungsdetails/storno:', idAbrechnung);
         return Api.patch(`/abrechnungsdetails/storno/${idAbrechnung}`);
+    },
+    abrechnungInsert() {
+        //Übergabe idAbrechnung, Backend storniert die entsprechende Position
+        console.log('abrechnunginsert');
+        return Api.patch(`/abrechnunginsert`);
     }
 
 };
