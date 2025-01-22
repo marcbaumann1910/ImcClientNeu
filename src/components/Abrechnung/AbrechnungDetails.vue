@@ -201,8 +201,7 @@ async function stornieren(idAbrechnung){
             </v-avatar>
             <v-card-subtitle><b>{{item.externeInventarNummer}}</b></v-card-subtitle>
             <v-card-subtitle>Status: <b>{{item.AbrechnungStatus}}</b></v-card-subtitle>
-            <v-card-subtitle>Statusdatum:</v-card-subtitle>
-            <v-card-subtitle>Statusdatum:<b>{{formatDate(item.StatusDatum)}}</b></v-card-subtitle>
+            <v-card-subtitle>Statusdatum: <b>{{formatDate(item.StatusDatum)}}</b></v-card-subtitle>
 
           </div>
 
