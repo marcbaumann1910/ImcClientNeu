@@ -126,6 +126,11 @@ export default {
         //Übergabe idAbrechnung, Backend storniert die entsprechende Position
         console.log('abrechnunginsert');
         return Api.patch(`/abrechnunginsert`);
+    },
+    dashboardLeihvorgaenge() {
+        //Abruf der Statistikdaten für das Dashboard - Leihvorgange Pie
+        console.log('dashboard/leihvorgaenge');
+        return Api.get(`/dashboard/leihvorgaenge`);
     }
 
 };

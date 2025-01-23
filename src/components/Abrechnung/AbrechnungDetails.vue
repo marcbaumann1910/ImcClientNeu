@@ -221,7 +221,7 @@ async function stornieren(idAbrechnung){
           <div class="d-flex flex-column align-items-center">
             <v-btn :disabled="!item.abrechenbar" class="ma-2" color="green" @click="abrechnen(item.IDinventarBuchungenPositionen, item.IDMitglied, item.AbrechnungsJahr)">Abrechnen</v-btn>
             <v-btn :disabled="!item.abrechenbar" class="mx-2 mb-2"  color="red" @click="stornieren(item.IDAbrechnung)">Stornieren</v-btn>
-            <v-btn :disabled="!item.verkaufbar || !item.abrechenbar" class="mx-2 mb-2" color="secondary" @click="verkauf()">Verkauf</v-btn>
+            <v-btn :disabled="!item.verkaufbar || !item.abrechenbar" class="mx-2 mb-2" color="secondary" @click="verkauf()">Verkaufen</v-btn>
           </div>
         </v-col>
       </v-row>
