@@ -20,13 +20,6 @@ const router = useRouter()
 onMounted(()=> {
   loadData()
   selectAbrechnungsJahr.value = new Date().getFullYear();
-  try {
-    AuthenticationService.abrechnungInsert();
-    console.log("Abrechnung Insert erfolgreich!")
-
-  }catch(err) {
-    console.log("Abrechnung Insert ist fehlgeschlagen!",err)
-  }
 })
 
 function navigateToAbrechnungDetails(item){
