@@ -90,7 +90,7 @@ const chartOptions = ref({
       <v-row>
         <!--Leihvorgänge Pie (Kreisdiagramm)-->
         <v-col cols="12" sm="6" md="4">
-          <v-card  max-width="500">
+          <v-card  max-width="500" max-height="550">
             <v-card-title>Leihvorgänge</v-card-title>
             <PieChart class="mb-2" :chart-data="chartData" :chart-options="chartOptions" />
           </v-card>
@@ -99,8 +99,8 @@ const chartOptions = ref({
         <v-col cols="12" sm="6" md="4">
 
         <!--Aktuellsten Leihvorgänge-->
-          <v-card  max-width="500">
-            <v-card-title>Aktuellsten Leihvorgänge</v-card-title>
+          <v-card  max-width="500" max-height="550">
+            <v-card-title>aktuelle Leihvorgänge</v-card-title>
 
             <v-list>
               <v-list-item
@@ -118,11 +118,11 @@ const chartOptions = ref({
                       {{ item.familyName }}
                     </v-list-item-title>
                   </v-col>
-                  <v-col cols="12" sm="6" md="4">
+<!--                  <v-col cols="12" sm="6" md="4">
                     <v-list-item-title>
                       {{ item.city }}
                     </v-list-item-title>
-                  </v-col>
+                  </v-col>-->
                   <v-col cols="12" sm="6" md="4">
                     <v-list-item-title>
                       {{ globalFunction.formatDate(item.DatumBuchung) }}

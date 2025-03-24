@@ -14,12 +14,16 @@ const { smAndDown } = useDisplay();
 const selectAbrechnungsJahr = ref();
 const searchMitglied = ref();
 const inProgress = ref(false);
-const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
+const showDialogYesNoCancel = computed(()=> store.getters.getShowDialogYesNoCancel.showDialog)
 const router = useRouter()
+
 
 onMounted(()=> {
   loadData()
-  selectAbrechnungsJahr.value = new Date().getFullYear();
+  console.log('selectAbrechnungsJahr.value', selectAbrechnungsJahr.value)
+
+  selectAbrechnungsJahr.value = store.getters.getSelectAbrechnungsJahr
+
 })
 
 function navigateToAbrechnungDetails(item){
@@ -28,6 +32,7 @@ function navigateToAbrechnungDetails(item){
     idMitglied: item.id,
     nameMitglied: `${item.firstName} ${item.familyName}`
   }});
+
 }
 
 //Suche nach Mitgliedern
@@ -57,6 +62,7 @@ function getAbrechnungsDaten() {
   }
   else{
     jahr = selectAbrechnungsJahr.value;
+    store.commit('setSelectAbrechnungsJahr', jahr);
   }
   //console.log('jahr',jahr)
   const filtered =  abrechnungsJahr.value.filter(item => item.AbrechnungsJahr === jahr);
@@ -67,7 +73,7 @@ function getAbrechnungsDaten() {
 
 async function loadData(){
   try{
-    const response = await AuthenticationService.abrechnungsDaten(selectAbrechnungsJahr.value);
+    const response = await AuthenticationService.abrechnungsDaten(selectAbrechnungsJahr.value = store.getters.getSelectAbrechnungsJahr);
     abrechnungsDaten.value = response.data.abrechnungsDaten;
     abrechnungsJahr.value = response.data.abrechnungsJahr;
     console.log(abrechnungsJahr, abrechnungsDaten);

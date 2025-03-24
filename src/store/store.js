@@ -58,6 +58,7 @@ const store = createStore({
         showAusgeliehenAbgeschlossen: [],
         member: [],
         notifications: [],
+        selectAbrechnungsJahr: new Date().getFullYear(),
         progressWaiting:{percentValue: 0, percent: false}
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
@@ -330,6 +331,9 @@ const store = createStore({
         setProgressWaiting(state, value){
             state.progressWaiting.percentValue = value.percentValue;
             state.progressWaiting.percent = value.percent;
+        },
+        setSelectAbrechnungsJahr(state, value){
+            state.selectAbrechnungsJahr = value;
         }
 
     },
@@ -417,6 +421,9 @@ const store = createStore({
         },
         setProgressWaiting({ commit }, value){
             commit('setProgressWaiting', value)
+        },
+        setSelectAbrechnungsJahr({ commit }, value) {
+            commit('setSelectAbrechnungsJahr', value)
         }
 
     },
@@ -482,6 +489,7 @@ const store = createStore({
         getMember: state => state.member,
         getNotifications: state => state.notifications,
         getProgressWaiting: state => state.progressWaiting,
+        getSelectAbrechnungsJahr: state => state.selectAbrechnungsJahr,
     },
 
 
