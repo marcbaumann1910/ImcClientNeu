@@ -39,6 +39,7 @@ const items = [
     ],
   },
   { title: 'Artikel', route: '/artikel', icon: 'mdi-file-document', requiresAdmin: true },
+  { title: 'Lager', route: '/lager', icon: 'mdi-warehouse', requiresAdmin: true },
   { title: 'Mitglieder', route: '/mitglieder', icon: 'mdi-account-multiple', requiresAdmin: true },
   { title: 'Abrechnung', route: '/abrechnung', icon: 'mdi-currency-eur',requiresAdmin: false },
   { title: 'Registrierung', route: '/register', icon: 'mdi-account-plus', requiresAdmin: false },

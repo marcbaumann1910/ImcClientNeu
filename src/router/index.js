@@ -16,8 +16,10 @@ import Leihvorgang from "@/components/Leihvorgang/Leihvorgang.vue";
 import LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/LeihvorgangVerwalten.vue";
 import m_LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/m_LeihvorgangVerwalten.vue";
 import m_Checkout from "@/components/Leihvorgang/m_Checkout.vue";
+import Lager from "@/components/Lager.vue";
 import store from "@/store/store.js";
 import AbrechnungDetails from "@/components/Abrechnung/AbrechnungDetails.vue";
+
 
 const routes = [
     {
@@ -129,6 +131,12 @@ const routes = [
         path: '/m.checkout',
         name: 'm_checkout',
         component: m_Checkout,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
+    },
+    {
+        path: '/lager',
+        name: 'lager',
+        component: Lager,
         meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
 ];

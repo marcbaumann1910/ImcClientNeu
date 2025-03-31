@@ -11,6 +11,20 @@ const search = ref('');
 const { smAndDown } = useDisplay();
 const inputCount = ref(0);
 
+//Legt fest ob Artikel.vue klickbar ist, wenn es eingebunden wird
+const probs = defineProps({
+  clickable: {
+    type: Boolean,
+    default: false
+  }
+})
+
+function onRowClicked(event, rowData) {
+  console.log('IDInventarArtikel angeklickt:', rowData.item.IDInventarArtikel)
+  // z.B. Navigation in eine Detailansicht:
+  // router.push({ name: 'ArtikelDetail', params: { id: item.id } })
+}
+
 //Abrufen der Artikel-Daten vom Server
 onMounted(async () => {
   const response = await AuthenticationService.artikels(store.getters.getUserData.idVerein);
@@ -230,6 +244,8 @@ console.log('germanColorToHex', germanColorToHex('grün'))
           <v-data-table
               :headers="headers"
               :items="items"
+              :class="{ 'cursor-pointer': clickable }"
+              @click:row="onRowClicked"
               v-model:search="search"
               items-per-page="5"
               items-per-page-text="Einträge je Seite"
@@ -363,6 +379,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
                       </span>
                     </div>
                   </template>
+
                 </v-col>
               </v-row>
             </template>
@@ -421,6 +438,10 @@ console.log('germanColorToHex', germanColorToHex('grün'))
 </template>
 
 <style scoped>
+
+.cursor-pointer {
+  cursor: pointer;
+}
 
 .rainbow-circle {
   width: 50px;
