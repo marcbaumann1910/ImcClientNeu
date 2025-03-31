@@ -159,8 +159,49 @@
       </tr>
       </tbody>
     </table>
-
   </div>
+
+
+    <span>Drag&Drop</span>
+
+  <!-- Bereich mit v-chips, die gezogen werden können -->
+  <v-row class="mb-4">
+    <v-col cols="12">
+      <div class="d-flex flex-row flex-wrap gap-2">
+        <v-chip
+            v-for="chip in chips"
+            :key="chip.id"
+            draggable
+            @dragstart="handleDragStart($event, chip)"
+        >
+          {{ chip.label }}
+        </v-chip>
+      </div>
+    </v-col>
+  </v-row>
+
+  <!-- Drop-Ziele als v-list -->
+  <v-list two-line>
+    <v-list-item
+        v-for="(item, index) in listItems"
+        :key="item.id"
+        class="drop-target ma-2 pa-2"
+        @dragover.prevent
+        @drop="handleDrop($event, item)"
+
+    >
+
+        <v-list-item-title>{{ item.name }}</v-list-item-title>
+        <v-list-item-subtitle>
+          Abgelegte Chips:
+          <span v-for="dChip in item.droppedChips" :key="dChip.id" class="mr-1">
+              <v-chip small>{{ dChip.label }}</v-chip>
+            </span>
+        </v-list-item-subtitle>
+      <v-divider></v-divider>
+    </v-list-item>
+
+  </v-list>
 </template>
 
 <script setup>
@@ -178,6 +219,43 @@ const usersList = ref([]); // Array zum Speichern der Benutzerliste
 const swipeDirection = ref('wisch mich')
 const side = ref('');
 const toggle = ref('');
+
+// Liste der Chips (Drag-Elemente)
+const chips = ref([
+  { id: 1, label: 'Chip A' },
+  { id: 2, label: 'Chip B' },
+  { id: 3, label: 'Chip C' }
+]);
+
+// Liste der Drop-Ziele (Listeneinträge)
+const listItems = ref([
+  { id: 'list1', name: 'Liste 1', droppedChips: [] },
+  { id: 'list2', name: 'Liste 2', droppedChips: [] },
+  { id: 'list3', name: 'Liste 3', droppedChips: [] }
+]);
+
+// Referenz für den aktuell gezogenen Chip
+const draggedChip = ref(null);
+
+function handleDragStart(event, chip) {
+  draggedChip.value = chip;
+  // Optional: Daten im DataTransfer-Objekt speichern
+  event.dataTransfer.setData('text/plain', chip.id);
+}
+
+function handleDrop(event, listItem) {
+  // Optional: Lese die Chip-ID aus dataTransfer (falls nötig)
+  const chipId = event.dataTransfer.getData('text/plain');
+  const chip = draggedChip.value;
+  if (chip) {
+    // Füge den Chip dem Drop-Ziel hinzu, falls er noch nicht vorhanden ist
+    if (!listItem.droppedChips.find(c => c.id === chip.id)) {
+      listItem.droppedChips.push(chip);
+    }
+  }
+  // Reset
+  draggedChip.value = null;
+}
 
 
 const cartItemAdd = async () =>{
@@ -295,5 +373,46 @@ input {
   min-width: 100%;
 }
 
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Stil für den Bereich mit Chips */
+.chip-list {
+  display: flex;
+  gap: 10px;
+}
+
+.chip {
+  background-color: #e0e0e0;
+  padding: 8px 12px;
+  border-radius: 16px;
+  cursor: grab;
+  user-select: none;
+}
+
+/* Stil für die Liste (Drop-Ziele) */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.list-item {
+  background-color: #f5f5f5;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-height: 60px;
+}
+
+/* Titel im Listeneintrag */
+.list-title {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
 
 </style>
