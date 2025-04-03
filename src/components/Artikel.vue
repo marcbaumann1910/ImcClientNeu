@@ -19,10 +19,12 @@ const probs = defineProps({
   }
 })
 
+// Hier definieren wir ein Event, das die Komponente selbst "emitten" kann
+const emit = defineEmits(['row-clicked'])
+
 function onRowClicked(event, rowData) {
   console.log('IDInventarArtikel angeklickt:', rowData.item.IDInventarArtikel)
-  // z.B. Navigation in eine Detailansicht:
-  // router.push({ name: 'ArtikelDetail', params: { id: item.id } })
+  emit('row-clicked', rowData.item) //Übergibt die Daten z.B. an die Komponente Lagerverwaltung
 }
 
 //Abrufen der Artikel-Daten vom Server
