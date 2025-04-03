@@ -1,12 +1,14 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import {onMounted, watch, ref} from "vue";
+import AuthenticationService from "@/services/AuthenticationService.js";
 const route = useRoute()
 const valid = ref(false)
 const firstname = ref('')
 const lastname = ref('')
 const email = ref('')
 const files = ref(null)
+const selectedFile = ref(null)
 const preview = ref(null)
 
 onMounted(()=>{
@@ -18,6 +20,9 @@ watch(files, (newVal) => {
   if (!newVal) return
   // Falls newVal ein Array ist (z.B. bei multiple-Dateiauswahl), nimm das erste Element:
   const file = Array.isArray(newVal) ? newVal[0] : newVal
+
+  // Speichere das File in der reaktiven Variable, damit es auch außerhalb verfügbar ist
+  selectedFile.value = file
 
   // Debug-Ausgabe, um den File-Inhalt zu prüfen
   console.log('Gewähltes File:', file)
@@ -34,6 +39,28 @@ watch(files, (newVal) => {
   }
   reader.readAsDataURL(file)
 })
+
+async function uploadImage() {
+  if (!selectedFile.value) {
+    alert('Bitte wählen Sie ein Bild aus!')
+    return
+  }
+  //Upload muss mit FormData() erfolgen
+  const formData = new FormData()
+  // Verwende die reaktive Variable "selectedFile"
+  formData.append('image', selectedFile.value)
+
+  // Falls du weitere Daten senden möchtest, z.B. Artikelbezeichnung oder Stückzahl:
+  // formData.append('articleName', articleName.value)
+  // formData.append('quantity', quantity.value)
+
+  try {
+    const result = await AuthenticationService.uploadImage(formData)
+    console.log('Upload Image', result)
+  } catch (error) {
+    console.error('Fehler beim Upload:', error)
+  }
+}
 
 const nameRules = [
   (value) => {
@@ -104,6 +131,8 @@ const emailRules = [
             hide-details
         />
       </v-col>
+
+      <v-btn @click="uploadImage" >Test Bild upload</v-btn>
     </v-row>
 
 

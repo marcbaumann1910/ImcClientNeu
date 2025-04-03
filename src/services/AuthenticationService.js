@@ -131,6 +131,15 @@ export default {
         //Abruf der Statistikdaten für das Dashboard - Leihvorgange Pie
         console.log('dashboard/leihvorgaenge');
         return Api.get(`/dashboard/leihvorgaenge`);
+    },
+    uploadImage(formData) {
+        //Upload eines Bildes im FormData() Format
+        console.log('uploadimage');
+        return Api.post(`/uploadimage`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
     }
 
 };
