@@ -3,7 +3,6 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 import Artikel from "@/components/Artikel/Artikel.vue";
 
-
 function handleRowClicked(item) {
   console.log('Detailansicht öffnen für:', item);
   // Z.B. Navigation mit Vue Router:
@@ -12,10 +11,6 @@ function handleRowClicked(item) {
       IDInventarArtikel: item.IDInventarArtikel//Falls noch kein Jahr gewählt wurde, dann das aktuelle Jahr
     }});
 }
-
-
-
-
 
 </script>
 

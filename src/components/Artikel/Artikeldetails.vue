@@ -10,13 +10,18 @@ const email = ref('')
 const files = ref(null)
 const selectedFile = ref(null)
 const preview = ref(null)
-const tab = ref(null)
 
 // Referenz auf das versteckte input-Element
 const fileInput = ref(null)
 
-onMounted(()=>{
+onMounted(async()=>{
   console.log('IDInventarArtikel::', route.query.IDInventarArtikel);
+  try {
+    const result = await AuthenticationService.artikel(route.query.IDInventarArtikel);
+    console.log('getArtikel', result)
+  } catch (error) {
+    console.error('Fehler beim getArtikel:', error)
+  }
 })
 
 // Funktion, die das hidden file input klickt

@@ -31,6 +31,10 @@ export default {
         console.log('artikel/:idVerein', idverein);
         return Api.get(`/artikels/${idverein}`);
     },
+    artikel(id) {
+        console.log('artikel/', id);
+        return Api.get(`/artikel/${id}`);
+    },
     mitglieder() {
         console.log('mitglieder: ');
         return Api.get('/mitglieder');
