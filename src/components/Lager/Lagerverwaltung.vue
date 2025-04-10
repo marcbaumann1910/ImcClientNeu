@@ -10,35 +10,35 @@ const email = ref('')
 const files = ref(null)
 const selectedFile = ref(null)
 const preview = ref(null)
+const tab = ref(null)
+
+// Referenz auf das versteckte input-Element
+const fileInput = ref(null)
 
 onMounted(()=>{
   console.log('IDInventarArtikel::', route.query.IDInventarArtikel);
 })
 
-// Event-Handler für Bildauswahl
-watch(files, (newVal) => {
-  if (!newVal) return
-  // Falls newVal ein Array ist (z.B. bei multiple-Dateiauswahl), nimm das erste Element:
-  const file = Array.isArray(newVal) ? newVal[0] : newVal
+// Funktion, die das hidden file input klickt
+function triggerFileInput() {
+  fileInput.value.click()
+}
 
-  // Speichere das File in der reaktiven Variable, damit es auch außerhalb verfügbar ist
-  selectedFile.value = file
+// Event-Handler, um die Datei auszuwählen und eine Vorschau anzuzeigen
+function onFileChange(e) {
+  const file = e.target.files[0]
+  if (!file) return
 
-  // Debug-Ausgabe, um den File-Inhalt zu prüfen
-  console.log('Gewähltes File:', file)
-
-  // Überprüfen, ob file.type existiert und mit "image/" beginnt
-  if (!file.type || !file.type.startsWith('image/')) {
-    alert('Bitte wählen Sie ein Bild aus.')
+  // Überprüfe, ob es sich um ein Bild handelt
+  if (!file.type.startsWith('image/')) {
+    alert('Bitte wähle ein Bild aus.')
     return
   }
-
-  const reader = new FileReader()
-  reader.onload = (e) => {
-    preview.value = e.target.result
-  }
-  reader.readAsDataURL(file)
-})
+  //Übergibt den Dateinamen, wird für den Backendaufruf benötigt
+  selectedFile.value = file
+  // Erzeugen einer URL zur sofortigen Vorschau (alternativ FileReader verwenden)
+  preview.value = URL.createObjectURL(file)
+}
 
 async function uploadImage() {
   if (!selectedFile.value) {
@@ -88,55 +88,147 @@ const emailRules = [
 
 <template>
   <h1 class="mb-5">Lagerverwaltung</h1>
+  <!--Bild  -->
+  <!-- Gesamte Zeile -->
+  <v-row>
+    <!-- Spalte 1: Bildauswahl -->
+    <v-col cols="12" md="3">
+      <!-- Wrapper-Div macht den Bereich klickbar -->
+      <div class="image-picker" @click="triggerFileInput">
+        <!-- Wenn ein Bild ausgewählt wurde, wird dieses als v-img angezeigt -->
+        <v-img
+            v-if="preview"
+            :src="preview"
+            contain
+            height="100"
+            width="100"
+        ></v-img>
+        <!-- Andernfalls ein Platzhalter mit Icon und Hinweistext -->
+        <div v-else class="placeholder">
+          <v-icon size="64">mdi-image-off</v-icon>
+          <div>Bild auswählen</div>
+        </div>
+        <!-- Verstecktes File Input -->
+        <input
+            ref="fileInput"
+            type="file"
+            accept="image/*"
+            @change="onFileChange"
+            style="display: none"
+        />
+      </div>
+    </v-col>
+    <!-- Spalte 2: Button -->
+    <v-col cols="12" md="3" class="d-flex align-center">
+      <v-btn @click="uploadImage">Test Bild upload</v-btn>
+    </v-col>
+    <!-- Spalte 3: Checkboxen (ggf. gruppiert in zwei Spalten) -->
+    <v-col cols="12" md="6">
+      <v-row dense>
+        <v-col cols="12" sm="6">
+          <v-checkbox label="verleihbar"></v-checkbox>
+          <v-checkbox label="aktiv"></v-checkbox>
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-checkbox label="verkäuflich"></v-checkbox>
+          <v-checkbox label="Ext. Nummer"></v-checkbox>
+        </v-col>
+      </v-row>
+    </v-col>
+  </v-row>
+
+  <div>
+    <!-- Dense reduziert die Zwischenräume zwischen den Spalten -->
+    <v-row dense>
+      <v-col cols="12" sm="6" md="4" class="text-start">
+        <v-text-field placeholder="Artikelbezeichnung" class="marginTop" variant="solo-filled"></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="6" md="4" class="text-start">
+        <v-text-field placeholder="Einkaufspreis" class="marginTop" variant="solo-filled"></v-text-field>
+      </v-col>
+      <v-col cols="12" sm="6" md="4" class="text-start">
+        <v-text-field placeholder="Verkaufspreis" class="marginTop" variant="solo-filled"></v-text-field>
+      </v-col>
+    </v-row>
+  </div>
 
 
   <div>
     <!-- Dense reduziert die Zwischenräume zwischen den Spalten -->
     <v-row dense>
       <v-col cols="12" sm="6" md="4" class="text-start">
-        <v-text-field class="marginTop" variant="solo-filled">Bezeichnung</v-text-field>
+        <v-select
+            class="mobile-text-small mt-0 mb-0 custom-no-margin"
+            label="Mehrwertsteuer"
+            persistent-hint
+            return-object
+            single-line
+            dense
+            variant="solo-filled"
+        ></v-select>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
-        <v-text-field class="marginTop" variant="solo-filled">Bezeichnung</v-text-field>
+        <v-select
+            class="mobile-text-small mt-0 mb-0 custom-no-margin"
+            label="Abrechnungsintervall"
+            persistent-hint
+            return-object
+            single-line
+            dense
+            variant="solo-filled"
+        ></v-select>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
-        <v-text-field class="marginTop" variant="solo-filled">Bezeichnung</v-text-field>
+        <v-select
+            class="mobile-text-small mt-0 mb-0 custom-no-margin"
+            label="Hersteller"
+            persistent-hint
+            return-object
+            single-line
+            dense
+            variant="solo-filled"
+        ></v-select>
       </v-col>
     </v-row>
   </div>
 
-  <!--Bild  -->
   <div>
-
-    <v-row>
-      <v-col cols="12" sm="6" md="4">
-        <!-- Vorschau des ausgewählten Bildes -->
-        <v-avatar size="128px" rounded="0" class="">
-          <template v-if="preview">
-            <v-img alt="Avatar" :src="preview" contain></v-img>
-          </template>
-          <template v-else>
-            <v-icon size="128px">mdi-image-off-outline</v-icon>
-          </template>
-        </v-avatar>
+    <!-- Dense reduziert die Zwischenräume zwischen den Spalten -->
+    <v-row dense>
+      <v-col cols="12" sm="6" md="4" class="text-start">
+        <v-select
+            class="mobile-text-small mt-0 mb-0 custom-no-margin"
+            label="Farbe"
+            persistent-hint
+            return-object
+            single-line
+            dense
+            variant="solo-filled"
+        ></v-select>
       </v-col>
-
-      <v-col cols="12" sm="6" md="4">
-        <v-file-input
-            v-model="files"
-            accept="image/*"
-            label="Bild auswählen"
-            prepend-icon="mdi-image"
-            truncate-length="20"
-            hide-details
-        />
+      <v-col cols="12" sm="6" md="4" class="text-start">
+        <v-select
+            class="mobile-text-small mt-0 mb-0 custom-no-margin"
+            label="Konfekionsgröße"
+            persistent-hint
+            return-object
+            single-line
+            dense
+            variant="solo-filled"
+        ></v-select>
       </v-col>
-
-      <v-btn @click="uploadImage" >Test Bild upload</v-btn>
+      <v-col cols="12" sm="6" md="4" class="text-start">
+        <v-select
+            class="mobile-text-small mt-0 mb-0 custom-no-margin"
+            label="Kategorie"
+            persistent-hint
+            return-object
+            single-line
+            dense
+            variant="solo-filled"
+        ></v-select>
+      </v-col>
     </v-row>
-
-
-
   </div>
 
 </template>
@@ -147,4 +239,40 @@ const emailRules = [
     margin-top: -15px !important;
   }
 }
+
+.image-picker {
+  border: 1px dashed #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  /* Feste Dimensionen, die für den gesamten Container gelten */
+  width: 120px;
+  height: 120px;
+  /* Kein inneres Padding – so ist der Abstand zum Rahmen überall gleich */
+  padding: 0;
+  box-sizing: border-box;
+  /* Flexbox, damit Inhalt (Bild oder Platzhalter) zentral ausgerichtet wird */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 3D Effekt */
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.image-picker:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Stelle sicher, dass der Platzhalter die volle Höhe und Breite des Containers einnimmt */
+  width: 100%;
+  height: 100%;
+  color: #999;
+}
+
 </style>
