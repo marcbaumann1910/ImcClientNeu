@@ -3,7 +3,7 @@ import {computed, ref, watchEffect, watch, onMounted} from 'vue'
 import { useDisplay } from "vuetify";
 import Mitglieder from "@/components/Mitglieder.vue";
 import WarenkorbDesktop from "@/components/Leihvorgang/WarenkorbDesktop.vue";
-import Artikel from "../Artikel.vue";
+import Artikel from "../Artikel/Artikel.vue";
 import Checkout from "@/components/Leihvorgang/Checkout.vue";
 import DialogExterneNummer from "@/components/Leihvorgang/DialogExterneNummer.vue";
 import OverlayWaiting from "@/components/OverlayWaiting.vue";

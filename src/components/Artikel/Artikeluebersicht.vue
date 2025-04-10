@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 const router = useRouter()
-import Artikel from "@/components/Artikel.vue";
+import Artikel from "@/components/Artikel/Artikel.vue";
 
 
 function handleRowClicked(item) {
@@ -20,7 +20,7 @@ function handleRowClicked(item) {
 </script>
 
 <template>
-  <h1>Lager</h1>
+  <h1>Artikelübersicht</h1>
 
   <div class="d-flex align-center flex-column my-2">
     <v-btn

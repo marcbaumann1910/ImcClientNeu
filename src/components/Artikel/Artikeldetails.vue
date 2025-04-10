@@ -87,7 +87,7 @@ const emailRules = [
 </script>
 
 <template>
-  <h1 class="mb-5">Lagerverwaltung</h1>
+  <h1 class="mb-5">Artikeldetails</h1>
   <!--Bild  -->
   <!-- Gesamte Zeile -->
   <v-row>
