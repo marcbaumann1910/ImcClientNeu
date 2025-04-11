@@ -28,12 +28,10 @@ function handleRowClicked(item) {
     </v-btn>
   </div>
 
-
-
-
-
   <Artikel
       clickable
+      :aktiv="false"
+      :verleihbar="false"
       @row-clicked="handleRowClicked"
   />
 

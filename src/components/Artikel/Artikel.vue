@@ -11,11 +11,21 @@ const search = ref('');
 const { smAndDown } = useDisplay();
 const inputCount = ref(0);
 
-//Legt fest ob Artikel.vue klickbar ist, wenn es eingebunden wird
+//clickable legt fest ob Artikel.vue klickbar ist, wenn es eingebunden wird
+//aktiv legt fest ob Artikel.vue nur Artikel, die aktiv sind, abruft.
+//verleihbar legt fest ob Artikel.vue nur Artikel, die verleihbar sind, abruft.
 const probs = defineProps({
   clickable: {
     type: Boolean,
     default: false
+  },
+   aktiv:{
+     type: Boolean,
+     default: true
+   } ,
+  verleihbar:{
+    type: Boolean,
+    default: true
   }
 })
 
@@ -29,7 +39,7 @@ function onRowClicked(event, rowData) {
 
 //Abrufen der Artikel-Daten vom Server
 onMounted(async () => {
-  const response = await AuthenticationService.artikels(store.getters.getUserData.idVerein);
+  const response = await AuthenticationService.artikels(store.getters.getUserData.idVerein, probs.aktiv, probs.verleihbar);
   items.value = response.data
 
   //Stellt sicher, dass trotz einer Navigation zur Checkout-Seite
