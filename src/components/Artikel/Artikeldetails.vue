@@ -10,6 +10,14 @@ const email = ref('')
 const files = ref(null)
 const selectedFile = ref(null)
 const preview = ref(null)
+const artikel = ref([])
+const umsatzsteuer = ref([])
+const abrechnungsIntervall = ref([])
+const farbe = ref([])
+const kategorie = ref([])
+const konfektionsGroessen = ref([])
+const imageUrl = process.env.VITE_API_URL
+
 
 // Referenz auf das versteckte input-Element
 const fileInput = ref(null)
@@ -18,6 +26,14 @@ onMounted(async()=>{
   console.log('IDInventarArtikel::', route.query.IDInventarArtikel);
   try {
     const result = await AuthenticationService.artikel(route.query.IDInventarArtikel);
+    artikel.value = result.data.artikel[0];
+    umsatzsteuer.value = result.data.umsatzsteuer;
+    abrechnungsIntervall.value = result.data.abrechnungsIntervall;
+    farbe.value = result.data.farbe;
+    kategorie.value = result.data.kategorie;
+    konfektionsGroessen.value = result.data.konfektionsGroessen
+    preview.value = imageUrl + artikel.value.Bildpfad;
+
     console.log('getArtikel', result)
   } catch (error) {
     console.error('Fehler beim getArtikel:', error)
@@ -146,13 +162,13 @@ const emailRules = [
     <!-- Dense reduziert die Zwischenräume zwischen den Spalten -->
     <v-row dense>
       <v-col cols="12" sm="6" md="4" class="text-start">
-        <v-text-field placeholder="Artikelbezeichnung" class="marginTop" variant="solo-filled"></v-text-field>
+        <v-text-field v-model="artikel.ArtikelBezeichnung" placeholder="Artikelbezeichnung" class="marginTop" variant="solo-filled"></v-text-field>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
-        <v-text-field placeholder="Einkaufspreis" class="marginTop" variant="solo-filled"></v-text-field>
+        <v-text-field v-model="artikel.Einkaufspreis" placeholder="Einkaufspreis" class="marginTop" variant="solo-filled"></v-text-field>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
-        <v-text-field placeholder="Verkaufspreis" class="marginTop" variant="solo-filled"></v-text-field>
+        <v-text-field v-model="artikel.Preis" placeholder="Verkaufspreis" class="marginTop" variant="solo-filled"></v-text-field>
       </v-col>
     </v-row>
   </div>
@@ -170,6 +186,10 @@ const emailRules = [
             single-line
             dense
             variant="solo-filled"
+            v-model="artikel.UstSatz"
+            :items="umsatzsteuer"
+            :item-title="i => i.UstSatz"
+            :item-value="i => i.IDUmsatzsteuer"
         ></v-select>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
@@ -181,6 +201,10 @@ const emailRules = [
             single-line
             dense
             variant="solo-filled"
+            v-model="artikel.AbrechnungIntervall"
+            :items="abrechnungsIntervall"
+            :item-title="i => i.Bezeichnung"
+            :item-value="i => i.IDAbrechnungIntervall"
         ></v-select>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
@@ -209,6 +233,10 @@ const emailRules = [
             single-line
             dense
             variant="solo-filled"
+            v-model="artikel.Farbe"
+            :items="farbe"
+            :item-title="i => i.Bezeichnung"
+            :item-value="i => i.IDFarbe"
         ></v-select>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
@@ -220,6 +248,10 @@ const emailRules = [
             single-line
             dense
             variant="solo-filled"
+            v-model="artikel.Konfektionsgroesse"
+            :items="konfektionsGroessen"
+            :item-title="i => i.Konfektionsgroesse"
+            :item-value="i => i.IDKonfektionsgroesse"
         ></v-select>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
@@ -231,6 +263,10 @@ const emailRules = [
             single-line
             dense
             variant="solo-filled"
+            v-model="artikel.KategorieBezeichnung"
+            :items="kategorie"
+            :item-title="i => i.Bezeichnung"
+            :item-value="i => i.IDInventarKategorie"
         ></v-select>
       </v-col>
     </v-row>
