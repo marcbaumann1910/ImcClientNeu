@@ -40,6 +40,10 @@ export default {
         console.log('artikel/', id);
         return Api.get(`/artikel/${id}`);
     },
+    artikelUpdate(data) {
+        console.log('artikelupdate/', data);
+        return Api.patch(`/artikelupdate`, data);
+    },
     mitglieder() {
         console.log('mitglieder: ');
         return Api.get('/mitglieder');

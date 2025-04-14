@@ -83,6 +83,30 @@ async function uploadImage() {
   }
 }
 
+async function updateArtikel(){
+
+  const data = {
+    artikelBezeichnung: artikel.value.ArtikelBezeichnung,
+    einkaufspreis: artikel.value.Einkaufspreis,
+    preis: artikel.value.Preis,
+    ustSatz: artikel.value.IDUmsatzsteuer,
+    abrechnungIntervall: artikel.value.IDAbrechnungIntervall,
+    farbe: artikel.value.Farbe,
+    konfektionsgroesse: artikel.value.Konfektionsgroesse,
+    kategorieBezeichnung: artikel.value.KategorieBezeichnung
+
+  }
+
+  console.log('artikel.value.ArtikelBezeichnung', artikel.value.ArtikelBezeichnung)
+
+  try {
+    const result = await AuthenticationService.artikelUpdate(data)
+    console.log('Update Artikel', data)
+  } catch (error) {
+    console.error('Fehler bUpdate Artikel:', data)
+  }
+}
+
 const nameRules = [
   (value) => {
     if (value) return true
@@ -142,6 +166,8 @@ const emailRules = [
     <!-- Spalte 2: Button -->
     <v-col cols="12" md="3" class="d-flex align-center">
       <v-btn @click="uploadImage">Test Bild upload</v-btn>
+      <v-btn @click="updateArtikel">Update Artikel</v-btn>
+
     </v-col>
     <!-- Spalte 3: Checkboxen (ggf. gruppiert in zwei Spalten) -->
     <v-col cols="12" md="6">
