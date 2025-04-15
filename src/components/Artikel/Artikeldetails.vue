@@ -16,8 +16,8 @@ const abrechnungsIntervall = ref([])
 const farbe = ref([])
 const kategorie = ref([])
 const konfektionsGroessen = ref([])
+const verleihbar = ref(false)
 const imageUrl = process.env.VITE_API_URL
-
 
 // Referenz auf das versteckte input-Element
 const fileInput = ref(null)
@@ -85,15 +85,75 @@ async function uploadImage() {
 
 async function updateArtikel(){
 
+  //Sollte das Bild nicht geändert werden, muss der Dateiname des Bildes (kommt aus dem Backend)
+  //extrahiert werden
+  const fullPath = artikel.value.Bildpfad; // "/images/artikel/Rock.jpg"
+  const imageName = fullPath.substring(fullPath.lastIndexOf('/') + 1);
+  console.log(imageName);
+
+  //Wenn in v-select Mehrwertsteuer kein neuer Eintrag gewählt wird, dann
+  //nehme ich die Daten aus dem Backend.
+  //Wird ein neuer Eintrag aus v-select gewählt, verwende ich die IDUmsatzsteuer
+  //aus dessen Objekt. Das gleiche Prinzip wende ich für die anderen v-selects an
+  let idUmsatzsteuer = "";
+  if (artikel.value.UstSatz && artikel.value.UstSatz.IDUmsatzsteuer) {
+    idUmsatzsteuer = artikel.value.UstSatz.IDUmsatzsteuer;
+    console.log('idUmsatzsteuer',idUmsatzsteuer)
+  } else {
+    idUmsatzsteuer = artikel.value.IDUmsatzsteuer;
+    console.log('artikel.value.IDUmsatzsteuer', idUmsatzsteuer)
+  }
+
+  let idAbrechnungsIntervall = "";
+  if (artikel.value.AbrechnungIntervall && artikel.value.AbrechnungIntervall.IDAbrechnungIntervall) {
+    idAbrechnungsIntervall = artikel.value.AbrechnungIntervall.IDAbrechnungIntervall;
+    console.log('idAbrechnungsIntervall', idAbrechnungsIntervall);
+  } else {
+    idAbrechnungsIntervall = artikel.value.IDAbrechnungIntervall;
+    console.log('artikel.value.IDAbrechnungIntervall', idAbrechnungsIntervall);
+  }
+
+  let idFarbe = "";
+  if (artikel.value.Farbe && artikel.value.Farbe.IDFarbe) {
+    idFarbe = artikel.value.Farbe.IDFarbe;
+    console.log('idFarbe:', idFarbe);
+  } else {
+    idFarbe = artikel.value.IDFarbe;
+    console.log('artikel.value.IDFarbe:', idFarbe);
+  }
+
+  let idKonfektionsgroesse = "";
+  if (artikel.value.Konfektionsgroesse && artikel.value.Konfektionsgroesse.IDKonfektionsgroesse) {
+    idKonfektionsgroesse = artikel.value.Konfektionsgroesse.IDKonfektionsgroesse;
+    console.log('idKonfektionsgroesse:', idKonfektionsgroesse);
+  } else {
+    idKonfektionsgroesse = artikel.value.IDKonfektionsgroesse;
+    console.log('artikel.value.IDKonfektionsgroesse:', idKonfektionsgroesse);
+  }
+
+  let idInventarKategorie = "";
+  if (artikel.value.KategorieBezeichnung && artikel.value.KategorieBezeichnung.IDInventarKategorie) {
+    idInventarKategorie = artikel.value.KategorieBezeichnung.IDInventarKategorie;
+    console.log('IDInventarKategorie:', idInventarKategorie);
+  } else {
+    idInventarKategorie = artikel.value.IDInventarKategorie;
+    console.log('artikel.value.IDInventarKategorie:', idInventarKategorie);
+  }
+
+  console.log('verleihbar',verleihbar.value)
+
   const data = {
+    idInventarArtikel: artikel.value.IDInventarArtikel,
     artikelBezeichnung: artikel.value.ArtikelBezeichnung,
     einkaufspreis: artikel.value.Einkaufspreis,
     preis: artikel.value.Preis,
-    ustSatz: artikel.value.IDUmsatzsteuer,
-    abrechnungIntervall: artikel.value.IDAbrechnungIntervall,
-    farbe: artikel.value.Farbe,
-    konfektionsgroesse: artikel.value.Konfektionsgroesse,
-    kategorieBezeichnung: artikel.value.KategorieBezeichnung
+    idUmsatzsteuer: idUmsatzsteuer,
+    idAbrechnungsIntervall: idAbrechnungsIntervall,
+    idFarbe: idFarbe,
+    idKonfektionsgroesse: idKonfektionsgroesse,
+    idInventarKategorie: idInventarKategorie,
+    bildPfad: selectedFile?.value?.name || null, //Wird Bild nicht geändert, null ans Backend senden!
+    verleihbar: !!verleihbar
 
   }
 
@@ -173,7 +233,7 @@ const emailRules = [
     <v-col cols="12" md="6">
       <v-row dense>
         <v-col cols="12" sm="6">
-          <v-checkbox label="verleihbar"></v-checkbox>
+          <v-checkbox v-model="verleihbar" label="verleihbar"></v-checkbox>
           <v-checkbox label="aktiv"></v-checkbox>
         </v-col>
         <v-col cols="12" sm="6">
