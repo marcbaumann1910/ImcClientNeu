@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "vite preview --port 4000"
+    "start": "vite preview --port 4000",
+    "serve": "vite preview --port 4000"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
