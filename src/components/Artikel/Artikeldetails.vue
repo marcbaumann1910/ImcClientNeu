@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
-import {onMounted, watch, ref} from "vue";
+import {onMounted, computed, ref} from "vue";
 import AuthenticationService from "@/services/AuthenticationService.js";
 const route = useRoute()
 const valid = ref(false)
@@ -16,7 +16,6 @@ const abrechnungsIntervall = ref([])
 const farbe = ref([])
 const kategorie = ref([])
 const konfektionsGroessen = ref([])
-const verleihbar = ref(false)
 const imageUrl = process.env.VITE_API_URL
 
 // Referenz auf das versteckte input-Element
@@ -39,6 +38,47 @@ onMounted(async()=>{
     console.error('Fehler beim getArtikel:', error)
   }
 })
+
+//Checkboxen setzen
+const verleihbar = computed({
+  get() {
+    return artikel.value.verleihbar === 1;
+  },
+  set(newValue) {
+    console.log("Checkbox geändert:", newValue);
+    artikel.value.verleihbar = newValue ? 1 : 0;
+  }
+});
+
+const aktiv = computed({
+  get() {
+    return artikel.value.aktiv === 1;
+  },
+  set(newValue) {
+    console.log("Checkbox geändert:", newValue);
+    artikel.value.aktiv = newValue ? 1 : 0;
+  }
+});
+
+const externeNummerPflicht = computed({
+  get() {
+    return artikel.value.externeInventarNummerPflicht === 1;
+  },
+  set(newValue) {
+    console.log("Checkbox geändert:", newValue);
+    artikel.value.externeInventarNummerPflicht = newValue ? 1 : 0;
+  }
+});
+
+const verkaufbar = computed({
+  get() {
+    return artikel.value.verkaufbar === 1;
+  },
+  set(newValue) {
+    console.log("Checkbox geändert:", newValue);
+    artikel.value.verkaufbar = newValue ? 1 : 0;
+  }
+});
 
 // Funktion, die das hidden file input klickt
 function triggerFileInput() {
@@ -153,8 +193,10 @@ async function updateArtikel(){
     idKonfektionsgroesse: idKonfektionsgroesse,
     idInventarKategorie: idInventarKategorie,
     bildPfad: selectedFile?.value?.name || null, //Wird Bild nicht geändert, null ans Backend senden!
-    verleihbar: !!verleihbar
-
+    verleihbar: !!verleihbar.value, //Checkbox
+    aktiv: !!aktiv.value, //Checkbox
+    externeNummerPflicht: !!externeNummerPflicht.value, //Checkbox
+    verkaufbar: !!verkaufbar.value, //Checkbox
   }
 
   console.log('artikel.value.ArtikelBezeichnung', artikel.value.ArtikelBezeichnung)
@@ -234,11 +276,11 @@ const emailRules = [
       <v-row dense>
         <v-col cols="12" sm="6">
           <v-checkbox v-model="verleihbar" label="verleihbar"></v-checkbox>
-          <v-checkbox label="aktiv"></v-checkbox>
+          <v-checkbox v-model="aktiv" label="aktiv"></v-checkbox>
         </v-col>
         <v-col cols="12" sm="6">
-          <v-checkbox label="verkäuflich"></v-checkbox>
-          <v-checkbox label="Ext. Nummer"></v-checkbox>
+          <v-checkbox v-model="verkaufbar" label="verkäuflich"></v-checkbox>
+          <v-checkbox v-model="externeNummerPflicht" label="Ext. Nummer"></v-checkbox>
         </v-col>
       </v-row>
     </v-col>
