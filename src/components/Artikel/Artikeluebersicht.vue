@@ -22,7 +22,6 @@ function handleRowClicked(item) {
         class="my-2"
         color="blue darken-2"
         prepend-icon="mdi-plus"
-        @click="nextPage"
     >
       Artikel anlegen
     </v-btn>
