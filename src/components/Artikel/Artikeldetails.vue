@@ -127,9 +127,10 @@ async function updateArtikel(){
 
   //Sollte das Bild nicht geändert werden, muss der Dateiname des Bildes (kommt aus dem Backend)
   //extrahiert werden
+/*
   const fullPath = artikel.value.Bildpfad; // "/images/artikel/Rock.jpg"
   const imageName = fullPath.substring(fullPath.lastIndexOf('/') + 1);
-  console.log(imageName);
+  console.log(imageName);*/
 
   //Wenn in v-select Mehrwertsteuer kein neuer Eintrag gewählt wird, dann
   //nehme ich die Daten aus dem Backend.
@@ -182,6 +183,26 @@ async function updateArtikel(){
 
   console.log('verleihbar',verleihbar.value)
 
+  //Bild-Upload, falls eines ausgewählt wurde
+  let returnImagePath = "";
+  if(selectedFile.value){
+
+    //Upload muss mit FormData() erfolgen
+    const formData = new FormData()
+    // Verwende die reaktive Variable "selectedFile"
+    formData.append('image', selectedFile.value)
+
+    try {
+      const result = await AuthenticationService.uploadImage(formData)
+      //Backend liefert den Speicherort des eben hochgeladenen Bildes
+      returnImagePath = result.data.imagePath
+      console.log('Upload Image', result)
+      console.log('returnImagePath', returnImagePath)
+    } catch (error) {
+      console.error('Fehler beim Upload:', error)
+    }
+  }
+
   const data = {
     idInventarArtikel: artikel.value.IDInventarArtikel,
     artikelBezeichnung: artikel.value.ArtikelBezeichnung,
@@ -192,7 +213,7 @@ async function updateArtikel(){
     idFarbe: idFarbe,
     idKonfektionsgroesse: idKonfektionsgroesse,
     idInventarKategorie: idInventarKategorie,
-    bildPfad: selectedFile?.value?.name || null, //Wird Bild nicht geändert, null ans Backend senden!
+    bildPfad: returnImagePath || null, //Wird Bild nicht geändert, NULL ans Backend senden!
     verleihbar: !!verleihbar.value, //Checkbox
     aktiv: !!aktiv.value, //Checkbox
     externeNummerPflicht: !!externeNummerPflicht.value, //Checkbox

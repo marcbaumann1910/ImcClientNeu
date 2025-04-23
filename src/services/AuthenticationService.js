@@ -147,8 +147,8 @@ export default {
     },
     uploadImage(formData) {
         //Upload eines Bildes im FormData() Format
-        console.log('uploadimage');
-        return Api.post(`/uploadimage`, formData, {
+        console.log('uploadarticelimage');
+        return Api.post(`/uploadarticelimage`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
