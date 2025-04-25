@@ -39,6 +39,7 @@ onMounted(async()=>{
   }
 })
 
+
 //Checkboxen setzen
 const verleihbar = computed({
   get() {
@@ -288,8 +289,8 @@ const emailRules = [
     </v-col>
     <!-- Spalte 2: Button -->
     <v-col cols="12" md="3" class="d-flex align-center">
-      <v-btn @click="uploadImage">Test Bild upload</v-btn>
-      <v-btn @click="updateArtikel">Update Artikel</v-btn>
+<!--      <v-btn @click="uploadImage">Test Bild upload</v-btn>-->
+      <v-btn @click="updateArtikel" color="success">speichern</v-btn>
 
     </v-col>
     <!-- Spalte 3: Checkboxen (ggf. gruppiert in zwei Spalten) -->
@@ -311,13 +312,22 @@ const emailRules = [
     <!-- Dense reduziert die Zwischenräume zwischen den Spalten -->
     <v-row dense>
       <v-col cols="12" sm="6" md="4" class="text-start">
-        <v-text-field v-model="artikel.ArtikelBezeichnung" placeholder="Artikelbezeichnung" class="marginTop" variant="solo-filled"></v-text-field>
+        <v-text-field v-model="artikel.ArtikelBezeichnung" placeholder="Artikelbezeichnung" label="Artikel Bezeichnung" class="marginTop" variant="solo-filled"></v-text-field>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
-        <v-text-field v-model="artikel.Einkaufspreis" placeholder="Einkaufspreis" class="marginTop" variant="solo-filled"></v-text-field>
+        <v-text-field
+            class="marginTop no-spinner"
+            v-model.number="artikel.Einkaufspreis"
+            label="Einkaufspreis"
+            placeholder="0,00"
+            suffix=" €"
+            type="number"
+            step="0.01"
+            variant="solo-filled"
+        ></v-text-field>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
-        <v-text-field v-model="artikel.Preis" placeholder="Verkaufspreis" class="marginTop" variant="solo-filled"></v-text-field>
+        <v-text-field v-model="artikel.Preis" placeholder="0,00 €" label="Verkaufspreis" class="marginTop" variant="solo-filled"></v-text-field>
       </v-col>
     </v-row>
   </div>
@@ -328,41 +338,34 @@ const emailRules = [
     <v-row dense>
       <v-col cols="12" sm="6" md="4" class="text-start">
         <v-select
-            class="mobile-text-small mt-0 mb-0 custom-no-margin"
-            label="Mehrwertsteuer"
-            persistent-hint
-            return-object
-            single-line
-            dense
-            variant="solo-filled"
-            v-model="artikel.UstSatz"
+            class="mobile-text-small mt-0 mb-0 custom-no-margin pt-4"
+            v-model="artikel.IDUmsatzsteuer"
             :items="umsatzsteuer"
-            :item-title="i => i.UstSatz"
-            :item-value="i => i.IDUmsatzsteuer"
-        ></v-select>
-      </v-col>
-      <v-col cols="12" sm="6" md="4" class="text-start">
-        <v-select
-            class="mobile-text-small mt-0 mb-0 custom-no-margin"
-            label="Abrechnungsintervall"
-            persistent-hint
-            return-object
-            single-line
+            item-title="UstSatz"
+            item-value="IDUmsatzsteuer"
+            label="Mehrwertsteuer"
             dense
             variant="solo-filled"
-            v-model="artikel.AbrechnungIntervall"
-            :items="abrechnungsIntervall"
-            :item-title="i => i.Bezeichnung"
-            :item-value="i => i.IDAbrechnungIntervall"
         ></v-select>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
         <v-select
-            class="mobile-text-small mt-0 mb-0 custom-no-margin"
+            class="mobile-text-small mt-0 mb-0 custom-no-margin pt-4"
+            v-model="artikel.IDAbrechnungIntervall"
+            :items="abrechnungsIntervall"
+            item-title="Bezeichnung"
+            item-value="IDAbrechnungIntervall"
+            label="Abrechnungsintervall"
+            dense
+            variant="solo-filled"
+        ></v-select>
+      </v-col>
+      <v-col cols="12" sm="6" md="4" class="text-start">
+        <v-select
+            class="mobile-text-small mt-0 mb-0 custom-no-margin pt-4"
+            item-title="Bezeichnung"
+            item-value="IDFarbe"
             label="Hersteller"
-            persistent-hint
-            return-object
-            single-line
             dense
             variant="solo-filled"
         ></v-select>
@@ -375,47 +378,38 @@ const emailRules = [
     <v-row dense>
       <v-col cols="12" sm="6" md="4" class="text-start">
         <v-select
-            class="mobile-text-small mt-0 mb-0 custom-no-margin"
-            label="Farbe"
-            persistent-hint
-            return-object
-            single-line
-            dense
-            variant="solo-filled"
-            v-model="artikel.Farbe"
+            class="mobile-text-small mt-0 mb-0 custom-no-margin pt-4"
+            v-model="artikel.IDFarbe"
             :items="farbe"
-            :item-title="i => i.Bezeichnung"
-            :item-value="i => i.IDFarbe"
+            item-title="Bezeichnung"
+            item-value="IDFarbe"
+            label="Farbe"
+            dense
+            variant="solo-filled"
         ></v-select>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
         <v-select
-            class="mobile-text-small mt-0 mb-0 custom-no-margin"
-            label="Konfekionsgröße"
-            persistent-hint
-            return-object
-            single-line
-            dense
-            variant="solo-filled"
-            v-model="artikel.Konfektionsgroesse"
+            class="mobile-text-small mt-0 mb-0 custom-no-margin pt-4"
+            v-model="artikel.IDKonfektionsgroesse"
             :items="konfektionsGroessen"
-            :item-title="i => i.Konfektionsgroesse"
-            :item-value="i => i.IDKonfektionsgroesse"
+            item-title="Konfektionsgroesse"
+            item-value="IDKonfektionsgroesse"
+            label="Konfektionsgröße"
+            dense
+            variant="solo-filled"
         ></v-select>
       </v-col>
       <v-col cols="12" sm="6" md="4" class="text-start">
         <v-select
-            class="mobile-text-small mt-0 mb-0 custom-no-margin"
+            class="mobile-text-small mt-0 mb-0 custom-no-margin pt-4"
+            v-model="artikel.IDInventarKategorie"
+            :items="kategorie"
+            item-title="Bezeichnung"
+            item-value="IDInventarKategorie"
             label="Kategorie"
-            persistent-hint
-            return-object
-            single-line
             dense
             variant="solo-filled"
-            v-model="artikel.KategorieBezeichnung"
-            :items="kategorie"
-            :item-title="i => i.Bezeichnung"
-            :item-value="i => i.IDInventarKategorie"
         ></v-select>
       </v-col>
     </v-row>
@@ -464,5 +458,10 @@ const emailRules = [
   height: 100%;
   color: #999;
 }
+
+/* Versteckt die Number-Spinner */
+.no-spinner input::-webkit-outer-spin-button,
+.no-spinner input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.no-spinner input[type=number] { -moz-appearance: textfield; }
 
 </style>
