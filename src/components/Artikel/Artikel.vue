@@ -226,9 +226,9 @@ console.log('germanColorToHex', germanColorToHex('grün'))
           <v-chip
               color="grey"
               class="my-3 ml-2"
-              @click="search='Unterhose'"
+              @click="search='Schurz'"
           >
-            Unterhose
+            Schurz
           </v-chip>
           <v-chip
               color="black"

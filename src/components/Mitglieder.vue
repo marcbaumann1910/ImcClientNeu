@@ -94,7 +94,19 @@ const filteredMembers = computed(() => {
           :color="isHovering ? 'primary' : 'white'"
       >
         <v-card-title>{{member.firstName}} {{member.familyName}}</v-card-title>
-        <v-card-subtitle>{{member.city}}</v-card-subtitle>
+
+        <v-card-subtitle class="d-flex align-center flex-wrap ga-4">
+        <span class="d-flex align-center">
+          <v-icon size="18" class="mr-1">mdi-map-marker</v-icon>
+          {{ member.city }}
+        </span>
+
+        <span class="d-flex align-center">
+          <v-icon size="18" class="mr-1">mdi-email</v-icon>
+          {{ member.privateEmail }}
+        </span>
+        </v-card-subtitle>
+
       </v-card>
       </v-hover>
       </div>
