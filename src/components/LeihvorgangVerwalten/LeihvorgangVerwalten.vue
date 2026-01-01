@@ -298,7 +298,7 @@ import App from "@/App.vue";
                 <v-row>
                   <v-col>
                     <v-list-item-action class="ml-4">
-                      <v-list-item-title >Artikel {{ item.anzahlArtikel }} Stück</v-list-item-title>
+                      <v-list-item-title >Artikel {{ item.anzahlArtikel }} Stück || MitgliedID {{ item.easyVereinMitglied_id }}</v-list-item-title>
                     </v-list-item-action>
                   </v-col>
 
