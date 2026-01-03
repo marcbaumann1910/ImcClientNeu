@@ -112,6 +112,7 @@ async function createInvoice(idMitglied, sumOffen){
     const response = await AuthenticationService.abrechnungNachMitglied({
       idMitglied: idMitglied,
       jahr: selectAbrechnungsJahr.value || new Date().getFullYear(), //Sollte noch kein Jahr ausgewählt worden sein, ist es das aktuelle Jahr
+      IDBenutzer: store.getters.getUserData.idBenutzer,
     })
     await loadData();
     console.log('response createInvoice', response)
@@ -161,6 +162,7 @@ async function createInvoiceAllMember() {
           response = await AuthenticationService.abrechnungNachMitglied({
             idMitglied: billingMember.id,
             jahr: selectAbrechnungsJahr.value || new Date().getFullYear(), //Sollte noch kein Jahr ausgewählt worden sein, ist es das aktuelle Jahr
+            IDBenutzer: store.getters.getUserData.idBenutzer,
           })
           console.log('response createInvoice', response)
 

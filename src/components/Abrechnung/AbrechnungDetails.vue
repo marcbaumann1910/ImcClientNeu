@@ -88,6 +88,7 @@ async function abrechnen(IDinventarBuchungenPositionen, idMitglied, abrechnungsJ
       idMitglied: route.query.idMitglied,
       jahr: route.query.jahr,
       inventarPosID: IDinventarBuchungenPositionen,
+      IDBenutzer: store.getters.getUserData.idBenutzer,
     })
 
     loadData();

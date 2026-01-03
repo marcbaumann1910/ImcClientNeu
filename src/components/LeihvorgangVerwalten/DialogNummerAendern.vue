@@ -63,7 +63,7 @@ async function dialogSave(){
     const response = await AuthenticationService.leihvorgangNummerAendern({
       IDinventarBuchungenPositionen: IDinventarBuchungenPositionen.value,
       neueExterneInventarNummer: textExterneInventarNummer.value || selectExterneInventarNummern.value,
-
+      IDBenutzer: store.getters.getUserData.idBenutzer,
     })
 
     const responseExterneNummerVergeben = await AuthenticationService.leihvorgangInventarExterneNummernVergeben([selectExterneInventarNummern.value])
