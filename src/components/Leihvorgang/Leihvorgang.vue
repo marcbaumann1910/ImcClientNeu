@@ -7,6 +7,7 @@ import Artikel from "../Artikel/Artikel.vue";
 import Checkout from "@/components/Leihvorgang/Checkout.vue";
 import DialogExterneNummer from "@/components/Leihvorgang/DialogExterneNummer.vue";
 import OverlayWaiting from "@/components/OverlayWaiting.vue";
+import DialogYesNoCancel from "@/components/DialogYesNoCancel.vue";
 import store from "@/store/store.js"
 import AuthenticationService from "@/services/AuthenticationService.js";
 import {expansionForLeihvorgang} from "@/scripte/globalFunctions.js";
@@ -26,6 +27,7 @@ const snackbarText = ref('')
 const snackbarColor = ref('error')
 const vChipColors = ref(['success', 'primary', 'primary']) //Steuerung der vChip Farben Anzeigenschritte
 const { smAndDown } = useDisplay();
+const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
 
 //Wenn das ausgewählte Mitglieder vom Benutzer entfernt wird, wird Komponente Mitglieder wieder geladen
 watchEffect(()=>{
@@ -138,6 +140,21 @@ async function nextPage(message) {
 
 async function leihvorgangBuchen(){
   let response = '';
+  let sendDocument;
+
+  const result = await store.dispatch('setShowDialogYesNoCancel', {
+    showDialog: true,
+    title: 'Leihvorgang buchen',
+    text: 'Mietvertrag an Mitglied per E-mail senden ?'
+  });
+
+  if(result === 'no' || result === 'cancel'){
+    sendDocument = false;
+  }
+  else {
+    sendDocument = true;
+  }
+
   try{
     isLoading.value = true;
     console.log('currentPage vuex getCartItems', cartItems.value);
@@ -148,6 +165,7 @@ async function leihvorgangBuchen(){
       IDMitglied: borrowMember.value.id,
       IDBenutzer: store.getters.getUserData.idBenutzer,
       IDVerein: store.getters.getUserData.idVerein,
+      sendDocument: sendDocument,
     });
     console.log('Erfolg leihvorgangBuchen', response.data);
 
@@ -211,6 +229,7 @@ function updateChipColors() {
 </script>
 
 <template>
+  <DialogYesNoCancel v-if="showDialogYesNoCancel"></DialogYesNoCancel>
 
   <v-snackbar
       v-model="snackbar"
@@ -235,7 +254,8 @@ function updateChipColors() {
   </v-snackbar>
 
   <v-container
-      fluid
+
+  fluid
       :class="{
       'pa-0 ma-0': $vuetify.display.mobile, // Klasse für mobile Geräte
       'ma-auto': !$vuetify.display.mobile // Klasse für größere Bildschirme
