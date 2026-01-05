@@ -137,7 +137,7 @@ async function dialogSave(){
       AusgeliehenBis: 'NULL',
       Bemerkung: textBemerkung.value,
       IDInventarZustand: selectedItemZustand.value.IDInventarZustand,
-      IDVerein: store.getters.getUserData.idVerein
+      IDVerein: store.getters.getUserData.idVerein,
     })
 
     //Damit die Verfügbarkeit der externeInventarNummer upgedatet werden kann

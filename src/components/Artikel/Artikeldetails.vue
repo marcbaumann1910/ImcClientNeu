@@ -1,4 +1,4 @@
-<script setup>
+  <script setup>
 import { useRoute } from 'vue-router'
 import {onMounted, computed, ref} from "vue";
 import AuthenticationService from "@/services/AuthenticationService.js";

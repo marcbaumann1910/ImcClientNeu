@@ -89,6 +89,7 @@ async function abrechnen(IDinventarBuchungenPositionen, idMitglied, abrechnungsJ
       jahr: route.query.jahr,
       inventarPosID: IDinventarBuchungenPositionen,
       IDBenutzer: store.getters.getUserData.idBenutzer,
+      IDVerein: store.getters.getUserData.idVerein,
     })
 
     loadData();
@@ -126,7 +127,7 @@ async function verkauf(){
   }
 }
 
-async function stornieren(idAbrechnung){
+async function stornieren(idAbrechnung, idInventarBuchungenPositionen){
 
   const result = await store.dispatch('setShowDialogYesNoCancel', {
     showDialog: true,
@@ -143,7 +144,12 @@ async function stornieren(idAbrechnung){
   }
 
   try{
-    const response = AuthenticationService.abrechnungStorno(idAbrechnung);
+    const response = AuthenticationService.abrechnungStorno(idAbrechnung,{
+      IDBenutzer: store.getters.getUserData.idBenutzer,
+      IDVerein: store.getters.getUserData.idVerein,
+      IDinventarBuchungenPositionen: idInventarBuchungenPositionen,
+    });
+
     console.log(`Die Abrechnungsposition ${idAbrechnung} wurde storniert`)
     loadData();
     notifySuccess(`Die Abrechnungsposition ${idAbrechnung} wurde storniert`)
@@ -221,7 +227,7 @@ async function stornieren(idAbrechnung){
         <v-col cols="12" sm="6" md="4" class="">
           <div class="d-flex flex-column align-items-center">
             <v-btn :disabled="!item.abrechenbar" class="ma-2" color="green" @click="abrechnen(item.IDinventarBuchungenPositionen, item.IDMitglied, item.AbrechnungsJahr)">Abrechnen</v-btn>
-            <v-btn :disabled="!item.abrechenbar" class="mx-2 mb-2"  color="red" @click="stornieren(item.IDAbrechnung)">Stornieren</v-btn>
+            <v-btn :disabled="!item.abrechenbar" class="mx-2 mb-2"  color="red" @click="stornieren(item.IDAbrechnung, item.IDinventarBuchungenPositionen)">Stornieren</v-btn>
             <v-btn :disabled="!item.verkaufbar || !item.abrechenbar" class="mx-2 mb-2" color="secondary" @click="verkauf()">Verkaufen</v-btn>
           </div>
         </v-col>

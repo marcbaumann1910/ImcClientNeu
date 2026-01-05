@@ -130,10 +130,10 @@ export default {
         console.log('abrechnung/mitglied:', data);
         return Api.post('/abrechnung/mitglied', data);
     },
-    abrechnungStorno(idAbrechnung) {
+    abrechnungStorno(idAbrechnung, data) {
         //Übergabe idAbrechnung, Backend storniert die entsprechende Position
-        console.log('abrechnungsdetails/storno:', idAbrechnung);
-        return Api.patch(`/abrechnungsdetails/storno/${idAbrechnung}`);
+        console.log('abrechnungsdetails/storno:', idAbrechnung, data);
+        return Api.patch(`/abrechnungsdetails/storno/${idAbrechnung}`, data);
     },
     abrechnungInsert() {
         //Übergabe idAbrechnung, Backend storniert die entsprechende Position

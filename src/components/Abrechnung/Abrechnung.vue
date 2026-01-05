@@ -113,6 +113,7 @@ async function createInvoice(idMitglied, sumOffen){
       idMitglied: idMitglied,
       jahr: selectAbrechnungsJahr.value || new Date().getFullYear(), //Sollte noch kein Jahr ausgewählt worden sein, ist es das aktuelle Jahr
       IDBenutzer: store.getters.getUserData.idBenutzer,
+      IDVerein: store.getters.getUserData.idVerein,
     })
     await loadData();
     console.log('response createInvoice', response)
@@ -163,6 +164,7 @@ async function createInvoiceAllMember() {
             idMitglied: billingMember.id,
             jahr: selectAbrechnungsJahr.value || new Date().getFullYear(), //Sollte noch kein Jahr ausgewählt worden sein, ist es das aktuelle Jahr
             IDBenutzer: store.getters.getUserData.idBenutzer,
+            IDVerein: store.getters.getUserData.idVerein,
           })
           console.log('response createInvoice', response)
 
