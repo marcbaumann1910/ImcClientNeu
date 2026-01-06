@@ -25,6 +25,9 @@ const user = computed(()=> store.getters.getUserData)
 const snackbar = ref(false);
 const snackbarText = ref('')
 const snackbarColor = ref('error')
+const snackbarTimeout = computed(() => {
+  return snackbarColor.value === 'error' ? -1 : 5000; // error bleibt offen, success schließt nach 5s
+});
 const vChipColors = ref(['success', 'primary', 'primary']) //Steuerung der vChip Farben Anzeigenschritte
 const { smAndDown } = useDisplay();
 const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
@@ -160,14 +163,21 @@ async function leihvorgangBuchen(){
     console.log('currentPage vuex getCartItems', cartItems.value);
     console.log('user:', user)
 
-    response = await AuthenticationService.leihvorgangBuchen({
+      response = await AuthenticationService.leihvorgangBuchen({
       cartItems: cartItems.value,
       IDMitglied: borrowMember.value.id,
       IDBenutzer: store.getters.getUserData.idBenutzer,
       IDVerein: store.getters.getUserData.idVerein,
       sendDocument: sendDocument,
     });
+    const responseBackend = response.data;
+
     console.log('Erfolg leihvorgangBuchen', response.data);
+    console.log('Email_gesendet: ', responseBackend.Email_gesendet);
+    console.log('Email_Fehler: ', responseBackend.Email_Fehler);
+    console.log('Email_EmpfaengerFehler: ', responseBackend.Email_EmpfaengerFehler);
+
+
 
     //Damit die Verfügbarkeit der externeInventarNummer upgedatet werden kann
     //bereite ich hier ein flaches Array auf und übergebe es an das Backend
@@ -192,6 +202,24 @@ async function leihvorgangBuchen(){
     snackbar.value = true;
     currentPage.value = 0; //Navigiert zur MitgliederSeite und die Auswahl kann von vorne beginnen!
     updateChipColors() //Steuerung der vChip Farben Anzeigenschritte
+
+    isLoading.value = false;
+
+    //Wenn das Backend einen Email-Versand FEHLER meldet und der Emailversand gewünscht wurde!
+    //Ist keine Emailversand gewünscht, muss responseBackend.Email_gesendet auch nicht ausgewertet werden!
+    if(!responseBackend.Email_gesendet && sendDocument){
+      snackbarText.value = `Mietvertrag konnte nicht per Email versendet werden!\n${responseBackend.Email_Fehler} ${responseBackend.Email_EmpfaengerFehler}`;
+      snackbarColor.value = "error"
+      snackbar.value = true;
+
+      const result = await store.dispatch('setShowDialogYesNoCancel', {
+        showDialog: true,
+        title: 'Leihvorgang gebucht!',
+        text: 'Leihvorgang wurde erfolgreich gebucht!',
+        showButtonOK: true,
+      });
+    }
+
   }catch(err){
     isLoading.value = false;
     console.log('Fehler leihvorgangBuchen', response.data, err)
@@ -199,7 +227,7 @@ async function leihvorgangBuchen(){
     snackbarColor.value = "error"
     snackbar.value = true;
   }
-  isLoading.value = false;
+
 }
 
 //Speichert das ausgewählte Mitglied im vuex-Store
@@ -235,7 +263,7 @@ function updateChipColors() {
       v-model="snackbar"
       multi-line
       location="top"
-      timeout="5000"
+      :timeout="snackbarTimeout"
       :color="snackbarColor"
   >
     {{ snackbarText }}
