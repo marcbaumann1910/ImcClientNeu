@@ -114,6 +114,7 @@ async function createInvoice(idMitglied, sumOffen){
       jahr: selectAbrechnungsJahr.value || new Date().getFullYear(), //Sollte noch kein Jahr ausgewählt worden sein, ist es das aktuelle Jahr
       IDBenutzer: store.getters.getUserData.idBenutzer,
       IDVerein: store.getters.getUserData.idVerein,
+      VwzBeschreibung: "Abrechnung Mietgebühren",
     })
     await loadData();
     console.log('response createInvoice', response)
@@ -165,6 +166,7 @@ async function createInvoiceAllMember() {
             jahr: selectAbrechnungsJahr.value || new Date().getFullYear(), //Sollte noch kein Jahr ausgewählt worden sein, ist es das aktuelle Jahr
             IDBenutzer: store.getters.getUserData.idBenutzer,
             IDVerein: store.getters.getUserData.idVerein,
+            VwzBeschreibung: "Abrechnung Mietgebühren",
           })
           console.log('response createInvoice', response)
 

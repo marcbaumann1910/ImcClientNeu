@@ -90,6 +90,7 @@ async function abrechnen(IDinventarBuchungenPositionen, idMitglied, abrechnungsJ
       inventarPosID: IDinventarBuchungenPositionen,
       IDBenutzer: store.getters.getUserData.idBenutzer,
       IDVerein: store.getters.getUserData.idVerein,
+      VwzBeschreibung: "Abrechnung Mietgebühren",
     })
 
     loadData();
