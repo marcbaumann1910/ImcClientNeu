@@ -153,6 +153,12 @@ export default {
                 'Content-Type': 'multipart/form-data'
             }
         });
-    }
+    },
+    confirmMietvertrag(data) {
+        //Mitvertrag bestätigen
+        console.log('confirmMietvertrag');
+        return Api.post('/mietvertrag/confirm', data);
+       }
+
 
 };

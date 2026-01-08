@@ -18,6 +18,7 @@ import m_LeihvorgangVerwalten from "@/components/LeihvorgangVerwalten/m_Leihvorg
 import m_Checkout from "@/components/Leihvorgang/m_Checkout.vue";
 import Lager from "@/components/Artikel/Artikeluebersicht.vue";
 import Lagerverwaltung from "@/components/Artikel/Artikeldetails.vue";
+import MietvertragConfirm from "@/components/MietvertragConfirm.vue";
 import store from "@/store/store.js";
 import AbrechnungDetails from "@/components/Abrechnung/AbrechnungDetails.vue";
 
@@ -145,6 +146,12 @@ const routes = [
         name: 'lagerverwaltung',
         component: Lagerverwaltung,
         meta: { requiresAuth: true }, // Markiere diese Route als geschützt
+    },
+    {
+        path: '/mietvertragconfirm',
+        name: 'mietvertragconfirm',
+        component: MietvertragConfirm,
+        meta: { requiresAuth: false }
     },
 ];
 
