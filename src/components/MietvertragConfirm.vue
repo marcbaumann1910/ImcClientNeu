@@ -15,14 +15,24 @@ async function confirmMietvertrag() {
   }
 
   const token = router.query.token;
+  let response;
 
   try {
-    const response = await AuthenticationService.confirmMietvertrag({
+      response = await AuthenticationService.confirmMietvertrag({
       token: token,
       accepted: true,
     });
+
+    if(response.data.confirm === true) {
+      alert(response.data.message);
+    }
     console.log("data", response.data);
   } catch (err) {
+    const data = err?.response?.data;
+    if (data?.confirm === false) {
+      alert(data.message);
+    }
+
     console.log("confirm error", err?.response?.status, err?.response?.data || err.message);
   }
 
