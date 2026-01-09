@@ -42,6 +42,7 @@ api.interceptors.request.use(
             '/token/refresh',
             '/reset-password-request',
             '/reset-password',
+            '/mietvertrag/confirm'
         ].some(excludedUrl => url === excludedUrl);
 
         if (!isExcluded) {
@@ -63,10 +64,20 @@ api.interceptors.request.use(
                 }
 
                 return new Promise((resolve) => {
+                    // addRefreshSubscriber((accessToken) => {
+                    //     config.headers['Authorization'] = `Bearer ${accessToken}`;
+                    //     resolve(config);
+                    // });
+                    //NEU: 09.01.2026
                     addRefreshSubscriber((accessToken) => {
-                        config.headers['Authorization'] = `Bearer ${accessToken}`;
+                        if (accessToken) {
+                            config.headers['Authorization'] = `Bearer ${accessToken}`;
+                        } else {
+                            delete config.headers['Authorization'];
+                        }
                         resolve(config);
                     });
+
                 });
             }
         }
