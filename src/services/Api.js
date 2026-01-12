@@ -5,7 +5,7 @@ import {buildUrl} from '@/scripte/globalFunctions.js';
 import { notifyError } from '@/scripte/notifications.js'; // Globale Benachrichtigungen
 
 const api = axios.create({
-    baseURL: process.env.VITE_API_URL,
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -171,7 +171,7 @@ api.refreshAccessToken = async function() {
 
         // Verwende eine separate Axios-Instanz ohne Interceptors
         const refreshApi = axios.create({
-            baseURL: process.env.VITE_API_URL,
+            baseURL: import.meta.env.VITE_API_URL,
             headers: {
                 'Content-Type': 'application/json',
             },

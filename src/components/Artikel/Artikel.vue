@@ -5,7 +5,7 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 import { germanColorToHex } from '@/utils/colorConverter.js'
 import store from "@/store/store.js"; //Wird benötigt um Farben (text) in RGB zu wandeln
 
-const imageUrl = process.env.VITE_API_URL
+const imageUrl = import.meta.env.VITE_API_URL
 const items = ref([]);
 const search = ref('');
 const { smAndDown } = useDisplay();
