@@ -166,13 +166,13 @@ function openDialogToolTip(dialogTitleOpen, dialogTextOpen) {
 }
 
 async function buildUrl(endpoint) {
-    if (process.env.VITE_API_URL.endsWith('/') && endpoint.startsWith('/')) {
-        return `${process.env.VITE_API_URL}${endpoint.substring(1)}`;
+    if (import.meta.env.VITE_API_URL.endsWith('/') && endpoint.startsWith('/')) {
+        return `${import.meta.env.VITE_API_URL}${endpoint.substring(1)}`;
     }
-    if (!process.env.VITE_API_URL.endsWith('/') && !endpoint.startsWith('/')) {
-        return `${process.env.VITE_API_URL}/${endpoint}`;
+    if (!import.meta.env.VITE_API_URL.endsWith('/') && !endpoint.startsWith('/')) {
+        return `${import.meta.env.VITE_API_URL}/${endpoint}`;
     }
-    return `${process.env.VITE_API_URL}${endpoint}`;
+    return `${import.meta.env.VITE_API_URL}${endpoint}`;
 }
 
 export {

@@ -1,6 +1,11 @@
 <script setup>
 import {ref, computed, onMounted, watch} from 'vue'
-const imageUrl = process.env.VITE_API_URL
+//##########################################################################################
+//Bilderpfad bauen, damit dieser auch auf den Subdomains läuft                             #
+const apiBase = import.meta.env.VITE_API_URL;            // https://test.mbdevelop.de/api#
+const origin  = apiBase.replace(/\/api\/?$/, "");        // https://test.mbdevelop.de    #
+const imageUrl = `${origin}`;                            // <- für Artikelbilder  #
+//##########################################################################################
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";

@@ -3,7 +3,12 @@ import { ref, computed, watch } from 'vue';
 import store from '../../store/store.js';
 import Leihvorgang from "@/components/Leihvorgang/Leihvorgang.vue";
 
-const imageUrl = process.env.VITE_API_URL
+//##########################################################################################
+//Bilderpfad bauen, damit dieser auch auf den Subdomains läuft                             #
+const apiBase = import.meta.env.VITE_API_URL;            // https://test.mbdevelop.de/api#
+const origin  = apiBase.replace(/\/api\/?$/, "");        // https://test.mbdevelop.de    #
+const imageUrl = `${origin}`;                            // <- für Artikelbilder  #
+//##########################################################################################
 
 //Überwacht den vuex-Store und aktualisiert den Warenkorb
 const cartItems = computed(() => store.getters.getCartItems);

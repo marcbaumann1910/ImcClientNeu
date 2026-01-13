@@ -8,7 +8,12 @@ import DialogYesNoCancel from "@/components/DialogYesNoCancel.vue";
 import OverlayWaiting from "@/components/OverlayWaiting.vue";
 import Notifications from "@/components/Notifications.vue";
 import { notifyError, notifySuccess } from '@/scripte/notifications.js';
-const imageUrl = process.env.VITE_API_URL
+//########################################################################################
+//Bilderpfad bauen, damit dieser auch auf den Subdomains läuft                           #
+const apiBase = import.meta.env.VITE_API_URL;            // https://test.mbdevelop.de/api#
+const origin  = apiBase.replace(/\/api\/?$/, "");        // https://test.mbdevelop.de    #
+const imageUrl = `${origin}`;                            // <- für Artikelbilder         #
+//########################################################################################
 const route = useRoute();
 const abrechnungDetails = ref([]);
 const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)

@@ -5,7 +5,13 @@ import AuthenticationService from "@/services/AuthenticationService.js";
 import { germanColorToHex } from '@/utils/colorConverter.js'
 import store from "@/store/store.js"; //Wird benötigt um Farben (text) in RGB zu wandeln
 
-const imageUrl = import.meta.env.VITE_API_URL
+//########################################################################################
+//Bilderpfad bauen, damit dieser auch auf den Subdomains läuft                           #
+const apiBase = import.meta.env.VITE_API_URL;            // https://test.mbdevelop.de/api#
+const origin  = apiBase.replace(/\/api\/?$/, "");        // https://test.mbdevelop.de    #
+const imageUrl = `${origin}`;                            // <- für Artikelbilder         #
+//########################################################################################
+
 const items = ref([]);
 const search = ref('');
 const { smAndDown } = useDisplay();

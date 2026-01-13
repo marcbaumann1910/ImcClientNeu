@@ -9,7 +9,12 @@ import { expansionForLeihvorgang, isVisibleIventarStatus, checkStatusZustandArti
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";
 
-const imageUrl = process.env.VITE_API_URL
+//##########################################################################################
+//Bilderpfad bauen, damit dieser auch auf den Subdomains läuft                             #
+const apiBase = import.meta.env.VITE_API_URL;            // https://test.mbdevelop.de/api#
+const origin  = apiBase.replace(/\/api\/?$/, "");        // https://test.mbdevelop.de    #
+const imageUrl = `${origin}`;                            // <- für Artikelbilder  #
+//##########################################################################################
 // Ref zur Verfolgung der erweiterten Panels
 const expandedPanels = ref([]);
 // Reaktives Objekt zur Verfolgung des Checkbox-Status

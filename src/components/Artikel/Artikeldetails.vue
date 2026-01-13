@@ -16,7 +16,12 @@ const abrechnungsIntervall = ref([])
 const farbe = ref([])
 const kategorie = ref([])
 const konfektionsGroessen = ref([])
-const imageUrl = process.env.VITE_API_URL
+//##########################################################################################
+//Bilderpfad bauen, damit dieser auch auf den Subdomains läuft                             #
+const apiBase = import.meta.env.VITE_API_URL;            // https://test.mbdevelop.de/api#
+const origin  = apiBase.replace(/\/api\/?$/, "");        // https://test.mbdevelop.de    #
+const imageUrl = `${origin}`;                            // <- für Artikelbilder  #
+//##########################################################################################
 
 // Referenz auf das versteckte input-Element
 const fileInput = ref(null)
