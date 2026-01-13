@@ -357,6 +357,10 @@ import App from "@/App.vue";
                         }}
                       </v-list-item-subtitle>
 
+                      <v-list-item-subtitle>
+                        Bemerkung: {{formatDate(itemArtikelDetails.ibp_StatusDatum)}}
+                      </v-list-item-subtitle>
+
 
                     </v-col>
 

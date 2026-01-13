@@ -104,7 +104,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
             <v-list-item-subtitle>Menge: {{ item.Menge }} Stück</v-list-item-subtitle>
           </v-col>
 
-          <v-col cols="4" class="d-flex flex-column justify-end align-center align-self-stretch">
+          <v-col cols="3" class="d-flex flex-column justify-end align-center align-self-stretch">
 
             <v-chip
                 class="d-flex justify-space-between mb-2"
@@ -126,13 +126,31 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
           </v-col>
 
           <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
+            <div class="d-flex align-center ga-3">
+              <v-text-field
+                  v-model="bemerkung"
+                  placeholder="z.B. Name Kind"
+                  variant="underlined"
+                  density="compact"
+                  clearable
+                  hide-details
+                  single-line
+                  class="bemerkung-field"
+              />
+
+            </div>
+          </v-col>
+
+          <v-col cols="1" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
             <v-label @click="deleteItem(item.IDInventarArtikel)" class="hover text-subtitle-2"
             >
               Löschen
             </v-label>
           </v-col>
 
-          <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
+
+
+          <v-col cols="1" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
             <v-badge
                 v-if="store.getters.getExterneNummernCount(item.IDInventarArtikel) > 0"
                 color="green"
@@ -192,6 +210,30 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
   transform: scale(1.1);
 }
 
+.bemerkung-field {
+  width: 160px;          /* ggf. 120–180 testen */
+  max-width: 200px;
+  font-size: 12px;       /* Text im Feld */
+}
+
+/* Placeholder kleiner */
+.bemerkung-field input::placeholder {
+  font-size: 12px;
+}
+
+/* Abstand nach oben/unten reduzieren */
+.bemerkung-field .v-field {
+  padding-top: 0;
+  padding-bottom: 0;
+  min-height: 28px;
+}
+
+/* Unterline näher an Text / weniger „dick“ */
+.bemerkung-field .v-field__outline,
+.bemerkung-field .v-field__outline__start,
+.bemerkung-field .v-field__outline__end {
+  display: none; /* nur zur Sicherheit, falls outline irgendwo reinfunkt */
+}
 
 
 
