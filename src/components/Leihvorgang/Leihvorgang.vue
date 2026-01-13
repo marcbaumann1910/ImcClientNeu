@@ -413,7 +413,7 @@ function updateChipColors() {
           <v-row>
             <v-col cols="12">
               <Mitglieder v-if="currentPage === 0" @memberSelected="handleMemberSelect" />
-              <Artikel v-if="currentPage === 1" />
+              <Artikel :clickable= "false" :aktiv="true" :verleihbar="false" v-if="currentPage === 1" />
               <m_Checkout v-if="currentPage === 2 && smAndDown"/>
               <Checkout v-if="currentPage === 2 && !smAndDown"/>
             </v-col>
