@@ -105,6 +105,7 @@ function updateCart(item){
       ExterneInventarNummerPflicht: item.externeInventarNummerPflicht,
       IDInventarKategorie: item.IDInventarKategorie,
       externeID: [],
+      Bemerkung: "",
     }
     //Erhöht die Anzeige im Warenkorb, wird über den vuex-Store erledigt
     //store.dispatch('setCartItemCount', cartItem.menge)

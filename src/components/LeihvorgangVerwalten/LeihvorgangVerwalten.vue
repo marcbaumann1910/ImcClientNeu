@@ -358,7 +358,7 @@ import App from "@/App.vue";
                       </v-list-item-subtitle>
 
                       <v-list-item-subtitle>
-                        Bemerkung: {{formatDate(itemArtikelDetails.ibp_StatusDatum)}}
+                        Bemerkung: {{itemArtikelDetails.ibp_Bemerkung}}
                       </v-list-item-subtitle>
 
 

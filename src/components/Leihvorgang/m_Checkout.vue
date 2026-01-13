@@ -97,6 +97,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
 <!--              <v-icon size="small">mdi-cart</v-icon>-->
               Menge: {{ item.Menge }}
             </v-list-item-subtitle>
+
           </v-col>
           <v-col cols="5" class="justify-center">
             <v-avatar size="60" class="ml-4 mr-4">

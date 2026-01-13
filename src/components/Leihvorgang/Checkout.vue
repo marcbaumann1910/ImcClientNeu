@@ -128,7 +128,8 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
           <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
             <div class="d-flex align-center ga-3">
               <v-text-field
-                  v-model="bemerkung"
+                  :model-value="item.Bemerkung"
+                  @update:model-value="val => store.dispatch('setCartItemBemerkung', { idArtikel: item.IDInventarArtikel, bemerkung: val ?? '' })"
                   placeholder="z.B. Name Kind"
                   variant="underlined"
                   density="compact"

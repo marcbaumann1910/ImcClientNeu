@@ -123,6 +123,10 @@ const store = createStore({
             store.dispatch('calculateNewItemsQuantity');
             store.dispatch('calculateNewItemsAmount');
         },
+        setCartItemBemerkung(state, { idArtikel, bemerkung }) {
+            const item = state.cartItems.find(i => i.IDInventarArtikel === idArtikel);
+            if (item) item.Bemerkung = bemerkung;
+        },
         deleteItemFromCart(state, id) {
             //löschte den Artikel vollständig aus dem Warenkorb
             const index = state.cartItems.findIndex((cartItems) => cartItems.IDInventarArtikel === id);
@@ -362,6 +366,9 @@ const store = createStore({
         },
         changeCartItemsQuantity({ commit }, idAndChangeQuantity) {
             commit('changeCartItemsQuantity', idAndChangeQuantity);
+        },
+        setCartItemBemerkung({ commit, dispatch }, value) {
+            commit('setCartItemBemerkung', value);
         },
         setBorrowMember({ commit }, values) {
             commit('setBorrowMember', values);
