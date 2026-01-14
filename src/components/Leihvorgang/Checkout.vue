@@ -126,23 +126,6 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
           </v-col>
 
           <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
-            <div class="d-flex align-center ga-3">
-              <v-text-field
-                  :model-value="item.Bemerkung"
-                  @update:model-value="val => store.dispatch('setCartItemBemerkung', { idArtikel: item.IDInventarArtikel, bemerkung: val ?? '' })"
-                  placeholder="z.B. Name Kind"
-                  variant="underlined"
-                  density="compact"
-                  clearable
-                  hide-details
-                  single-line
-                  class="bemerkung-field"
-              />
-
-            </div>
-          </v-col>
-
-          <v-col cols="1" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
             <v-label @click="deleteItem(item.IDInventarArtikel)" class="hover text-subtitle-2"
             >
               Löschen
@@ -151,7 +134,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
 
 
 
-          <v-col cols="1" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
+          <v-col cols="2" class="d-flex flex-column justify-end align-start align-self-stretch mb-2">
             <v-badge
                 v-if="store.getters.getExterneNummernCount(item.IDInventarArtikel) > 0"
                 color="green"
@@ -177,7 +160,7 @@ function showDialogForExterneID(menge, idArtikel, externeInventarNummerPflicht, 
             </v-label>
           </v-col>
 
-          <v-col cols="1" class="d-flex justify-end align-end">
+          <v-col cols="2" class="d-flex justify-end align-end">
             <v-list-item-title>{{ Math.round(((item.Preis * item.Menge) *100) /100).toFixed(2) }} €</v-list-item-title>
           </v-col>
 
