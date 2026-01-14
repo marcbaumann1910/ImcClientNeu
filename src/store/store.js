@@ -193,12 +193,23 @@ const store = createStore({
                 return;
             }
 
-            if(existingItem) {
-                console.log("match id in before push setExterneInventarNummerToCartItem")
-                //Wichtig! ...value.externeID.value (sonst ist es ein verschachteltes Array!!!!)
-                existingItem.externeID = [];
-                existingItem.externeID.push(...value.externeID.value);
-                console.log("after push id in setExterneInventarNummerToCartItem")
+            //Normale Übernahme: externeID + Bemerkung indexweise zusammenführen ---
+            const ids = value.externeID?.value ?? value.externeID ?? [];
+            const bemerkungen = value.Bemerkung?.value ?? value.Bemerkung ?? [];
+
+            existingItem.externeID = [];
+
+            // Wichtig: wir gehen über ids-Länge (denn ohne ID ist Bemerkung nicht zuordenbar)
+            for (let i = 0; i < ids.length; i++) {
+                const externeID = ids[i] ?? null;
+
+                // wenn keine externeID gewählt, skip
+                if (externeID === null || externeID === "") continue;
+
+                existingItem.externeID.push({
+                    externeID: String(externeID),
+                    bemerkung: (bemerkungen[i] ?? "") // optional
+                });
             }
 
 

@@ -14,6 +14,7 @@ const idInventarKategorie = computed(()=> store.getters.getShowDialogExterneInve
 
 const textInventarNummern = ref([]);
 const inventarExterneNummern = ref([]);
+const textBemerkung = ref([]);
 
 //Sorgt dafür, dass die ExternenInventarNummern (externeID), die in cartItems als Array gespeichert sind
 //dem jeweiligen Textfeld - passend zur idArtikel - im vuex-Store gespeichert werden und beim Öffnen
@@ -25,7 +26,15 @@ watch(
     async (newVal) => {
       if (newVal) {
         // Dialog wird geöffnet
-        textInventarNummern.value = [...store.getters.getExterneNummernForArtikel(idArtikel.value)];
+        const stored = store.getters.getExterneNummernForArtikel(idArtikel.value) || [];
+        //Inventar-Nummer aus Object extrahieren
+        textInventarNummern.value = stored.map(x =>
+            typeof x === "object" && x !== null ? String(x.externeID ?? "") : String(x ?? "")
+        );
+        //Bemerkung aus Object extrahieren
+        textBemerkung.value = stored.map(x =>
+            typeof x === "object" && x !== null ? String(x.bemerkung ?? "") : ""
+        );
 
         //Abruf der InventarNummern über die ausgelagerte Funktion
         inventarExterneNummern.value = await fetchInventarExterneNummer(idInventarKategorie.value);
@@ -58,7 +67,11 @@ function dialogSave(){
   store.dispatch("setShowDialogExterneInventarNummer", {showDialog: false, Menge: 0})
   const idArtikel = store.getters.getShowDialogExterneInventarNummer.idArtikel
   //Speichern der erfassten Externen Inventar Nummern im vuex-Store
-  store.dispatch('setExterneInventarNummerToCartItem', {idArtikel: idArtikel, externeID: textInventarNummern});
+  store.dispatch('setExterneInventarNummerToCartItem', {
+    idArtikel: idArtikel,
+    externeID: textInventarNummern,
+    Bemerkung: textBemerkung
+  });
   console.log('getCartItems from vuex:', store.getters.getCartItems)
   console.log('2 DialogExterneNummer from vuxe', store.getters.getShowDialogExterneInventarNummer.idArtikel);
 }
@@ -121,16 +134,24 @@ function filteredInventarExterneNummern(index) {
               <!--generiert die Selects abhängig von der gewählten Menge des jeweiligen Artikels. Menge wird auch über den vuex-Store übergeben-->
               <!--item-value="ExterneNummer" Muss auch die ExterneNummer sein, da diese im vuexStore gespeichert und später für das InsertUpdate benötigt wird!!!-->
               <!--Siehe Doku DialogExterneNummer.vue Besonderheit v-select  -->
-              <v-select
-                  v-for="(value, index) in textInventarNummern"
-                  :key="'select-' + index"
-                  v-model="textInventarNummern[index]"
-                  :items="filteredInventarExterneNummern(index)"
-                  item-title="ExterneNummer"
-                  item-value="ExterneNummer"
-                  label="Bitte die Inventar Nummer wählen"
-                  persistent-hint
-            ></v-select>
+              <div v-for="(x, index) in dialogFormFields" :key="`row-${index}`">
+                <v-select
+                    :key="'select-' + index"
+                    v-model="textInventarNummern[index]"
+                    :items="filteredInventarExterneNummern(index)"
+                    item-title="ExterneNummer"
+                    item-value="ExterneNummer"
+                    :label="`Bitte die Inventar Nummer wählen ${Number(index) + 1} `"
+                    persistent-hint
+              ></v-select>
+                <v-text-field
+                    :label="`Bemerkung ${Number(index) + 1}`"
+                    placeholder="z.B. Name Kind"
+                    v-model="textBemerkung[index]"
+                    clearable
+                >
+                </v-text-field>
+              </div>
             </template>
           </v-col>
         </v-row>
