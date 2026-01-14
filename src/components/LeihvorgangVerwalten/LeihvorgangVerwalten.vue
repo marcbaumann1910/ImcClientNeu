@@ -357,7 +357,7 @@ import App from "@/App.vue";
                         }}
                       </v-list-item-subtitle>
 
-                      <v-list-item-subtitle>
+                      <v-list-item-subtitle v-if="itemArtikelDetails.ibp_Bemerkung" >
                         Bemerkung: {{itemArtikelDetails.ibp_Bemerkung}}
                       </v-list-item-subtitle>
 

@@ -206,7 +206,9 @@ checkStatusZustandArtikel;
       max-height="250">
     <!-- Toolbar mit reduzierter Höhe -->
     <v-toolbar color="#C62828" dark height="40" class="align-center">
-      <v-toolbar-title class="ml-2">{{itemArtikelDetails.ia_ArtikelBezeichnung}}</v-toolbar-title>
+      <v-toolbar-title v-if="!itemArtikelDetails.ibp_Bemerkung" class="ml-2">{{itemArtikelDetails.ia_ArtikelBezeichnung}}</v-toolbar-title>
+      <v-toolbar-title v-else class="ml-2">{{itemArtikelDetails.ia_ArtikelBezeichnung}} ({{itemArtikelDetails.ibp_Bemerkung}})</v-toolbar-title>
+
       <v-menu>
       <template v-slot:activator="{ props }">
         <v-btn
@@ -244,9 +246,11 @@ checkStatusZustandArtikel;
 
       <v-col cols="10">
         <v-card-title>
-            {{itemArtikelDetails.ibp_externeInventarNummer}}
+          {{itemArtikelDetails.ibp_externeInventarNummer}}
         </v-card-title>
       </v-col>
+
+
     </v-row>
 
     <v-row no-gutters>
@@ -308,19 +312,7 @@ checkStatusZustandArtikel;
           <v-icon color="black" class="ml-2">mdi-cart</v-icon>
           {{itemArtikelDetails.ibp_Menge}}
         </v-card-subtitle>
-        <v-card-subtitle
-            class="py-1 my-0 text-caption"
-        >
-          <v-icon
-              color="black"
-              class="ml-2"
-              v-if="itemArtikelDetails.ibp_Bemerkung"
-              @click="openDialogToolTip('Bemerkung', itemArtikelDetails.ibp_Bemerkung)"
-          >
-            mdi-comment
-          </v-icon>
-          {{itemArtikelDetails.ibp_Bemerkung}}
-        </v-card-subtitle>
+
       </v-col>
     </v-row>
   </v-card>
