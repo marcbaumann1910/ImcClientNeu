@@ -96,6 +96,11 @@ const filteredMembers = computed(() => {
         <v-card-title>{{member.firstName}} {{member.familyName}}</v-card-title>
 
         <v-card-subtitle class="d-flex align-center flex-wrap ga-4">
+
+        <span v-if="member.hasOpenBooking" class="d-flex align-center">
+          <v-icon color="warning">mdi-clipboard-check</v-icon>
+        </span>
+
         <span class="d-flex align-center">
           <v-icon size="18" class="mr-1">mdi-map-marker</v-icon>
           {{ member.city }}
