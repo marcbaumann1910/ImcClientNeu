@@ -65,12 +65,15 @@ async function dialogSave(){
       neueExterneInventarNummer: textExterneInventarNummer.value || selectExterneInventarNummern.value,
       IDBenutzer: store.getters.getUserData.idBenutzer,
       IDVerein: store.getters.getUserData.idVerein,
+      alteExterneInventarNummer: artikelDetails.value.ibp_externeInventarNummer
     })
 
-    const responseExterneNummerVergeben = await AuthenticationService.leihvorgangInventarExterneNummernVergeben([selectExterneInventarNummern.value])
-    console.log('responseExterneNummerVergeben', responseExterneNummerVergeben)
-    const responseExterneNummerFreigeben = await AuthenticationService.leihvorgangInventarExterneNummernFreigeben([artikelDetails.value.ibp_externeInventarNummer])
-    console.log('responseExterneNummerFreigeben', responseExterneNummerFreigeben)
+    //Übernimmt seit dem 14.01.2026 das Backend
+    // const responseExterneNummerVergeben = await AuthenticationService.leihvorgangInventarExterneNummernVergeben([selectExterneInventarNummern.value])
+    // console.log('responseExterneNummerVergeben', responseExterneNummerVergeben)
+    //Übernimmt seit dem 14.01.2026 das Backend
+    // const responseExterneNummerFreigeben = await AuthenticationService.leihvorgangInventarExterneNummernFreigeben([artikelDetails.value.ibp_externeInventarNummer])
+    // console.log('responseExterneNummerFreigeben', responseExterneNummerFreigeben)
 
   }catch(err){
     alert('Vorgang fehlgeschlagen. Nummer konnte nicht geändert werden')

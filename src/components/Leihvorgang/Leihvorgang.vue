@@ -187,11 +187,12 @@ async function leihvorgangBuchen(){
         externeInventarNummer.push(...item.externeID);
       }
     }
-    //Nur wenn es auch externeInventarNummer (aus v-select) gibt, wird das Update ausgeführt
-    if(externeInventarNummer.length > 0){
-      const responseExterneNummer = await AuthenticationService.leihvorgangInventarExterneNummernVergeben(externeInventarNummer)
-      console.log('responseExterneNummer', responseExterneNummer)
-    }
+    //Übernimmt seit dem 14.01.2026 das Backend
+    // //Nur wenn es auch externeInventarNummer (aus v-select) gibt, wird das Update ausgeführt
+    // if(externeInventarNummer.length > 0){
+    //   const responseExterneNummer = await AuthenticationService.leihvorgangInventarExterneNummernVergeben(externeInventarNummer)
+    //   console.log('responseExterneNummer', responseExterneNummer)
+    // }
 
 
     console.log('Update ExterneNummer erfolgreich!')

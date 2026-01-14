@@ -129,6 +129,7 @@ async function dialogSave(){
       ALT_IDinventarBuchungenPositionen: artikelDetails.value.ibp_IDinventarBuchungenPositionen, //ursprüngliche IDinventarBuchungenPositionen
       ALT_IDInventarArtikel: artikelDetails.value.ia_IDInventarArtikel, //ursprüngliche IDInventarArtikel
       ALT_IDInventarBuchungen: artikelDetails.value.ibp_IDInventarBuchungen, //ursprüngliche IDInventarBuchungen
+      ALT_ExterneInventarNummer: artikelDetails.value.ibp_externeInventarNummer,
       IDBenutzer: store.getters.getUserData.idBenutzer, //ID des Benutzers der die Buchung durchführt
       IDInventarArtikel: selectedItemNewChoose.value.IDInventarArtikel, //neue, getauschte IDInventarArtikel
       Menge: 1,
@@ -140,19 +141,21 @@ async function dialogSave(){
       IDVerein: store.getters.getUserData.idVerein,
     })
 
-    //Damit die Verfügbarkeit der externeInventarNummer upgedatet werden kann
-    if(selectExterneInventarNummern.value){
-      try{
-        const responseExterneNummerVergeben = await AuthenticationService.leihvorgangInventarExterneNummernVergeben([selectExterneInventarNummern.value])
-        console.log('responseExterneNummerVergeben', responseExterneNummerVergeben)
-        const responseExterneNummerFreigeben = await AuthenticationService.leihvorgangInventarExterneNummernFreigeben([artikelDetails.value.ibp_externeInventarNummer])
-        console.log('responseExterneNummerFreigeben', responseExterneNummerFreigeben)
-      }catch(err)
-      {
-        console.log('Fehler ExterneNummerVergeben/responseExterneNummerFreigeben')
-      }
-
-    }
+    //Übernimmt seit dem 14.01.2026 das Backend
+    ////Damit die Verfügbarkeit der externeInventarNummer upgedatet werden kann
+    // if(selectExterneInventarNummern.value){
+    //   try{
+    //     const responseExterneNummerVergeben = await AuthenticationService.leihvorgangInventarExterneNummernVergeben([selectExterneInventarNummern.value])
+    //     console.log('responseExterneNummerVergeben', responseExterneNummerVergeben)
+    //     //Übernimmt seit dem 14.01.2026 das Backend
+    //     // const responseExterneNummerFreigeben = await AuthenticationService.leihvorgangInventarExterneNummernFreigeben([artikelDetails.value.ibp_externeInventarNummer])
+    //     // console.log('responseExterneNummerFreigeben', responseExterneNummerFreigeben)
+    //   }catch(err)
+    //   {
+    //     console.log('Fehler ExterneNummerVergeben/responseExterneNummerFreigeben')
+    //   }
+    //
+    // }
 
     console.log('Tausch erfolgreich durchgeführt')
   }catch(err){
