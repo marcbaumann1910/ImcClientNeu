@@ -139,6 +139,7 @@ async function dialogSave(){
       Bemerkung: textBemerkung.value,
       IDInventarZustand: selectedItemZustand.value.IDInventarZustand,
       IDVerein: store.getters.getUserData.idVerein,
+      ALT_Bemerkung: artikelDetails.value.ibp_Bemerkung,
     })
 
     //Übernimmt seit dem 14.01.2026 das Backend
