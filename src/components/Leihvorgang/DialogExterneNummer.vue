@@ -135,7 +135,7 @@ function filteredInventarExterneNummern(index) {
               <!--item-value="ExterneNummer" Muss auch die ExterneNummer sein, da diese im vuexStore gespeichert und später für das InsertUpdate benötigt wird!!!-->
               <!--Siehe Doku DialogExterneNummer.vue Besonderheit v-select  -->
               <div v-for="(x, index) in dialogFormFields" :key="`row-${index}`">
-                <v-select
+                <v-autocomplete
                     :key="'select-' + index"
                     v-model="textInventarNummern[index]"
                     :items="filteredInventarExterneNummern(index)"
@@ -143,7 +143,9 @@ function filteredInventarExterneNummern(index) {
                     item-value="ExterneNummer"
                     :label="`Bitte die Inventar Nummer wählen ${Number(index) + 1} `"
                     persistent-hint
-              ></v-select>
+                    clearable
+                    hide-no-data
+              ></v-autocomplete>
                 <v-text-field
                     :label="`Bemerkung ${Number(index) + 1}`"
                     placeholder="z.B. Name Kind"

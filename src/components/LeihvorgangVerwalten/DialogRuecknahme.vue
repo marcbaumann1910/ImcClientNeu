@@ -130,7 +130,7 @@ async function dialogSave(){
             <v-card-subtitle v-if="artikelDetails.ibp_externeInventarNummer" class="mobile-text-small">{{artikelDetails.ibp_externeInventarNummer}}</v-card-subtitle>
             <v-card-text>
 
-              <v-select
+              <v-autocomplete
                   class="mobile-text-small"
                   v-model="selectedItem"
                   :items="stateItems"
@@ -141,7 +141,9 @@ async function dialogSave(){
                   return-object
                   variant="solo-filled"
                   @update:modelValue="handleSelectionChange"
-              ></v-select>
+                  clearable
+                  hide-no-data
+              ></v-autocomplete>
 
 
              <v-text-field

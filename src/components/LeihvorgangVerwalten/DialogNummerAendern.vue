@@ -120,7 +120,7 @@ async function dialogSave(){
                 <template v-else>
                   <!--Ist die InventarNummer Pflicht, werden die verfügbaren Nummern in den Selects aufgelistet-->
                   <!--Siehe Doku DialogExterneNummer.vue Besonderheit v-select  -->
-                  <v-select
+                  <v-autocomplete
                       class="mobile-text-small"
                       v-model="selectExterneInventarNummern"
                       :items="inventarExterneNummern"
@@ -129,7 +129,9 @@ async function dialogSave(){
                       label="Inventar Nummer wählen"
                       variant="solo-filled"
                       persistent-hint
-                  ></v-select>
+                      clearable
+                      hide-no-data
+                  ></v-autocomplete>
                 </template>
 
               </v-card-text>

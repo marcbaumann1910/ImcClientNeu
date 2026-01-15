@@ -210,6 +210,7 @@ async function dialogSave(){
                     return-object
                     single-line
                     dense
+                    hide-no-data
                     variant="solo-filled"
                     @update:modelValue="handleSelectionChange"
                 ></v-select>
@@ -217,7 +218,7 @@ async function dialogSave(){
 
               <v-col cols="12">
                 <!-- Zweiter Select -->
-                <v-select
+                <v-autocomplete
                     class="mobile-text-small mt-0 mb-0 custom-no-margin"
                     v-model="selectedItemZustand"
                     :items="stateItemsZustand"
@@ -228,9 +229,11 @@ async function dialogSave(){
                     return-object
                     single-line
                     dense
+                    clearable
+                    hide-no-data
                     variant="solo-filled"
                     @update:modelValue="handleSelectionChange2"
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
 
               <!-- Bedingte Anzeige der Textfelder -->
@@ -245,7 +248,7 @@ async function dialogSave(){
               </v-col>
 
               <v-col cols="12" v-else>
-                <v-select
+                <v-autocomplete
                     class="mobile-text-small mt-0 mb-0 custom-no-margin"
                     v-model="selectExterneInventarNummern"
                     :items="inventarExterneNummern"
@@ -254,8 +257,10 @@ async function dialogSave(){
                     label="Inventar Nummer wählen"
                     persistent-hint
                     dense
+                    clearable
+                    hide-no-data
                     variant="solo-filled"
-                ></v-select>
+                ></v-autocomplete>
               </v-col>
 
               <v-col cols="12">
