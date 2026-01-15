@@ -128,12 +128,14 @@ function filteredArtikelDetails(item) {
     const konfektionsGroesse = (detail.konfektionsGroesse_Konfektionsgroesse || '').toLowerCase();
     const farbe = (detail.farbe || '').toLowerCase();
     const externeID = (detail.ibp_externeInventarNummer || '').toLowerCase();
+    const bemerkung = (detail.ibp_Bemerkung || '').toLowerCase();
 
     return (
         artikelBezeichnung.includes(lowerSearchTerm) ||
         konfektionsGroesse.includes(lowerSearchTerm) ||
         farbe.includes(lowerSearchTerm) ||
-        externeID.includes(lowerSearchTerm)
+        externeID.includes(lowerSearchTerm) ||
+        bemerkung.includes(lowerSearchTerm)
     );
   });
 }
@@ -146,7 +148,10 @@ const filteredLeihvorgaengeMitgliederAbrufen = computed(() => {
   // Ansonsten filtere die Mitglieder basierend auf dem Suchbegriff
   return leihvorgaengeMitgliederAbrufen.value.filter((item) => {
     const fullName = `${item.easyVereinMitglied_firstName} ${item.easyVereinMitglied_familyName}`.toLowerCase();
-    return fullName.includes(searchMitglied.value.toLowerCase());
+
+    return (
+        fullName.includes(searchMitglied.value.toLowerCase())
+    );
   });
 });
 
@@ -249,10 +254,11 @@ import App from "@/App.vue";
             class="mb-1">
           <v-expansion-panel-title @click="handleExpansionPanelClick(item)">
             {{ item.easyVereinMitglied_firstName }} {{ item.easyVereinMitglied_familyName }}
+          <!--inventarBuchung_abgeschlossen kommt vom Backend liefert den Status 1 (ausgeliehen) & 7 (ausgeliehen Tausch), wenn dieser vorkommt als true-->
             <template v-slot:actions="{ expanded }">
               <v-icon
-                  :color="expanded ? 'black' : (item.inventarBuchung_abgeschlossen==='true' ? 'green' : 'orange')"
-                  :icon="expanded ? 'mdi-pencil' : (item.inventarBuchung_abgeschlossen==='true' ? 'mdi-progress-check' : 'mdi-progress-clock')"></v-icon>
+                  :color="expanded ? 'black' : (Boolean(Number(!item.inventarBuchung_abgeschlossen))  ? 'green' : 'orange')"
+                  :icon="expanded ? 'mdi-pencil' : (Boolean(Number(!item.inventarBuchung_abgeschlossen)) ? 'mdi-progress-check' : 'mdi-progress-clock')"></v-icon>
             </template>
           </v-expansion-panel-title>
           <v-divider></v-divider>
