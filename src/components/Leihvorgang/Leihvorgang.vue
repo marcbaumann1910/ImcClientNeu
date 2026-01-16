@@ -11,6 +11,8 @@ import DialogYesNoCancel from "@/components/DialogYesNoCancel.vue";
 import store from "@/store/store.js"
 import AuthenticationService from "@/services/AuthenticationService.js";
 import {expansionForLeihvorgang} from "@/scripte/globalFunctions.js";
+import EmailAbfrageDialog from "@/components/Leihvorgang/EmailAbfrageDialog.vue";
+
 import M_Checkout from "@/components/Leihvorgang/m_Checkout.vue";
 
 const isLoading = ref(false);
@@ -31,6 +33,8 @@ const snackbarTimeout = computed(() => {
 const vChipColors = ref(['success', 'primary', 'primary']) //Steuerung der vChip Farben Anzeigenschritte
 const { smAndDown } = useDisplay();
 const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
+const emailPromptOpen = ref(false);
+const emailPromptLoading = ref(false);
 
 //Wenn das ausgewählte Mitglieder vom Benutzer entfernt wird, wird Komponente Mitglieder wieder geladen
 watchEffect(()=>{
@@ -38,6 +42,7 @@ watchEffect(()=>{
       currentPage.value = 0;
       store.dispatch('clearCartItems',[])
     }
+
   updateChipColors()//Steuerung der vChip Farben Anzeigenschritte
 });
 
@@ -119,6 +124,7 @@ const btnText = computed(()=>{
 //Eine Seite vor innerhalb der v-card und die Buttonbeschriftung anpassen
 //Nur wenn Unterseite = 2 ist, dann wir der leihvorgangBuchen() ausgeführt, sonst eine Seite nach vorne navigiert
 async function nextPage(message) {
+
   if (currentPage.value === 2) {
     //Prüft ob der Artikel eine Pflicht zur Erfassung der externeID hat.
     //Wenn ja, wird die Navigation unterbrochen und der Vorgang kann nicht gebucht werden.
@@ -234,7 +240,18 @@ async function leihvorgangBuchen(){
 //Speichert das ausgewählte Mitglied im vuex-Store
 function handleMemberSelect(member) {
   selectedMember.value = member; // Speichert das ausgewählte Mitglied
-  store.dispatch('setBorrowMember', selectedMember);
+  store.dispatch('setBorrowMember', selectedMember.value);
+
+  if(member?.privateEmail === '' || member?.privateEmail === undefined) {
+    console.log("keine Emailadresse zum Mitglied")
+    emailPromptOpen.value = true
+    return
+  }
+  else{
+    console.log("Emailadresse zum Mitglied vorhanden", member?.privateEmail)
+  }
+
+
   isSelectedMember.value = !!store.getters.getBorrowMember.firstName
   console.log('selectedMember', selectedMember);
   console.log('selectedMember', selectedMember.value.firstName);
@@ -255,10 +272,54 @@ function updateChipColors() {
   vChipColors.value[currentPage.value] = 'success';
 }
 
+//Dialog speichern EmailAbfrageDialog
+async function onSaveMemberEmail(email, idMitglied){
+  console.log('onSaveMemberEmail',email);
+  console.log('onSaveMemberEmail MitgliedID',borrowMember.value.id);
+
+  try {
+    const result = await AuthenticationService.emailUpdateEasyverein({
+      email: email,
+      IDMitglied: borrowMember.value.id
+    });
+
+    const resultData = result.data;
+
+    if(resultData?.erfolg){
+      console.log('Update MemberEmail erfolgreich:', resultData.message);
+    }
+
+  }
+  catch(err){
+    console.log('Update MemberEmail fehlgeschlagen',err)
+  }
+
+
+  emailPromptOpen.value = false; // Dialog schließen
+}
+
+function onCancelEmailPrompt(){
+  console.log('onCancelEmailPrompt');
+}
+
 </script>
 
 <template>
   <DialogYesNoCancel v-if="showDialogYesNoCancel"></DialogYesNoCancel>
+
+<!-- v-if="emailPromptOpen" darum, weil idMitglied required = true in props von EmailAbfragDialog.vue ist und sonst unnötige Warnungen ausgegeben werden -->
+<!--  Somit wird der Dialog erst gerendert wenn dieser tatsächlich benötigt wird-->
+  <EmailAbfrageDialog
+      v-model="emailPromptOpen"
+      v-if="emailPromptOpen"
+      :member-name="`${borrowMember?.firstName ?? ''} ${borrowMember?.familyName ?? ''}`.trim()"
+      :initial-email="borrowMember?.privateEmail"
+      :loading="emailPromptLoading"
+      :required="true"
+      :idMitglied="borrowMember?.id"
+      @save="onSaveMemberEmail"
+      @cancel="onCancelEmailPrompt"
+  ></EmailAbfrageDialog>
 
   <v-snackbar
       v-model="snackbar"
@@ -283,7 +344,6 @@ function updateChipColors() {
   </v-snackbar>
 
   <v-container
-
   fluid
       :class="{
       'pa-0 ma-0': $vuetify.display.mobile, // Klasse für mobile Geräte
@@ -291,18 +351,20 @@ function updateChipColors() {
     }"
   >
 
-
     <OverlayWaiting v-if="isLoading"></OverlayWaiting>
     <DialogExterneNummer></DialogExterneNummer>
     <!-- @goToCheckout="nextPage" rufe die Funktion nextPage auf  -->
     <WarenkorbDesktop v-if="showCart && !smAndDown" @goToCheckout="nextPage"/>
 
+
     <!-- Da v-show nicht funktioniert und die v-card mit dem Hauptinhalt nach rechts rückt sobald WarenkorbDesktop mit v-if aus dem DOM
      verschwindet, verwende ich in Abhängigkeit von showCart end oder center bei v-row justify-->
     <v-row :justify="showCart ? 'end' : 'center'" class="no-gutters">
 
-      <v-col cols="12" lg="10" md="8" sm="6" >
-        <!--Anzeige der Schritte (Stepper)      -->
+      <!--      ALTE Spaltenaufteilung >-->
+<!--      <v-col cols="12" lg="10" md="8" sm="6" >-->
+      <v-col cols="12" md="11" lg="10" xl="9">
+      <!--Anzeige der Schritte (Stepper)      -->
         <v-card class="d-flex mb-4 bg-transparent rounded-0">
           <v-chip
               class="flex-grow-1 vChipStep rounded-0 mr-1 justify-center text-h6"

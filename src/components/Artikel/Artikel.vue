@@ -178,12 +178,12 @@ console.log('germanColorToHex', germanColorToHex('grün'))
 
 <template>
 
-  <v-row justify="center">
-    <v-col cols="12" md="8" lg="8">
-
+  <v-row justify="center" class="no-gutters">
+<!--    <v-col cols="12" md="8" lg="8">-->
+    <v-col cols="12" md="11" lg="10" xl="9">
       <v-card class="w-100" flat>
 
-        <v-card-title class="d-flex align-center pe-2">
+        <v-card-title class="d-flex align-center py-2 px-2">
           <!-- Icon und Text in einer Zeile -->
 <!--          <v-icon icon="mdi-wardrobe-outline" class="mr-2"></v-icon>-->
 <!--          <span class="desktop-label d-none d-sm-inline">Inventar</span>-->
@@ -368,6 +368,7 @@ console.log('germanColorToHex', germanColorToHex('grün'))
               <v-row align="center">
                 <v-col class="d-flex align-center" cols="12">
                  <v-select
+                     class="vselect"
                      v-if="!smAndDown"
                      :items="getAvailableQuantities(item.Bestand)"
                      v-model="item.selectedQuantity"
@@ -470,6 +471,10 @@ console.log('germanColorToHex', germanColorToHex('grün'))
   border-radius: 50%; /* Runde Form */
   background: conic-gradient(red, orange, yellow, green, blue, indigo, violet);
 
+}
+
+.vselect{
+  max-width: 90px;
 }
 
 .vLableUpDown {

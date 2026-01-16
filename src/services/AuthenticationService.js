@@ -155,10 +155,15 @@ export default {
         });
     },
     confirmMietvertrag(data) {
-        //Mitvertrag bestätigen
+        //Mietvertrag bestätigen
         console.log('confirmMietvertrag');
         return Api.post('/mietvertrag/confirm', data);
-       }
+       },
+    emailUpdateEasyverein(data) {
+        //Emailadresse in easyVerein ändern oder hinterlegen
+        console.log('/leihvorgang/emailupdateeasyverein');
+        return Api.patch('leihvorgang/emailupdateeasyverein', data);
+    }
 
 
 };
