@@ -26,20 +26,29 @@ const showWarenkorbMobile = computed(()=> store.getters.getShowWarenkorbMobile)
 const user = computed(()=> store.getters.getUserData)
 const snackbar = ref(false);
 const snackbarText = ref('')
-const snackbarColor = ref('error')
+const snackbarColor = ref('error');
+
+const snackbarTimeoutOverride = ref(null); // null = kein Override
+
 const snackbarTimeout = computed(() => {
-  return snackbarColor.value === 'error' ? -1 : 5000; // error bleibt offen, success schließt nach 5s
+  // Wenn Override gesetzt ist, gilt der Wert
+  if (snackbarTimeoutOverride.value !== null) return snackbarTimeoutOverride.value;
+
+  // Sonst Standardregel
+  return snackbarColor.value === 'error' ? -1 : 5000;
 });
+
 const vChipColors = ref(['success', 'primary', 'primary']) //Steuerung der vChip Farben Anzeigenschritte
 const { smAndDown } = useDisplay();
 const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
 const emailPromptOpen = ref(false);
 const emailPromptLoading = ref(false);
 const memberEmailUpdate = ref(null);
+const hasSelectedMember = computed(() => !!borrowMember.value?.id);
 
 //Wenn das ausgewählte Mitglieder vom Benutzer entfernt wird, wird Komponente Mitglieder wieder geladen
 /*watchEffect(()=>{
-    if(!isSelectedMember.value){
+    if(!hasSelectedMember.value){
       currentPage.value = 0;
       store.dispatch('clearCartItems',[])
     }
@@ -47,7 +56,7 @@ const memberEmailUpdate = ref(null);
   updateChipColors()//Steuerung der vChip Farben Anzeigenschritte
 });*/
 watch(
-    isSelectedMember,
+    hasSelectedMember,
     (selected, prev) => {
       // Nur wenn vorher true war und jetzt false wird
       if (prev === true && selected === false) {
@@ -83,16 +92,24 @@ watch(showWarenkorbMobile, (newValue)=>{
   }
 })
 
+function showSnackbar(text, color = 'error', timeoutOverride = null) {
+  snackbarText.value = text;
+  snackbarColor.value = color;
+  snackbarTimeoutOverride.value = timeoutOverride; // null = auto
+  snackbar.value = true;
+}
+
+
 //Button aktivieren und deaktivieren
 const btnNextPageDisable = computed(()=>{
-  if(currentPage.value === 0 && isSelectedMember.value)
+  if(currentPage.value === 0 && hasSelectedMember.value)
   {
     return true;
   }
-  if(currentPage.value === 1 && store.getters.getCartItemCount > 0 && isSelectedMember.value){
+  if(currentPage.value === 1 && store.getters.getCartItemCount > 0 && hasSelectedMember.value){
     return true;
   }
-  if(currentPage.value === 2 && store.getters.getCartItemCount > 0 && isSelectedMember.value){
+  if(currentPage.value === 2 && store.getters.getCartItemCount > 0 && hasSelectedMember.value){
     return true;
   }
 });
@@ -141,6 +158,15 @@ const btnText = computed(()=>{
 //Nur wenn Unterseite = 2 ist, dann wir der leihvorgangBuchen() ausgeführt, sonst eine Seite nach vorne navigiert
 async function nextPage(message) {
 
+  // Failsafe: Ohne Member geht nix
+  if (!borrowMember.value?.id) {
+    snackbarText.value = "Bitte zuerst ein Mitglied auswählen.";
+    snackbarColor.value = "error";
+    snackbar.value = true;
+    currentPage.value = 0;
+    return;
+  }
+
   if (currentPage.value === 2) {
     //Prüft ob der Artikel eine Pflicht zur Erfassung der externeID hat.
     //Wenn ja, wird die Navigation unterbrochen und der Vorgang kann nicht gebucht werden.
@@ -151,7 +177,8 @@ async function nextPage(message) {
         //gewählten Menge übereinstimmt, wenn diese nicht übereinstimmen, kann der Vorgang nicht
         //gebucht werden
         if(item.Menge !== externeNummernCount && item.ExterneInventarNummerPflicht === 1){
-          alert(`Die Externe Nummer muss erfasst werden:\n${item.ArtikelBezeichnung}` )
+          //alert(`Die Externe Nummer muss erfasst werden:\n${item.ArtikelBezeichnung}` )
+          showSnackbar(`Die Externe Nummer muss erfasst werden:\n${item.ArtikelBezeichnung}`, "warning", 5000);
           return;
         }
 
@@ -219,7 +246,7 @@ async function leihvorgangBuchen(){
 
     console.log('Update ExterneNummer erfolgreich!')
     store.dispatch('clearCartItems') //Setzt den vuex-Store für den Leihvorgang auf Anfang (null)
-    isSelectedMember.value = false; //Setzt das ausgewählte Mitglied zurück
+    deleteSelectedMember(); //Setzt das ausgewählte Mitglied zurück
     snackbarText.value = 'Leihvorgang wurde erfolgreich gebucht';
     snackbarColor.value = "success"
     snackbar.value = true;
@@ -257,7 +284,7 @@ async function leihvorgangBuchen(){
 function handleMemberSelect(member) {
   selectedMember.value = member; // Speichert das ausgewählte Mitglied
   store.dispatch('setBorrowMember', selectedMember.value);
-  isSelectedMember.value = !!store.getters.getBorrowMember.firstName
+  //isSelectedMember.value = !!store.getters.getBorrowMember.firstName
 
 
   if(member?.privateEmail === '' || member?.privateEmail === undefined) {
@@ -280,7 +307,7 @@ function handleMemberSelect(member) {
 function deleteSelectedMember(){
   selectedMember.value = null;
   store.dispatch('setBorrowMember', []);
-  isSelectedMember.value = !!store.getters.getBorrowMember.firstName
+  //isSelectedMember.value = !!store.getters.getBorrowMember.firstName
   console.log('store', store.getters.getBorrowMember.firstName);
 }
 
@@ -330,6 +357,9 @@ async function onSaveMemberEmail(email, idMitglied){
 
 function onCancelEmailPrompt(){
   console.log('onCancelEmailPrompt');
+  //Setzt die Auswahl des Mitglieds auf false,
+  //verhindert das navigieren zum nächsten Schritt ohne Auswahl eines Mitglieds!
+  deleteSelectedMember()
 }
 
 function showEmailInfo(){
@@ -444,6 +474,7 @@ function showEmailInfo(){
               color="grey"
               prepend-icon="mdi-arrow-left-circle"
               @click="previousPage"
+              :disabled="!hasSelectedMember"
             >
             zurück
           </v-btn>

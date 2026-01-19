@@ -75,7 +75,7 @@ function onCancel() {
             :rules="rules"
             :disabled="loading"
             clearable
-            autofocus
+            :autofocus="!isMobile"
             @keyup.enter="onSave"
         />
         <div class="text-caption text-medium-emphasis">
