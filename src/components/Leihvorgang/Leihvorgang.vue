@@ -332,6 +332,23 @@ function onCancelEmailPrompt(){
   console.log('onCancelEmailPrompt');
 }
 
+function showEmailInfo(){
+  if(!selectedMember.value){
+    return;
+  }
+
+  if(selectedMember.value.privateEmail){
+    snackbarText.value = `E-Mail: ${selectedMember.value.privateEmail}`;
+    snackbarColor.value = "info"
+    snackbar.value = true;
+  }
+  else{
+    snackbarText.value = "Für dieses Mitglied ist keine E-Mail hinterlegt.";
+    snackbarColor.value = "warning";
+    snackbar.value = true;
+  }
+}
+
 </script>
 
 <template>
@@ -496,12 +513,28 @@ function onCancelEmailPrompt(){
               class="mt-2 ml-2 mb-2"
               variant="flat"
               color="green"
-              prepend-icon="mdi-close-circle-outline v-chip--active"
-              @click="deleteSelectedMember"
           >
+            <!-- ICON X Auswahl des Mitglieds aufheben -->
+            <v-icon
+                class="mr-2 pr-0"
+                size="18"
+                @click="deleteSelectedMember"
+            >
+              mdi-close-circle-outline
+            </v-icon>
+
             {{selectedMember.firstName}} {{selectedMember.familyName}}
+
             <v-icon class="ml-2" v-if="selectedMember.privateEmail" size="15">mdi-email-check</v-icon>
             <v-icon class="ml-2" v-else size="15">mdi-email-alert</v-icon>
+            <!-- Info-Icon (stoppt Chip-Klick!) -->
+            <v-icon
+            size="15"
+            class="ml-2"
+            @click.stop="showEmailInfo"
+            >
+             mdi-information
+            </v-icon>
           </v-chip>
           <!--hier wird die Auswahl aus Mitglieder empfangen und an handleMemberSelect übergeben -->
           <!-- in v-if funktioniert isSelectedMember.value nicht  -->
