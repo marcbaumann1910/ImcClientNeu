@@ -500,7 +500,7 @@ function onCancelEmailPrompt(){
               @click="deleteSelectedMember"
           >
             {{selectedMember.firstName}} {{selectedMember.familyName}}
-            <v-icon class="ml-2" v-if="selectedMember" size="15">mdi-email-check</v-icon>
+            <v-icon class="ml-2" v-if="selectedMember.privateEmail" size="15">mdi-email-check</v-icon>
             <v-icon class="ml-2" v-else size="15">mdi-email-alert</v-icon>
           </v-chip>
           <!--hier wird die Auswahl aus Mitglieder empfangen und an handleMemberSelect übergeben -->
