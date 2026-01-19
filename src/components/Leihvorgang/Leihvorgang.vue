@@ -35,16 +35,32 @@ const { smAndDown } = useDisplay();
 const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
 const emailPromptOpen = ref(false);
 const emailPromptLoading = ref(false);
+const memberEmailUpdate = ref(null);
 
 //Wenn das ausgewählte Mitglieder vom Benutzer entfernt wird, wird Komponente Mitglieder wieder geladen
-watchEffect(()=>{
+/*watchEffect(()=>{
     if(!isSelectedMember.value){
       currentPage.value = 0;
       store.dispatch('clearCartItems',[])
     }
 
   updateChipColors()//Steuerung der vChip Farben Anzeigenschritte
-});
+});*/
+watch(
+    isSelectedMember,
+    (selected, prev) => {
+      // Nur wenn vorher true war und jetzt false wird
+      if (prev === true && selected === false) {
+        currentPage.value = 0;
+
+        // nur dispatchen wenn wirklich was drin ist (zusätzlicher Guard)
+        if (store.getters.getCartItemCount > 0) {
+          store.dispatch("clearCartItems");
+        }
+      }
+    }
+);
+
 
 
 // watch(currentPage, (newVal) => {
@@ -241,18 +257,18 @@ async function leihvorgangBuchen(){
 function handleMemberSelect(member) {
   selectedMember.value = member; // Speichert das ausgewählte Mitglied
   store.dispatch('setBorrowMember', selectedMember.value);
+  isSelectedMember.value = !!store.getters.getBorrowMember.firstName
+
 
   if(member?.privateEmail === '' || member?.privateEmail === undefined) {
     console.log("keine Emailadresse zum Mitglied")
     emailPromptOpen.value = true
-    return
   }
   else{
     console.log("Emailadresse zum Mitglied vorhanden", member?.privateEmail)
   }
 
 
-  isSelectedMember.value = !!store.getters.getBorrowMember.firstName
   console.log('selectedMember', selectedMember);
   console.log('selectedMember', selectedMember.value.firstName);
   console.log('store', store.getters.getBorrowMember.firstName);
@@ -287,6 +303,16 @@ async function onSaveMemberEmail(email, idMitglied){
 
     if(resultData?.erfolg){
       console.log('Update MemberEmail erfolgreich:', resultData.message);
+      const update = {...borrowMember.value, privateEmail: email };
+      await store.dispatch('setBorrowMember', update);
+      selectedMember.value = update;
+      //Um das aktuelle Suchergebnis zu aktualisieren, Mitglieder.vue darüber informieren!
+      memberEmailUpdate.value = {
+        id: borrowMember.value.id,
+        privateEmail: email,
+      }
+      console.log('getBorrowMember:', store.getters.getBorrowMember.privateEmail);
+
     }
 
   }
@@ -475,7 +501,11 @@ function onCancelEmailPrompt(){
           <!-- in v-if funktioniert isSelectedMember.value nicht  -->
           <v-row>
             <v-col cols="12">
-              <Mitglieder v-if="currentPage === 0" @memberSelected="handleMemberSelect" />
+              <Mitglieder
+                  v-if="currentPage === 0"
+                  @memberSelected="handleMemberSelect"
+                  :email-update="memberEmailUpdate"
+              />
               <Artikel :clickable= "false" :aktiv="true" :verleihbar="false" v-if="currentPage === 1" />
               <m_Checkout v-if="currentPage === 2 && smAndDown"/>
               <Checkout v-if="currentPage === 2 && !smAndDown"/>

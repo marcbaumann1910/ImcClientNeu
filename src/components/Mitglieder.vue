@@ -1,13 +1,14 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import {ref, computed, onMounted, watch} from 'vue'
 import AuthenticationService from "@/services/AuthenticationService.js";
 const search = ref('');
 const members = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(3);
 
-defineProps({
-  member: Object,
+const props =  defineProps({
+  //member: Object,
+  emailUpdate: { type: Object, default: null },
 })
 
 onMounted(async ()  => {
@@ -19,6 +20,22 @@ onMounted(async ()  => {
     console.log('Fehler beim abrufen der Mitglieder', err)
   }
 })
+
+watch(
+    () => props.emailUpdate,
+    (u) => {
+      if (!u) return;
+
+      // Wir suchen den Member in deiner Liste
+      const member = members.value.find(m => m.id === u.id);
+
+      // Wenn gefunden: Email aktualisieren
+      if (member && member.privateEmail !== u.privateEmail) {
+        member.privateEmail = u.privateEmail; // nur wenn wirklich anders
+      }
+    }
+);
+
 
 //Berechnen der paginierten Mitglieder
 const paginatedMembers = computed(() => {
@@ -107,7 +124,8 @@ const filteredMembers = computed(() => {
         </span>
 
         <span class="d-flex align-center">
-          <v-icon size="18" class="mr-1">mdi-email</v-icon>
+          <v-icon v-if="member.privateEmail" color="green" size="18" class="mr-1">mdi-email</v-icon>
+          <v-icon v-else color="red" size="18" class="mr-1">mdi-email</v-icon>
           {{ member.privateEmail }}
         </span>
         </v-card-subtitle>
