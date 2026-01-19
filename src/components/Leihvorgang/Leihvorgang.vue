@@ -266,12 +266,14 @@ function handleMemberSelect(member) {
   }
   else{
     console.log("Emailadresse zum Mitglied vorhanden", member?.privateEmail)
+    currentPage.value = 1;
   }
-
 
   console.log('selectedMember', selectedMember);
   console.log('selectedMember', selectedMember.value.firstName);
   console.log('store', store.getters.getBorrowMember.firstName);
+
+
 }
 
 //Löscht das aktuell ausgewählte Mitglied im vuex-Store
@@ -312,6 +314,7 @@ async function onSaveMemberEmail(email, idMitglied){
         privateEmail: email,
       }
       console.log('getBorrowMember:', store.getters.getBorrowMember.privateEmail);
+      currentPage.value = 1;
 
     }
 
@@ -319,9 +322,10 @@ async function onSaveMemberEmail(email, idMitglied){
   catch(err){
     console.log('Update MemberEmail fehlgeschlagen',err)
   }
+  finally {
+    emailPromptOpen.value = false; // Dialog schließen
+  }
 
-
-  emailPromptOpen.value = false; // Dialog schließen
 }
 
 function onCancelEmailPrompt(){
@@ -479,7 +483,7 @@ function onCancelEmailPrompt(){
             <!-- Titel und Untertitel zentral -->
             <div class="text-center text-h5">
               <v-card-subtitle class="text-h6">ausgewählt:</v-card-subtitle>
-              {{ selectedMember.firstName }} {{ selectedMember.familyName }}
+              {{ selectedMember.firstName }} {{ selectedMember.familyName }} <v-icon class="ml-2" size="18">mdi-email-check</v-icon> {{ selectedMember.privateEmail }}
             </div>
 
             <!-- Spacer rechts vom Titel -->
@@ -496,6 +500,8 @@ function onCancelEmailPrompt(){
               @click="deleteSelectedMember"
           >
             {{selectedMember.firstName}} {{selectedMember.familyName}}
+            <v-icon class="ml-2" v-if="selectedMember" size="15">mdi-email-check</v-icon>
+            <v-icon class="ml-2" v-else size="15">mdi-email-alert</v-icon>
           </v-chip>
           <!--hier wird die Auswahl aus Mitglieder empfangen und an handleMemberSelect übergeben -->
           <!-- in v-if funktioniert isSelectedMember.value nicht  -->
