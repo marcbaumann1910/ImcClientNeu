@@ -120,8 +120,15 @@ async function createInvoice(idMitglied, sumOffen){
     console.log('response createInvoice', response)
     notifySuccess(`Die Rechnung wurde erfolgreich erstellt. ${response.data.newInvoiceID}`)
   }catch(error){
-    notifyError('Die Rechnung konnte nicht erstellt werden');
-    console.log('Fehler: Rechnung konnte nicht erstellt werden')
+    // PRÜFUNG AUF DEN KRITISCHEN SYNCHRONISATIONSFEHLER
+    if (error.response && error.response.status === 500 && error.response.data.manualActionRequired) {
+      const invoiceID = error.response.data.newInvoiceID;
+      notifyError(`KRITISCHER FEHLER: Rechnung ${invoiceID} wurde erstellt, aber der Status konnte nicht gespeichert werden! Bitte Admin informieren.`);
+      console.error('Synchronisationsfehler:', error.response.data);
+    } else {
+      // Normaler Fehler (API gar nicht erst erreicht oder andere Probleme)
+      notifyError('Die Rechnung konnte nicht erstellt werden.');
+    }
   }finally {
     inProgress.value = false;
   }
