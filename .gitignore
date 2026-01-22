@@ -31,3 +31,12 @@ coverage
 
 .env
 .env.*
+.env.e2e
+.env.e2e.local
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "types": ["vue","vuetify"]
+    "types": ["vue","vuetify","node","vite/client"]
   },
   "include": [
     "src/**/*.ts",

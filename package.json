@@ -19,7 +19,6 @@
     "chart.js": "^3.9.1",
     "chartjs-plugin-datalabels": "^2.2.0",
     "color": "^4.2.3",
-    "dotenv": "^16.4.5",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
     "vue": "^3.4.36",
@@ -30,11 +29,13 @@
     "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
-    "@types/node": "^22.7.4",
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^22.19.7",
     "@types/vue": "^1.0.31",
     "@types/vue-router": "^2.0.0",
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/tsconfig": "^0.5.1",
+    "dotenv": "^17.2.3",
     "eslint": "^9.8.0",
     "terser-webpack-plugin": "^5.3.10",
     "typescript": "^5.6.2",
