@@ -158,8 +158,7 @@ async function login(){
     return;
   }
   try {
-//infasdfo@maaasdfasdrc79.de
-// Hallo-2024!
+
     const response = await AuthenticationService.login(
         {
           email: txtEmail.value,

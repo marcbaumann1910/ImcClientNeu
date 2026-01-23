@@ -23,43 +23,36 @@ async function fillExterneNummerDialog(page, bemerkungText) {
     await expect(dialog).toBeVisible({ timeout: 15000 });
 
     const acInputs = dialog.locator('.v-autocomplete input');
-    const acCount = await acInputs.count();
+    if ((await acInputs.count()) > 0) {
+        const input = acInputs.first();
+        await input.click();
+        await page.waitForTimeout(1200);
 
-    if (acCount > 0) {
-        for (let i = 0; i < acCount; i++) {
-            const input = acInputs.nth(i);
-            await input.click();
-            await page.waitForTimeout(800); // Animation abwarten
+        const listbox = page.locator('.v-overlay-container .v-listbox, .v-listbox, [role="listbox"]').last();
+        const options = listbox.locator('.v-list-item, [role="option"]');
 
-            const listbox = page.locator('.v-overlay-container .v-listbox, .v-listbox, [role="listbox"]').last();
-            const option = listbox.locator('.v-list-item, [role="option"]').first();
-
-            if (await option.count()) {
-                await option.click();
-                await page.waitForTimeout(300);
-            } else {
-                await page.keyboard.press('Escape');
-                return false;
-            }
+        if (await options.count() === 0) {
+            console.log("Bestand leer im Dialog erkannt.");
+            await page.keyboard.press('Escape');
+            return false;
         }
+
+        await options.first().click({ force: true });
+        await page.waitForTimeout(300);
     } else {
         const inventarBox = dialog.getByRole('textbox', { name: /Inventar-Nummer/i }).first();
-        if (await inventarBox.isVisible()) {
-            await inventarBox.fill(`TEST-${Date.now()}`);
-        }
+        if (await inventarBox.isVisible()) await inventarBox.fill(`TEST-${Date.now()}`);
     }
 
     const bemerkung = dialog.locator('input[placeholder*="z.B. Name"]').first();
     if (await bemerkung.count()) await bemerkung.fill(bemerkungText);
 
-    const saveBtn = dialog.getByRole('button', { name: /Speichern/i }).first();
-    await saveBtn.click();
+    await dialog.getByRole('button', { name: /Speichern/i }).click();
     await expect(dialog).toBeHidden({ timeout: 10000 });
     return true;
 }
 
 async function handlePostBookingDialogs(page) {
-    // 1) Email-Abfrage (falls nötig)
     const emailDialog = page.locator('.v-card').filter({ hasText: 'E-Mail-Adresse fehlt' }).first();
     if (await emailDialog.isVisible()) {
         await emailDialog.getByRole('textbox').fill(BORROWER_EMAIL_IF_MISSING);
@@ -67,16 +60,17 @@ async function handlePostBookingDialogs(page) {
         await page.waitForTimeout(1000);
     }
 
-    // 2) Mietvertrag-Bestätigung (JA klicken)
-    const confirmDialog = page.locator('.v-overlay--active .v-card').filter({ hasText: /Mietvertrag|Leihvorgang buchen/i }).first();
+    const confirmDialog = page.locator('.v-overlay--active .v-card').filter({ hasText: /Leihvorgang buchen|Mietvertrag/i }).first();
     if (await confirmDialog.count()) {
         const jaBtn = confirmDialog.getByRole('button', { name: /^JA$/i }).first();
-        await jaBtn.click();
+        if (await jaBtn.count()) await jaBtn.click();
     }
 }
 
-test.describe('Audit: Realer Buchungsvorgang (Desktop)', () => {
-    test('Workflow: Login -> Mitglied -> Artikel -> Übersicht -> Buchen', async ({ page }) => {
+test.describe('Audit: Realer Buchungsvorgang', () => {
+    test('Workflow: Login -> Mitglied -> Artikel -> Buchen -> Audit', async ({ page }) => {
+        page.on('dialog', async d => d.dismiss().catch(() => {}));
+
         // 1) LOGIN
         await page.goto('/login');
         await page.getByPlaceholder(/Email/i).fill(TEST_LOGIN.email);
@@ -95,42 +89,70 @@ test.describe('Audit: Realer Buchungsvorgang (Desktop)', () => {
 
         // 3) MITGLIED SUCHEN
         await page.locator('.search-field input').first().fill(MEMBER_SEARCH_TERM);
-        const memberResult = page.locator('.vCardMitgliedSuchen').getByText(MEMBER_FULL_NAME).first();
-        await memberResult.click();
+        await page.locator('.vCardMitgliedSuchen').getByText(MEMBER_FULL_NAME).first().click();
 
-        // 4) ARTIKEL-SEITE (Menge wählen)
-        await expect(page.locator('main').getByText('€').first()).toBeVisible({ timeout: 20000 });
-        const qtySelect = page.locator('.v-select').first();
-        await qtySelect.click();
-        await page.locator('.v-overlay-container .v-list-item').filter({ hasText: /^1$/ }).first().click();
+        // 4) ARTIKEL WÄHLEN (Retry Loop)
+        let bookingFinished = false;
+        let articleIndex = 0;
 
-        // 5) ZUR ÜBERSICHT
-        await page.getByRole('button', { name: /Zur Übersicht/i }).click();
+        while (!bookingFinished) {
+            await expect(page.locator('main').getByText('€').first()).toBeVisible({ timeout: 20000 });
 
-        // 6) EXTERNE NUMMERN ERFASSEN
-        // Wir klicken auf das Label "*Externe Nr. erfassen"
-        const erfassenLabel = page.locator('text=*Externe Nr. erfassen').first();
-        await expect(erfassenLabel).toBeVisible({ timeout: 15000 });
-        await erfassenLabel.click();
+            const qtySelects = page.locator('.v-select');
+            if (articleIndex >= await qtySelects.count()) throw new Error("Kein Artikel mit Bestand mehr gefunden!");
 
-        const success = await fillExterneNummerDialog(page, "Automatischer Audit-Test");
-        if (!success) throw new Error("Fehler beim Ausfüllen der externen Nummer");
+            // Wir wählen gezielt den Artikel am articleIndex (0 = Hexen-Rock, 1 = Schurtz, etc.)
+            await qtySelects.nth(articleIndex).scrollIntoViewIfNeeded();
+            await qtySelects.nth(articleIndex).click();
+            await page.locator('.v-overlay-container .v-list-item').filter({ hasText: /^1$/ }).first().click();
 
-        // 7) VORGANG BUCHEN (Der rote Button aus dem Screenshot)
+            // 5) ZUR ÜBERSICHT
+            await page.getByRole('button', { name: /Zur Übersicht/i }).click();
+
+            // 6) EXTERNE NUMMER
+            const erfLink = page.locator('text=*Externe Nr. erfassen').first();
+            await expect(erfLink).toBeVisible({ timeout: 10000 });
+            await erfLink.click();
+
+            const success = await fillExterneNummerDialog(page, "Audit-Test");
+
+            if (success) {
+                bookingFinished = true;
+            } else {
+                console.log(`Artikel an Index ${articleIndex} leer. Lösche und versuche nächsten.`);
+                // Artikel im Warenkorb löschen (Mülleimer rechts)
+                await page.locator('.mdi-trash-can').first().click();
+                await page.waitForTimeout(500);
+
+                // Zurück zur Artikelliste
+                await page.getByRole('button', { name: /ZURÜCK/i }).click();
+
+                // Index erhöhen, damit im nächsten Durchlauf NICHT wieder der Hexen-Rock gewählt wird
+                articleIndex++;
+                await page.waitForTimeout(1000);
+            }
+        }
+
+        // 7) VORGANG BUCHEN
         const buchenBtn = page.getByRole('button', { name: /VORGANG BUCHEN/i }).first();
         await expect(buchenBtn).toBeEnabled();
         await buchenBtn.click();
 
-        // 8) DIALOGE BESTÄTIGEN (Email / Mietvertrag JA)
+        // 8) DIALOGE BESTÄTIGEN
         await handlePostBookingDialogs(page);
 
         // 9) ERFOLGSMELDUNG
         await expect(page.locator('.v-snackbar, .v-alert')).toContainText(/erfolgreich|gebucht/i, { timeout: 25000 });
 
-        // 10) AUDIT IN VERWALTUNG
+        // 10) AUDIT IN DER VERWALTUNG
         await page.goto('/leihvorgangverwalten');
         await page.locator('.search-field input').first().fill(MEMBER_FULL_NAME);
-        await page.locator(`.v-expansion-panel-title:has-text("${MEMBER_FULL_NAME}")`).click();
-        await expect(page.locator('.v-expansion-panel-text').first()).toContainText(/ausgeliehen/i);
+        await page.locator(`.v-expansion-panel-title:has-text("${MEMBER_FULL_NAME}")`).first().click();
+
+        const content = page.locator('.v-expansion-panel-text').first();
+        await expect(content).toContainText(/verliehen/i);
+
+        const today = new Date().toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        await expect(content).toContainText(today);
     });
 });

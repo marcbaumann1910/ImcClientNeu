@@ -178,6 +178,9 @@ async function uploadImage() {
     console.log('Upload Image', result)
   } catch (error) {
     console.error('Fehler beim Upload:', error)
+    snackbarColor.value = 'error'
+    snackbarText.value = error
+    snackbar.value = true
   }
 }
 
@@ -210,8 +213,9 @@ async function saveNow() {
   } catch (error) {
     saveState.value = "error";
     snackbarColor.value = 'error'
-    snackbarText.value = 'Speichern fehlgeschlagen.'
+    snackbarText.value = error
     snackbar.value = true
+    return;
   }
 }
 
@@ -292,6 +296,7 @@ async function updateArtikel(){
       console.log('returnImagePath', returnImagePath)
     } catch (error) {
       console.error('Fehler beim Upload:', error)
+      throw new Error("Bildupload nicht möglich.");
     }
   }
 

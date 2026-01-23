@@ -29,7 +29,7 @@ export default {
     },
     artikels(idverein, aktiv, verleihbar) {
         console.log('artikel/:idVerein', idverein);
-        return Api.get(`/artikels/${idverein}`,{
+        return Api.get(`/artikels/`,{
             params:{
                 aktiv: aktiv,
                 verleihbar: verleihbar,
