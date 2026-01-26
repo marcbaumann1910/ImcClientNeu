@@ -44,6 +44,10 @@ export default {
         console.log('artikelupdate/', data);
         return Api.patch(`/artikelupdate`, data);
     },
+    artikelUpdateLager(data) {
+        console.log('artikelUpdateLager/', data);
+        return Api.patch(`/artikelupdatelager`, data);
+    },
     mitglieder() {
         console.log('mitglieder: ');
         return Api.get('/mitglieder');

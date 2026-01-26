@@ -2,6 +2,7 @@
 import { useRoute } from 'vue-router'
 import {onMounted, computed, ref, watch} from "vue";
 import AuthenticationService from "@/services/AuthenticationService.js";
+import DialogLagerBuchungen from "@/components/Artikel/DialogLagerBuchungen.vue";
 const route = useRoute()
 const selectedFile = ref(null)
 const preview = ref(null)
@@ -11,7 +12,17 @@ const umsatzsteuer = ref([])
 const abrechnungsIntervall = ref([])
 const farbe = ref([])
 const kategorie = ref([])
+const lagerbestand = ref(0)
 const konfektionsGroessen = ref([])
+const bookingDialog = ref(false)
+const bookingFormRef = ref(null)
+const bookingSaving = ref(false)
+const bookingError = ref(null)
+const bookingTypes = ['Zugang', 'Abgang']
+const booking = ref({
+  type: 'Zugang',
+  amount: 1
+})
 const saveState = ref('idle') // idle | dirty | saving | success | error
 const formRef = ref(null)
 const snackbar = ref(false);
@@ -76,6 +87,7 @@ onMounted(async()=>{
     kategorie.value = result.data.kategorie;
     konfektionsGroessen.value = result.data.konfektionsGroessen
     preview.value = imageUrl + artikel.value.Bildpfad;
+    lagerbestand.value = Number(artikel.value.Bestand ?? 0);
 
     //
     artikelOriginal.value = deepClone(artikel.value)
@@ -315,6 +327,7 @@ async function updateArtikel(){
     aktiv: !!aktiv.value, //Checkbox
     externeNummerPflicht: !!externeNummerPflicht.value, //Checkbox
     verkaufbar: !!verkaufbar.value, //Checkbox
+    lagerbestand: artikel.value.Bestand,
   }
 
   console.log('artikel.value.ArtikelBezeichnung', artikel.value.ArtikelBezeichnung)
@@ -372,6 +385,72 @@ function toDeDecimalString(v) {
   return String(v).replace('.', ',')
 }
 
+function openBookingDialog() {
+  bookingError.value = null
+  booking.value.type = 'Zugang'
+  booking.value.amount = 1
+  bookingDialog.value = true
+}
+
+// aktueller Bestand: du nutzt lagerbestand als ref([]) -> sollte Zahl sein!
+const currentStock = computed(() => Number(lagerbestand.value ?? 0))
+
+const projectedStock = computed(() => {
+  const amount = Number(booking.value.amount || 0)
+  const delta = booking.value.type === 'Zugang' ? amount : -amount
+  return currentStock.value + delta
+})
+
+function positiveInt(v) {
+  const n = Number(v)
+  return (Number.isInteger(n) && n > 0) || 'Menge muss eine ganze Zahl > 0 sein'
+}
+
+function closeBookingDialog() {
+  bookingDialog.value = false
+  bookingError.value = null
+}
+
+async function submitBooking() {
+  bookingError.value = null
+
+  // validate
+  const form = bookingFormRef.value
+  if (form) {
+    const { valid } = await form.validate()
+    if (!valid) return
+  }
+
+  // Abgang darf nicht unter 0 führen (wenn du das willst)
+  if (booking.value.type === 'Abgang' && projectedStock.value < 0) {
+    bookingError.value = 'Abgang nicht möglich: Bestand würde negativ werden.'
+    return
+  }
+
+  try {
+    bookingSaving.value = true
+
+    const amount = Number(booking.value.amount || 0)
+    const delta = booking.value.type === 'Zugang' ? amount : -amount
+
+    // TODO: Backend Call später:
+    await AuthenticationService.artikelUpdateLager({
+      idInventarArtikel: artikel.value.IDInventarArtikel,
+      veraenderung: delta
+    })
+
+    // Frontend sofort aktualisieren:
+    lagerbestand.value = currentStock.value + delta
+    if (artikel.value) artikel.value.Bestand = lagerbestand.value
+
+    bookingDialog.value = false
+  } catch (e) {
+    bookingError.value = e?.message ?? 'Buchung konnte nicht gespeichert werden.'
+  } finally {
+    bookingSaving.value = false
+  }
+}
+
 </script>
 
   <template>
@@ -397,6 +476,76 @@ function toDeDecimalString(v) {
       </template>
 
     </v-snackbar>
+
+    <!--DIALOG-->
+    <v-dialog v-model="bookingDialog" max-width="520">
+      <v-card rounded="xl">
+        <v-card-title class="d-flex align-center">
+          Lagerbuchung
+          <v-spacer />
+          <v-btn icon="mdi-close" variant="text" @click="closeBookingDialog" />
+        </v-card-title>
+
+        <v-card-text>
+          <v-form ref="bookingFormRef" validate-on="submit">
+            <v-row dense>
+              <v-col cols="12">
+                <v-select
+                    v-model="booking.type"
+                    :items="bookingTypes"
+                    label="Typ"
+                    variant="solo-filled"
+                    :rules="[req('Typ ist Pflicht')]"
+                />
+              </v-col>
+
+              <v-col cols="12">
+                <v-text-field
+                    v-model.number="booking.amount"
+                    label="Menge"
+                    variant="solo-filled"
+                    inputmode="numeric"
+                    type="number"
+                    min="1"
+                    :rules="[req('Menge ist Pflicht'), positiveInt]"
+                />
+              </v-col>
+
+              <!-- Optional: Sofort-Feedback bei Abgang -->
+              <v-col cols="12" v-if="booking.type === 'Abgang'">
+                <v-alert variant="tonal" type="warning" density="compact">
+                  Neuer Bestand wäre: <b>{{ projectedStock }}</b>
+                </v-alert>
+              </v-col>
+
+              <v-col cols="12" v-if="bookingError">
+                <v-alert variant="tonal" type="error" density="compact">
+                  {{ bookingError }}
+                </v-alert>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+
+        <v-card-actions class="pa-4">
+
+          <v-btn
+              color="primary"
+              class="text-none"
+              :loading="bookingSaving"
+              :disabled="bookingSaving"
+              @click="submitBooking"
+          >
+            Speichern
+          </v-btn>
+          <v-spacer />
+          <v-btn variant="text" class="text-none" @click="closeBookingDialog">
+            Abbrechen
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+   <!--Ende DIALOG-->
 
     <v-container class="py-6" fluid>
       <div v-if="!artikel">
@@ -614,6 +763,43 @@ function toDeDecimalString(v) {
               </v-row>
             </v-card-text>
           </v-card>
+
+          <!--Lager-->
+          <v-card rounded="xl" elevation="2" class="mt-4">
+            <v-card-title>Lager & Bestände</v-card-title>
+            <v-card-text>
+              <v-row dense>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                      v-model="lagerbestand"
+                      label="Lagerbestand"
+                      placeholder="z.B. 10"
+                      variant="solo-filled"
+                      inputmode="decimal"
+                      readonly
+                      @input="markDirty"
+                      :rules="[decimal]"
+                  />
+                  <v-btn
+                      class="text-none"
+                      prepend-icon="mdi-swap-vertical"
+                      @click="openBookingDialog"
+                  >
+                    Buchung
+                  </v-btn>
+                </v-col>
+
+                <v-col cols="12" md="4">
+
+
+                </v-col>
+                <!---->
+
+              </v-row>
+            </v-card-text>
+          </v-card>
+
+
         </v-col>
       </v-row>
         </v-form>
