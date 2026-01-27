@@ -18,6 +18,7 @@ const bookingDialog = ref(false)
 const bookingFormRef = ref(null)
 const bookingSaving = ref(false)
 const bookingError = ref(null)
+const bookingSuccess = ref(null)
 const bookingTypes = ['Zugang', 'Abgang']
 const booking = ref({
   type: 'Zugang',
@@ -55,8 +56,11 @@ const fileInput = ref(null)
 const isDirty = computed(() => {
   if (!artikel.value || !artikelOriginal.value) return false;
 
+  //OHNE Bestand vergleichen, da mit separater Router gespeichert wird!
+  const { Bestand, ...current } = artikel.value
+
   const artikelChanged =
-      JSON.stringify(artikel.value) !== JSON.stringify(artikelOriginal.value);
+      JSON.stringify(current) !== JSON.stringify(artikelOriginal.value)
 
   const imageChanged = !!selectedFile.value; // sobald neues Bild gewählt
 
@@ -89,14 +93,22 @@ onMounted(async()=>{
     preview.value = imageUrl + artikel.value.Bildpfad;
     lagerbestand.value = Number(artikel.value.Bestand ?? 0);
 
-    //
-    artikelOriginal.value = deepClone(artikel.value)
+    //Deep-Clone durchführen zur Erkennung wann gespeichert werden muss!
+    // Clone ohne Bestand
+    const { Bestand, ...rest } = artikel.value;
+    artikelOriginal.value = snapshotWithoutBestand(artikel.value)
 
     console.log('getArtikel', result)
   } catch (error) {
     console.error('Fehler beim getArtikel:', error)
   }
 })
+
+function snapshotWithoutBestand(a) {
+  if (!a) return null
+  const { Bestand, ...rest } = a
+  return deepClone(rest)
+}
 
 //Wird benötigt, um zu prüfen, ob sich etwas am Artikel geändert hat
 //Button speichern kann dann freigegeben werden
@@ -213,7 +225,7 @@ async function saveNow() {
   saveState.value = "saving";
   try {
     await updateArtikel();
-    artikelOriginal.value = deepClone(artikel.value); // dirty reset
+    artikelOriginal.value = snapshotWithoutBestand(artikel.value); // dirty reset
     selectedFile.value = null;   // <- wichtig
     saveState.value = "success";
     snackbarColor.value = 'success'
@@ -433,19 +445,31 @@ async function submitBooking() {
     const amount = Number(booking.value.amount || 0)
     const delta = booking.value.type === 'Zugang' ? amount : -amount
 
-    // TODO: Backend Call später:
-    await AuthenticationService.artikelUpdateLager({
+    const result = await AuthenticationService.artikelUpdateLager({
       idInventarArtikel: artikel.value.IDInventarArtikel,
       veraenderung: delta
     })
+    const resultData = result.data
+
+    if(resultData.erfolg) {
+      console.log("lagerBestandAenderung:", resultData.message)
+      //Wenn kein Fehler, dann im Element v-alert dies als success ausgeben!
+      bookingSuccess.value = 'Buchung war erfolgreich!'
+    }
+
 
     // Frontend sofort aktualisieren:
     lagerbestand.value = currentStock.value + delta
     if (artikel.value) artikel.value.Bestand = lagerbestand.value
 
+    //1 Sekunden warten bis der Dialog geschlossen wird.
+    await new Promise(r => setTimeout(r, 1000));
     bookingDialog.value = false
+    bookingSuccess.value = null
+
   } catch (e) {
-    bookingError.value = e?.message ?? 'Buchung konnte nicht gespeichert werden.'
+    console.log("lagerBestandAenderung:", e?.message)
+    bookingError.value = 'Buchung konnte nicht gespeichert werden.'
   } finally {
     bookingSaving.value = false
   }
@@ -519,8 +543,13 @@ async function submitBooking() {
               </v-col>
 
               <v-col cols="12" v-if="bookingError">
-                <v-alert variant="tonal" type="error" density="compact">
+                <v-alert  variant="tonal" type="error" density="compact">
                   {{ bookingError }}
+                </v-alert>
+              </v-col>
+              <v-col cols="12" v-if="bookingSuccess">
+                <v-alert  variant="tonal" type="success" density="compact">
+                  {{ bookingSuccess }}
                 </v-alert>
               </v-col>
             </v-row>
@@ -619,7 +648,7 @@ async function submitBooking() {
             </v-card-text>
 
             <v-divider />
-
+            <v-col>
             <v-card-text>
 <!--              <div class="text-subtitle-2 mb-2">Status</div>
 
@@ -643,12 +672,44 @@ async function submitBooking() {
 
               <v-divider class="my-4" />-->
 
-              <div class="text-subtitle-2 mb-2">Einstellungen</div>
+              <div class="mb-2">Einstellungen</div>
               <v-switch v-model="verleihbar" label="verleihbar" color="primary" inset hide-details />
               <v-switch v-model="verkaufbar" label="verkaufbar" color="primary" inset hide-details />
               <v-switch v-model="aktiv" label="aktiv" color="primary" inset hide-details />
               <v-switch v-model="externeNummerPflicht" color="primary" label="Externe Nummer Pflicht" inset hide-details />
             </v-card-text>
+            </v-col>
+            <v-divider />
+            <div class="mt-3 ml-6 mb-4">Bestand</div>
+
+            <v-row dense class="px-4 pb-4">
+              <v-col cols="12" sm="6" class="d-flex">
+                <v-text-field
+                    v-model="lagerbestand"
+                    label="Lagerbestand"
+                    variant="solo-filled"
+                    readonly
+                    hide-details
+                    class="flex-grow-1"
+                />
+              </v-col>
+
+              <v-col cols="12" sm="6" class="d-flex">
+                <v-btn
+                    block
+                    class="text-none booking-btn"
+                    prepend-icon="mdi-swap-vertical"
+                    @click="openBookingDialog"
+                    min-height="56"
+                    color="primary"
+                    size="x-large"
+                >
+                  Buchung
+                </v-btn>
+              </v-col>
+            </v-row>
+
+
           </v-card>
         </v-col>
         <!-- RIGHT: Formular -->
@@ -764,42 +825,6 @@ async function submitBooking() {
             </v-card-text>
           </v-card>
 
-          <!--Lager-->
-          <v-card rounded="xl" elevation="2" class="mt-4">
-            <v-card-title>Lager & Bestände</v-card-title>
-            <v-card-text>
-              <v-row dense>
-                <v-col cols="12" md="4">
-                  <v-text-field
-                      v-model="lagerbestand"
-                      label="Lagerbestand"
-                      placeholder="z.B. 10"
-                      variant="solo-filled"
-                      inputmode="decimal"
-                      readonly
-                      @input="markDirty"
-                      :rules="[decimal]"
-                  />
-                  <v-btn
-                      class="text-none"
-                      prepend-icon="mdi-swap-vertical"
-                      @click="openBookingDialog"
-                  >
-                    Buchung
-                  </v-btn>
-                </v-col>
-
-                <v-col cols="12" md="4">
-
-
-                </v-col>
-                <!---->
-
-              </v-row>
-            </v-card-text>
-          </v-card>
-
-
         </v-col>
       </v-row>
         </v-form>
@@ -853,5 +878,6 @@ async function submitBooking() {
     flex-direction:column;
     color:rgba(0,0,0,.5);
   }
+
   </style>
 
