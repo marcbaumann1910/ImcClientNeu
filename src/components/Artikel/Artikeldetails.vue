@@ -25,6 +25,7 @@ const booking = ref({
   amount: 1
 })
 const saveState = ref('idle') // idle | dirty | saving | success | error
+const duplicateInProcess = ref(false)
 const formRef = ref(null)
 const snackbar = ref(false);
 const snackbarText = ref('')
@@ -104,6 +105,7 @@ onMounted(async()=>{
   }
 })
 
+//Sorgt dafür, dass das Bestandsfeld nicht gespeichert wird, da dies per separater Route gespeichert wird!
 function snapshotWithoutBestand(a) {
   if (!a) return null
   const { Bestand, ...rest } = a
@@ -475,6 +477,76 @@ async function submitBooking() {
   }
 }
 
+async function duplicateArtikel() {
+  //bisheriger Artikel kopieren
+  //Damit isDirty funktioniert, fügen wir Bestand nicht hinzu!
+  //Sicherheitshalber!!!
+  duplicateInProcess.value = true
+  const newArtikel = {
+      ...artikel.value,
+      IDInventarArtikel: null,
+      ArtikelBezeichnung: `Kopie von ${artikel.value.ArtikelBezeichnung}`,
+  }
+
+  //Zur Übergabe an das Backend, fügen wir Bestand hinzu!
+  //Bestand ist standardmäßig 0!
+  const newArtikelData = {
+    ...newArtikel,
+    Bestand: 0,
+  }
+
+  try{
+    const result = await AuthenticationService.artikelCreateNewArtikel(newArtikelData)
+    const resultData = result.data
+
+    //Frontend sofort aktualisieren:
+    artikel.value = {
+      ...newArtikel,
+      IDInventarArtikel: resultData.insertedId,
+    }
+    //Bestand, kann somit eine Runde übers Backend drehen! Evtl. brauche ich das in Zukunft!
+    lagerbestand.value = resultData.Bestand;
+
+    console.log("Artikel erfolgreich kopiert:", resultData)
+    artikelOriginal.value = snapshotWithoutBestand(artikel.value)
+    duplicateInProcess.value = false
+  }catch (err) {
+    console.log("Fehler beim Kopieren des Artikels:", err)
+    duplicateInProcess.value = false
+  }
+}
+
+function createEmptyArtikel() {
+  return {
+    IDInventarArtikel: null,
+    ArtikelBezeichnung: '',
+    Einkaufspreis: '',
+    Preis: '',
+    IDInventarKategorie: null,
+    IDKonfektionsgroesse: null,
+    IDFarbe: null,
+    IDAbrechnungIntervall: null,
+    IDUmsatzsteuer: null,
+
+    verleihbar: 0,
+    verkaufbar: 0,
+    aktiv: 0,
+    externeInventarNummerPflicht: 0,
+
+    Bildpfad: null,
+    // Bestand NICHT hier rein (du machst es ja separat)
+  }
+}
+
+function newArtikel() {
+  artikel.value = createEmptyArtikel()
+  // Snapshot ohne Bestand setzen, damit isDirty sauber startet
+  const { Bestand, ...rest } = artikel.value
+  artikelOriginal.value = deepClone(rest)
+  lagerbestand.value = 0
+  preview.value = null
+}
+
 </script>
 
   <template>
@@ -567,6 +639,7 @@ async function submitBooking() {
           >
             Speichern
           </v-btn>
+
           <v-spacer />
           <v-btn variant="text" class="text-none" @click="closeBookingDialog">
             Abbrechen
@@ -595,9 +668,32 @@ async function submitBooking() {
           <!-- Header Button NUR Desktop -->
           <v-btn
               v-if="$vuetify.display.mdAndUp"
-              color="success"
+              color="primary"
               size="large"
               class="text-none"
+              prepend-icon="mdi-content-copy"
+              :loading="duplicateInProcess"
+              @click="duplicateArtikel"
+          >
+            Duplizieren
+          </v-btn>
+
+          <v-btn
+              v-if="$vuetify.display.mdAndUp"
+              color="primary"
+              size="large"
+              class="text-none ml-3"
+              prepend-icon="mdi-new-box"
+              @click="newArtikel"
+          >
+            Artikel neu
+          </v-btn>
+
+          <v-btn
+              v-if="$vuetify.display.mdAndUp"
+              color="success"
+              size="large"
+              class="text-none ml-3"
               prepend-icon="mdi-content-save"
               :disabled="!isDirty || saveState === 'saving'"
               :loading="saveState === 'saving'"

@@ -48,6 +48,10 @@ export default {
         console.log('artikelUpdateLager/', data);
         return Api.patch(`/artikelupdatelager`, data);
     },
+    artikelCreateNewArtikel(data) {
+        console.log('artikelCreateNewArtikel/', data);
+        return Api.patch(`/artikelcreatenewartikel`, data);
+    },
     mitglieder() {
         console.log('mitglieder: ');
         return Api.get('/mitglieder');
