@@ -8,7 +8,7 @@ function handleRowClicked(item) {
   // Z.B. Navigation mit Vue Router:
   // router.push({ name: 'DetailAnsicht', params: { id: item.id } });
   router.push({name: 'lagerverwaltung', query: {
-      IDInventarArtikel: item.IDInventarArtikel//Falls noch kein Jahr gewählt wurde, dann das aktuelle Jahr
+      IDInventarArtikel: item.IDInventarArtikel
     }});
 }
 

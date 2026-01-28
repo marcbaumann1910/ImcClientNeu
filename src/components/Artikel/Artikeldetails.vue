@@ -1,8 +1,12 @@
   <script setup>
 import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 import {onMounted, computed, ref, watch} from "vue";
 import AuthenticationService from "@/services/AuthenticationService.js";
-import DialogLagerBuchungen from "@/components/Artikel/DialogLagerBuchungen.vue";
+import DialogYesNoCancel from "@/components/DialogYesNoCancel.vue";
+import store from "@/store/store.js";
+const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
 const route = useRoute()
 const selectedFile = ref(null)
 const preview = ref(null)
@@ -210,8 +214,136 @@ async function uploadImage() {
   }
 }
 
+async function duplicateArtikel(isNewArtikel) {
+
+  const result = await store.dispatch('setShowDialogYesNoCancel', {
+    showDialog: true,
+    title: 'Artikel duplizieren',
+    text: 'Möchten Sie den Artikel duplizieren ?'
+  });
+
+  if(result === 'no' || result === 'cancel'){
+    return;
+  }
+
+  //bisheriger Artikel kopieren
+  //Damit isDirty funktioniert, fügen wir Bestand nicht hinzu!
+  //Sicherheitshalber!!!
+  duplicateInProcess.value = true
+
+  //Da ich sowohl für das Duplizieren des Artikels auch für das Erstellen eines neuen Artikels
+  //dieselbe Route im Backend nutze, müssen wir die Artikelbezeichnung nur anpassen,
+  //wenn wir duplizieren!
+  let newArtikel
+  if (isNewArtikel) {
+    newArtikel = {
+      ...artikel.value,
+      IDInventarArtikel: null,
+    }
+    console.log("isNewArtikel:", isNewArtikel)
+  }
+  else{
+    newArtikel = {
+      ...artikel.value,
+      IDInventarArtikel: null,
+      ArtikelBezeichnung: `Kopie von ${artikel.value.ArtikelBezeichnung}`,
+    }
+    console.log("isNewArtikel:", isNewArtikel)
+  }
+
+  //router.push({ name: 'DetailAnsicht', params: { id: item.id } });
+
+  //Zur Übergabe an das Backend, fügen wir Bestand hinzu!
+  //Bestand ist standardmäßig 0!
+  const newArtikelData = {
+    ...newArtikel,
+    Bestand: 0,
+  }
+
+  try{
+    const result = await AuthenticationService.artikelCreateNewArtikel(newArtikelData)
+    const resultData = result.data
+
+    //Frontend sofort aktualisieren:
+    artikel.value = {
+      ...newArtikel,
+      IDInventarArtikel: resultData.insertedId,
+    }
+    //Bestand, kann somit eine Runde übers Backend drehen! Evtl. brauche ich das in Zukunft!
+    lagerbestand.value = resultData.Bestand;
+
+    console.log("Artikel erfolgreich kopiert:", resultData)
+    artikelOriginal.value = snapshotWithoutBestand(artikel.value)
+    duplicateInProcess.value = false
+
+    //Aktualisiert die ULR, damit diese auf die aktuelle IDArtikel verweist!
+    await router.replace({
+      name: 'lagerverwaltung', query: {
+        IDInventarArtikel: artikel.value.IDInventarArtikel
+      }
+    });
+
+  }catch (err) {
+    console.log("Fehler beim Kopieren des Artikels:", err)
+    duplicateInProcess.value = false
+  }
+}
+
+function createEmptyArtikel() {
+  return {
+    IDInventarArtikel: null,
+    ArtikelBezeichnung: '',
+    Einkaufspreis: '',
+    Preis: '',
+    IDInventarKategorie: null,
+    IDKonfektionsgroesse: null,
+    IDFarbe: null,
+    IDAbrechnungIntervall: null,
+    IDUmsatzsteuer: null,
+
+    verleihbar: 0,
+    verkaufbar: 0,
+    aktiv: 0,
+    externeInventarNummerPflicht: 0,
+
+    Bildpfad: null,
+  }
+}
+
+async function newArtikel() {
+
+  const result = await store.dispatch('setShowDialogYesNoCancel', {
+    showDialog: true,
+    title: 'Artikel neu anlegen',
+    text: 'Möchten Sie einen neuen Artikel anlegen ?'
+  });
+
+  if(result === 'no' || result === 'cancel'){
+    return;
+  }
+
+  artikel.value = createEmptyArtikel()
+  // Snapshot ohne Bestand setzen, damit isDirty sauber startet
+  const { Bestand, ...rest } = artikel.value
+  artikelOriginal.value = deepClone(rest)
+  lagerbestand.value = 0
+  preview.value = null
+}
+
 async function saveNow() {
-  if (!artikel.value) return;
+  if (!artikel.value) {
+    console.log("Objekt artikel ist leer!")
+    return;
+  }
+
+  //Wenn idInventarArtikel leer ist, dann wird duplicateArtikel aufgerufen
+  //Backend legt den Artikel komplett neu an!
+  if (!artikel.value.IDInventarArtikel || !artikel.value.IDInventarArtikel === "") {
+    console.log("idInventarArtikel ist leer, dublicateArtikel wird aufgerufen")
+    await duplicateArtikel(true);
+    return;
+  }
+
 
   // 1) Frontend-Validation
   const { valid } = await formRef.value?.validate()
@@ -477,75 +609,6 @@ async function submitBooking() {
   }
 }
 
-async function duplicateArtikel() {
-  //bisheriger Artikel kopieren
-  //Damit isDirty funktioniert, fügen wir Bestand nicht hinzu!
-  //Sicherheitshalber!!!
-  duplicateInProcess.value = true
-  const newArtikel = {
-      ...artikel.value,
-      IDInventarArtikel: null,
-      ArtikelBezeichnung: `Kopie von ${artikel.value.ArtikelBezeichnung}`,
-  }
-
-  //Zur Übergabe an das Backend, fügen wir Bestand hinzu!
-  //Bestand ist standardmäßig 0!
-  const newArtikelData = {
-    ...newArtikel,
-    Bestand: 0,
-  }
-
-  try{
-    const result = await AuthenticationService.artikelCreateNewArtikel(newArtikelData)
-    const resultData = result.data
-
-    //Frontend sofort aktualisieren:
-    artikel.value = {
-      ...newArtikel,
-      IDInventarArtikel: resultData.insertedId,
-    }
-    //Bestand, kann somit eine Runde übers Backend drehen! Evtl. brauche ich das in Zukunft!
-    lagerbestand.value = resultData.Bestand;
-
-    console.log("Artikel erfolgreich kopiert:", resultData)
-    artikelOriginal.value = snapshotWithoutBestand(artikel.value)
-    duplicateInProcess.value = false
-  }catch (err) {
-    console.log("Fehler beim Kopieren des Artikels:", err)
-    duplicateInProcess.value = false
-  }
-}
-
-function createEmptyArtikel() {
-  return {
-    IDInventarArtikel: null,
-    ArtikelBezeichnung: '',
-    Einkaufspreis: '',
-    Preis: '',
-    IDInventarKategorie: null,
-    IDKonfektionsgroesse: null,
-    IDFarbe: null,
-    IDAbrechnungIntervall: null,
-    IDUmsatzsteuer: null,
-
-    verleihbar: 0,
-    verkaufbar: 0,
-    aktiv: 0,
-    externeInventarNummerPflicht: 0,
-
-    Bildpfad: null,
-    // Bestand NICHT hier rein (du machst es ja separat)
-  }
-}
-
-function newArtikel() {
-  artikel.value = createEmptyArtikel()
-  // Snapshot ohne Bestand setzen, damit isDirty sauber startet
-  const { Bestand, ...rest } = artikel.value
-  artikelOriginal.value = deepClone(rest)
-  lagerbestand.value = 0
-  preview.value = null
-}
 
 </script>
 
@@ -572,6 +635,8 @@ function newArtikel() {
       </template>
 
     </v-snackbar>
+
+    <DialogYesNoCancel v-if="showDialogYesNoCancel"></DialogYesNoCancel>
 
     <!--DIALOG-->
     <v-dialog v-model="bookingDialog" max-width="520">
@@ -673,7 +738,7 @@ function newArtikel() {
               class="text-none"
               prepend-icon="mdi-content-copy"
               :loading="duplicateInProcess"
-              @click="duplicateArtikel"
+              @click="duplicateArtikel(false)"
           >
             Duplizieren
           </v-btn>

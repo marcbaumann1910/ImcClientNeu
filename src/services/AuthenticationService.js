@@ -50,7 +50,7 @@ export default {
     },
     artikelCreateNewArtikel(data) {
         console.log('artikelCreateNewArtikel/', data);
-        return Api.patch(`/artikelcreatenewartikel`, data);
+        return Api.post(`/artikelcreatenewartikel`, data);
     },
     mitglieder() {
         console.log('mitglieder: ');
