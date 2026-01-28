@@ -12,6 +12,9 @@ const selectedFile = ref(null)
 const preview = ref(null)
 const artikel = ref(null)
 const artikelOriginal = ref(null)
+const artikelMode = ref('view')
+// 'existing' = Artikel geladen mit ID
+// 'create'   = neuer Artikel (createEmptyArtikel)
 const umsatzsteuer = ref([])
 const abrechnungsIntervall = ref([])
 const farbe = ref([])
@@ -102,6 +105,8 @@ onMounted(async()=>{
     // Clone ohne Bestand
     const { Bestand, ...rest } = artikel.value;
     artikelOriginal.value = snapshotWithoutBestand(artikel.value)
+
+    artikelMode.value = 'existing' //Dient zur Unterscheidung ob Artikel neu erstellt oder existierend geladen wurde
 
     console.log('getArtikel', result)
   } catch (error) {
@@ -216,16 +221,19 @@ async function uploadImage() {
 
 async function duplicateArtikel(isNewArtikel) {
 
-  const result = await store.dispatch('setShowDialogYesNoCancel', {
-    showDialog: true,
-    title: 'Artikel duplizieren',
-    text: 'Möchten Sie den Artikel duplizieren ?'
-  });
+  if (artikelMode.value === 'existing') {
+     console.log("Artikel wird angelegt!")
 
-  if(result === 'no' || result === 'cancel'){
-    return;
+    const result = await store.dispatch('setShowDialogYesNoCancel', {
+      showDialog: true,
+      title: 'Artikel duplizieren',
+      text: 'Möchten Sie den Artikel duplizieren ?'
+    });
+
+    if(result === 'no' || result === 'cancel'){
+      return;
+    }
   }
-
   //bisheriger Artikel kopieren
   //Damit isDirty funktioniert, fügen wir Bestand nicht hinzu!
   //Sicherheitshalber!!!
@@ -275,7 +283,7 @@ async function duplicateArtikel(isNewArtikel) {
     console.log("Artikel erfolgreich kopiert:", resultData)
     artikelOriginal.value = snapshotWithoutBestand(artikel.value)
     duplicateInProcess.value = false
-
+    artikelMode.value = 'existing' //Hilft beim steuern der DialogYesNoCancel
     //Aktualisiert die ULR, damit diese auf die aktuelle IDArtikel verweist!
     await router.replace({
       name: 'lagerverwaltung', query: {
@@ -290,6 +298,7 @@ async function duplicateArtikel(isNewArtikel) {
 }
 
 function createEmptyArtikel() {
+  artikelMode.value = 'create' //Hilft beim steuern der DialogYesNoCancel
   return {
     IDInventarArtikel: null,
     ArtikelBezeichnung: '',
@@ -308,6 +317,7 @@ function createEmptyArtikel() {
 
     Bildpfad: null,
   }
+
 }
 
 async function newArtikel() {
@@ -331,18 +341,9 @@ async function newArtikel() {
 }
 
 async function saveNow() {
-  if (!artikel.value) {
-    console.log("Objekt artikel ist leer!")
-    return;
-  }
-
   //Wenn idInventarArtikel leer ist, dann wird duplicateArtikel aufgerufen.
   //Backend legt den Artikel komplett neu an!
-  if (!artikel.value.IDInventarArtikel || !artikel.value.IDInventarArtikel === "") {
-    console.log("idInventarArtikel ist leer, dublicateArtikel wird aufgerufen")
-    await duplicateArtikel(true);
-    return;
-  }
+
 
 
   // 1) Frontend-Validation
@@ -352,6 +353,12 @@ async function saveNow() {
     snackbarText.value = 'Bitte Pflichtfelder ausfüllen.'
     snackbar.value = true
     return
+  }
+
+  if (artikelMode.value === 'create' && !artikel.value.IDInventarArtikel) {
+    console.log("artikelMode = create und IDInventarArtikel ist leer, dublicateArtikel wird aufgerufen")
+    await duplicateArtikel(true);
+    return;
   }
 
   if (!isDirty.value) return;
@@ -1031,7 +1038,7 @@ async function submitBooking() {
                     prepend-icon="mdi-content-duplicate"
                     color="primary"
                     :disabled="!artikel?.IDInventarArtikel"
-                    @click="duplicateArtikel"
+                    @click="duplicateArtikel(false)"
                 >
                   Duplizieren
                 </v-btn>
