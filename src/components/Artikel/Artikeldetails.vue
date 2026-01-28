@@ -336,7 +336,7 @@ async function saveNow() {
     return;
   }
 
-  //Wenn idInventarArtikel leer ist, dann wird duplicateArtikel aufgerufen
+  //Wenn idInventarArtikel leer ist, dann wird duplicateArtikel aufgerufen.
   //Backend legt den Artikel komplett neu an!
   if (!artikel.value.IDInventarArtikel || !artikel.value.IDInventarArtikel === "") {
     console.log("idInventarArtikel ist leer, dublicateArtikel wird aufgerufen")
@@ -991,14 +991,14 @@ async function submitBooking() {
         </v-form>
         <!-- Sticky Bar NUR Mobile -->
         <v-footer
-            v-if="$vuetify.display.smAndDown && (isDirty || saveState === 'saving' || saveState === 'success' || saveState === 'error')"
+            v-if="$vuetify.display.smAndDown"
             app
             class="pa-0"
-            style="background: rgba(255,0,0,0.08); z-index: 9999;"
+            style="z-index: 9999;"
         >
           <v-card class="mx-4 my-3 pa-3 w-100" elevation="10">
-            <div class="d-flex align-center">
-              <!-- Status links -->
+            <!-- Zeile 1: Speichern -->
+            <div class="d-flex align-center mb-2">
               <div class="text-body-2">
                 <span v-if="saveState === 'dirty'">Ungespeicherte Änderungen</span>
                 <span v-else-if="saveState === 'saving'">Speichere…</span>
@@ -1006,7 +1006,9 @@ async function submitBooking() {
                 <span v-else-if="saveState === 'error'">Fehler beim Speichern</span>
                 <span v-else>Alles gespeichert</span>
               </div>
+
               <v-spacer />
+
               <v-btn
                   color="success"
                   class="text-none"
@@ -1017,12 +1019,40 @@ async function submitBooking() {
               >
                 Speichern
               </v-btn>
-              <!-- success icon rechts -->
-              <v-icon v-if="saveState === 'success'" class="ml-3" color="success">mdi-check-circle</v-icon>
-              <v-icon v-else-if="saveState === 'error'" class="ml-3" color="error">mdi-alert-circle</v-icon>
             </div>
+
+            <!-- Zeile 2: Aktionen -->
+            <v-row dense>
+              <v-col cols="6">
+                <v-btn
+                    block
+                    variant="outlined"
+                    class="text-none"
+                    prepend-icon="mdi-content-duplicate"
+                    color="primary"
+                    :disabled="!artikel?.IDInventarArtikel"
+                    @click="duplicateArtikel"
+                >
+                  Duplizieren
+                </v-btn>
+              </v-col>
+
+              <v-col cols="6">
+                <v-btn
+                    block
+                    variant="tonal"
+                    class="text-none"
+                    color="secondary"
+                    prepend-icon="mdi-plus-box"
+                    @click="newArtikel"
+                >
+                  Neuer
+                </v-btn>
+              </v-col>
+            </v-row>
           </v-card>
         </v-footer>
+
 
       </template>
     </v-container>

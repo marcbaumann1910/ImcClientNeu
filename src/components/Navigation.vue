@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+const router = useRouter()
 import { useDisplay } from "vuetify";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import store from "@/store/store.js";
@@ -20,6 +21,11 @@ console.log(store.getters.getShowWarenkorbDesktop);
 store.dispatch('setCartItemCount', 0)
 
 
+function goBack() {
+  window.history.length > 1
+      ? window.history.back()
+      : router.push({ name: "Dashboard" })
+}
 
 
 function currentSelection(){
@@ -54,7 +60,7 @@ const kebabs = [
   {title: 'Abmelden', route: '/logout', icon: 'mdi-logout'},
 ]
 
-const router = useRouter()
+
 //Prüft ob der User eingeloggt ist oder nicht
 const isUserLoggedIn = computed(() => !!store.getters.getAccessToken);
 
@@ -111,6 +117,8 @@ function showCartChange(){
 
   <!-- App Bar -->
   <v-app-bar class="mb-6" color="secondary" prominent>
+    <!-- Zurück Button links -->
+    <v-btn icon="mdi-arrow-left" @click="goBack" />
 
     <div class="nav-icon-wrapper d-flex flex-column align-items-center">
       <v-app-bar-nav-icon v-if="isLoggedIn" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
