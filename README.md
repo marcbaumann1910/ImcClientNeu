@@ -27,3 +27,15 @@ npm run dev
 ```sh
 npm run build
 ```
+
+### Run Unit Tests (Vitest)
+
+```sh
+npm run test:unit
+```
+
+### Run End-to-End Tests (Playwright)
+
+```sh
+npx playwright test
+```

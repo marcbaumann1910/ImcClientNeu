@@ -13,6 +13,11 @@ export default defineConfig(({ mode }) => {
   });
 
   return {
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      include: ['src/**/__tests__/*.spec.js'],
+    },
     server: {
       port: 4000,
       sourcemap: false, // Deaktiviert Source Maps auf dem Entwicklungsserver
