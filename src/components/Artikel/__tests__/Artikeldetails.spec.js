@@ -6,6 +6,11 @@ import Artikeldetails from '../Artikeldetails.vue';
 vi.mock('vue-router', () => ({
   useRoute: vi.fn(() => ({
     query: { IDInventarArtikel: '1' }
+  })),
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn()
   }))
 }));
 
@@ -60,6 +65,9 @@ describe('Artikeldetails.vue', () => {
           'v-form': true,
           'v-dialog': true,
           'v-snackbar': true,
+          'v-skeleton-loader': true,
+          'v-icon': true,
+          'v-footer': true,
           'DialogLagerBuchungen': true
         }
       }
