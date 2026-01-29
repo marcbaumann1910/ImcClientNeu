@@ -94,6 +94,12 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
+        console.log('Response Error Interceptor:', {
+            url: originalRequest?.url,
+            status: error.response?.status,
+            _retry: originalRequest?._retry
+        });
+
         if (!originalRequest) {
             // Wenn keine ursprüngliche Anfrage vorhanden ist, lehne den Fehler ab
             return Promise.reject(error);
@@ -112,6 +118,10 @@ api.interceptors.response.use(
                     const newAccessToken = await api.refreshAccessToken();
                     console.log('Neuer Access Token:', newAccessToken);
 
+                    if (!newAccessToken) {
+                        throw new Error('Refresh failed');
+                    }
+
                     // Aktualisiere den Authorization Header mit dem neuen Access Token
                     originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
 
@@ -119,12 +129,25 @@ api.interceptors.response.use(
                     return api(originalRequest);
                 } catch (tokenRefreshError) {
                     console.error('Fehler beim Erneuern des Tokens:', tokenRefreshError);
-                    // Lösche Tokens aus dem Speicher
-                    store.commit('setAccessToken', null);
-                    // Leite den Benutzer zur Login-Seite weiter
-                    await router.push('/login');
+                    // Lösche alle auth-relevanten Daten aus dem Store
+                    await store.dispatch('logout');
+                    // Leite den Benutzer zur Login-Seite weiter mit dem aktuellen Pfad als Redirect-Ziel
+                    await router.push({ 
+                        name: 'login', 
+                        query: { redirect: router.currentRoute.value.fullPath } 
+                    });
                     return Promise.reject(tokenRefreshError);
                 }
+            }
+            
+            // Wenn es ein 401 ist, der bereits einmal wiederholt wurde, dann ausloggen
+            if (status === 401 && originalRequest._retry) {
+                await store.dispatch('logout');
+                await router.push({ 
+                    name: 'login', 
+                    query: { redirect: router.currentRoute.value.fullPath } 
+                });
+                return Promise.reject(error);
             }
 
             // Handle 429 Too Many Requests
@@ -148,7 +171,11 @@ api.interceptors.response.use(
                     notifyError('Serverfehler. Bitte versuche es später erneut.');
                     break;
                 default:
-                    notifyError('Ein unbekannter Fehler ist aufgetreten.');
+                    // Nur Fehlermeldung zeigen, wenn es wirklich ein Fehler-Statuscode ist (4xx, 5xx)
+                    // und nicht bereits oben behandelt wurde
+                    if (status >= 400) {
+                        notifyError(`Ein unbekannter Fehler ist aufgetreten (Status: ${status}).`);
+                    }
             }
         } else if (error.request) {
             // Die Anfrage wurde gemacht, aber keine Antwort erhalten
@@ -192,12 +219,14 @@ api.refreshAccessToken = async function() {
         // Überprüfe, ob der Fehler auf fehlenden oder ungültigen Refresh Token zurückzuführen ist
         if (error.response && [401, 403].includes(error.response.status)) {
             // Kein gültiger Refresh Token vorhanden, Benutzer ist nicht eingeloggt
-            // Das ist in Ordnung, wir können den Fehler ignorieren
-            console.log('Kein gültiger Refresh Token vorhanden. Benutzer ist nicht eingeloggt.');
+            // Sicherstellen, dass der Store-Zustand sauber ist
+            await store.dispatch('logout');
+            console.log('Kein gültiger Refresh Token vorhanden. Benutzer wurde ausgeloggt.');
         } else {
             // Handle andere Fehler
             console.error('Ein unerwarteter Fehler ist aufgetreten:', error);
         }
+        throw error;
     } finally {
         await store.dispatch('setIsAuthLoading', false);
     }

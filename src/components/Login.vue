@@ -201,7 +201,9 @@ async function login(){
 
     console.log('response',response)
 
-    await router.push('/dashboard');
+    // Redirect to the originally requested page or dashboard
+    const redirectPath = router.currentRoute.value.query.redirect || '/dashboard';
+    await router.push(redirectPath);
 
 
   } catch(err)

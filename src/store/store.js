@@ -84,6 +84,9 @@ const store = createStore({
             state.isUserLoggedIn = false;
             state.userData = {};
             state.accessToken = null;
+            // Sicherstellen, dass auch der localStorage bereinigt wird, 
+            // falls dort noch etwas von früherer Logik liegt
+            localStorage.removeItem('accessToken');
         },
         setCartItemCount(state, cartItemCount) {
             state.cartItemCount = cartItemCount;

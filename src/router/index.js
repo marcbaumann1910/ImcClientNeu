@@ -188,10 +188,15 @@ router.beforeEach((to, from, next) => {
 
     function checkAuth() {
         const accessToken = store.getters.getAccessToken;
+        const isUserLoggedIn = store.getters.isUserLoggedIn;
 
-        if (requiresAuth && !accessToken) {
+        console.log('Router Guard Check:', { requiresAuth, accessToken: !!accessToken, isUserLoggedIn });
+
+        if (requiresAuth && (!accessToken || !isUserLoggedIn)) {
             // Falls die Route eine Authentifizierung erfordert, aber kein Access Token vorhanden ist
-            next({ name: 'login' });
+            // oder der User nicht als eingeloggt gilt
+            // Die aktuelle Route als Redirect-Ziel übergeben
+            next({ name: 'login', query: { redirect: to.fullPath } });
         } else {
             // Weiter zur gewünschten Route
             next();
