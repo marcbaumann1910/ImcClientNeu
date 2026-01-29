@@ -1,167 +1,208 @@
 <script setup>
-import {computed, ref} from 'vue'
-import PieChart from '@/components/PieChart.vue'
-import { onMounted } from "vue";
-import AuthenticationService from "@/services/AuthenticationService.js";
-import {formatDate} from "@/scripte/globalFunctions.js";
-import * as globalFunction from "../scripte/globalFunctions.js";
-const chartDataBackend = ref([]);
-const neuesteVorgaenge = ref([]);
-const lagerbestand = ref([]);
+import { ref } from 'vue';
 
-onMounted(async () => {
-  try {
-
-    //Vom Backend werden 'leihvorgaenge', 'neuesteVorgaenge', 'lagerbestand' abgerufen
-    const response = await AuthenticationService.dashboardLeihvorgaenge()
-    //Daten vom Backend --> Anzahl in eine Zahl wandeln, damit dies in Prozent umgerechnet werden können
-    chartDataBackend.value = response.data.leihvorgaenge.map(item => {
-      return {
-        Bezeichnung: item.Bezeichnung,
-        Anzahl: parseFloat(item.Anzahl),
-      }
-    })
-    neuesteVorgaenge.value = response.data.neuesteVorgaenge
-    lagerbestand.value = response.data.lagerbestand
-
-    console.log('Dashboard Leihvoränge erfolgreich abrufen')
-  }catch (err) {
-    console.log('FEHLER: Dashboard Leihvoränge', err.message)
+// Mock Daten für das Design-Beispiel
+const stats = ref([
+  {
+    title: 'Gesamt Artikel',
+    value: '1.248',
+    icon: 'mdi-package-variant',
+    color: 'blue',
+    trendIcon: 'mdi-arrow-up',
+    trendText: '+12 diese Woche',
+    trendColor: 'text-success'
+  },
+  {
+    title: 'Aktive Leihen',
+    value: '84',
+    icon: 'mdi-handshake',
+    color: 'green',
+    trendIcon: 'mdi-trending-up',
+    trendText: 'Hohe Auslastung',
+    trendColor: 'text-info'
+  },
+  {
+    title: 'Überfällig',
+    value: '7',
+    icon: 'mdi-clock-alert-outline',
+    color: 'red',
+    trendIcon: 'mdi-alert-circle',
+    trendText: 'Handlung erforderlich',
+    trendColor: 'text-error'
+  },
+  {
+    title: 'Inventarwert',
+    value: '42.500 €',
+    icon: 'mdi-currency-eur',
+    color: 'orange',
+    trendIcon: 'mdi-minus',
+    trendText: 'Stabil',
+    trendColor: 'text-grey'
   }
-})
+]);
 
-/**
- * Daten (labels, datasets) für ein Pie-Chart
- */
-const chartData = computed(() => {
-  if (!chartDataBackend.value || chartDataBackend.value.length === 0) {
-    return {
-      labels: [],
-      datasets: [{ data: [] }]
-    };
+const activities = ref([
+  {
+    user: 'Marc Baumann',
+    action: 'Leihvorgang #4203 abgeschlossen',
+    time: 'vor 5 Min.',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg'
+  },
+  {
+    user: 'System',
+    action: 'Lagerbestand "Kabeltrommel" niedrig',
+    time: 'vor 1 Std.',
+    avatar: 'https://cdn.vuetifyjs.com/images/logos/v-alt.svg'
+  },
+  {
+    user: 'Julia Schmidt',
+    action: 'Neuer Artikel "Beamer LG" angelegt',
+    time: 'vor 3 Std.',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg'
+  },
+  {
+    user: 'Thomas Müller',
+    action: 'Mitgliedsprofil aktualisiert',
+    time: 'vor 5 Std.',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/3.jpg'
+  },
+  {
+    user: 'Marc Baumann',
+    action: 'Inventurliste exportiert',
+    time: 'vor 1 Tag',
+    avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg'
   }
-  const labels = chartDataBackend.value.map(item => item.Bezeichnung);
-  const data = chartDataBackend.value.map(item => item.Anzahl);
-  const backgroundColor = ['#F44336', '#4CAF50', '#FFC107', '#2196F3'];
-
-  return {
-    labels,
-    datasets: [
-      {
-        data,
-        backgroundColor,
-        label: 'Leihstatus'
-      }
-    ]
-  };
-});
-
-/**
- * Optionen (Optionen für Legende, Title etc.)
- */
-const chartOptions = ref({
-  responsive: true,
-  plugins: {
-    //legend: { position: 'top' },
-    datalabels: {
-      color: '#fff',
-      font: { weight: 'bold' },
-      formatter: (value, context) => {
-        console.log('formatter -> value:', value)
-        const dataArr = context.chart.data.datasets[0].data
-        const total = dataArr.reduce((acc, val) => acc + val, 0)
-        const percentage = ((value / total) * 100).toFixed(1)
-        return `${value} (${percentage}%)`
-      }
-    }
-  }
-})
-
-
+]);
 </script>
 
+
+
 <template>
-<v-container>
+  <v-container fluid class="pa-6 bg-grey-lighten-4 fill-height">
+    <!-- Header Bereich -->
+    <v-row>
+      <v-col cols="12" class="d-flex justify-space-between align-center mb-4">
+        <div>
+          <h1 class="text-h4 font-weight-bold text-grey-darken-3">Dashboard Übersicht</h1>
+          <p class="text-subtitle-1 text-grey-darken-1">Willkommen zurück! Hier ist der aktuelle Status Ihres Inventars.</p>
+        </div>
+        <v-btn icon="mdi-bell-outline" variant="text" color="grey-darken-1"></v-btn>
+      </v-col>
+    </v-row>
 
-  <div class="dashboard-background">
-    <h1>Dashboard</h1>
-  </div>
+    <!-- KPI Sektion -->
+    <v-row>
+      <v-col v-for="(stat, i) in stats" :key="i" cols="12" sm="6" lg="3">
+        <v-card elevation="2" class="rounded-lg pa-4 border-s-xl" :style="{ borderLeftColor: stat.color + ' !important' }">
+          <div class="d-flex justify-space-between align-center">
+            <div>
+              <div class="text-overline mb-1 text-grey-darken-1">{{ stat.title }}</div>
+              <div class="text-h4 font-weight-bold">{{ stat.value }}</div>
+              <div class="text-caption mt-1" :class="stat.trendColor">
+                <v-icon size="x-small">{{ stat.trendIcon }}</v-icon> {{ stat.trendText }}
+              </div>
+            </div>
+            <v-avatar :color="stat.color + '-lighten-4'" size="56" rounded="lg">
+              <v-icon :color="stat.color" size="32">{{ stat.icon }}</v-icon>
+            </v-avatar>
+          </div>
+        </v-card>
+      </v-col>
+    </v-row>
 
-      <v-row>
-        <!--Leihvorgänge Pie (Kreisdiagramm)-->
-        <v-col cols="12" sm="6" md="4">
-          <v-card  max-width="500" max-height="550">
-            <v-card-title>Leihvorgänge</v-card-title>
-            <PieChart class="mb-2" :chart-data="chartData" :chart-options="chartOptions" />
-          </v-card>
-        </v-col>
+    <!-- Schnellzugriff & Aktionen -->
+    <v-row class="mt-6">
+      <v-col cols="12" md="8">
+        <v-card elevation="2" class="rounded-lg h-100">
+          <v-card-title class="pa-4 font-weight-bold border-bottom d-flex align-center">
+            <v-icon start color="primary">mdi-lightning-bolt</v-icon>
+            Schnellzugriff
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-card-text class="pa-6">
+            <v-row>
+              <v-col cols="12" sm="6">
+                <v-btn
+                  block
+                  height="100"
+                  color="primary"
+                  variant="elevated"
+                  class="rounded-xl flex-column"
+                  @click="$router.push('/leihvorgang')"
+                >
+                  <v-icon size="32" class="mb-2">mdi-cart-plus</v-icon>
+                  <span>Neuer Leihvorgang</span>
+                </v-btn>
+              </v-col>
+              <v-col cols="12" sm="6">
+                <v-btn
+                  block
+                  height="100"
+                  color="secondary"
+                  variant="tonal"
+                  class="rounded-xl flex-column"
+                  @click="$router.push('/artikel')"
+                >
+                  <v-icon size="32" class="mb-2">mdi-package-variant-plus</v-icon>
+                  <span>Artikel anlegen</span>
+                </v-btn>
+              </v-col>
+            </v-row>
 
-        <v-col cols="12" sm="6" md="4">
+            <!-- Platzhalter für Chart -->
+            <div class="mt-8">
+              <div class="text-subtitle-1 font-weight-bold mb-4">Leihaktivität (7 Tage)</div>
+              <v-sheet height="200" color="grey-lighten-3" class="rounded-lg d-flex align-center justify-center border-dashed border-thin">
+                <div class="text-center text-grey">
+                  <v-icon size="48" class="mb-2">mdi-chart-line</v-icon>
+                  <div>[ Chart Integration: Leihvorgänge pro Tag ]</div>
+                </div>
+              </v-sheet>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
 
-        <!--Aktuellsten Leihvorgänge-->
-          <v-card  max-width="500" max-height="550">
-            <v-card-title>aktuelle Leihvorgänge</v-card-title>
-
-            <v-list>
-              <v-list-item
-                  v-for="(item, index) in neuesteVorgaenge"
-                  :key="index"
-              >
-                <v-row no-gutters align="start">
-                  <v-col cols="12" sm="6" md="4">
-                    <v-list-item-title>
-                      {{ item.firstName }}
-                    </v-list-item-title>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-list-item-title>
-                      {{ item.familyName }}
-                    </v-list-item-title>
-                  </v-col>
-<!--                  <v-col cols="12" sm="6" md="4">
-                    <v-list-item-title>
-                      {{ item.city }}
-                    </v-list-item-title>
-                  </v-col>-->
-                  <v-col cols="12" sm="6" md="4">
-                    <v-list-item-title>
-                      {{ globalFunction.formatDate(item.DatumBuchung) }}
-                    </v-list-item-title>
-                  </v-col>
-
-                </v-row>
-                <v-divider></v-divider>
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-col>
-
-
-      </v-row>
-
-      <v-row>
-        <v-col cols="12" sm="6" md="4">
-          <v-card>
-            <v-card-title>Kachel 3</v-card-title>
-          </v-card>
-        </v-col>
-
-        <v-col cols="12" sm="6" md="4">
-          <v-card>
-            <v-card-title>Kachel 4</v-card-title>
-          </v-card>
-        </v-col>
-      </v-row>
-
-
-    </v-container>
-
+      <v-col cols="12" md="4">
+        <v-card elevation="2" class="rounded-lg h-100">
+          <v-card-title class="pa-4 font-weight-bold border-bottom d-flex align-center">
+            <v-icon start color="orange-darken-2">mdi-history</v-icon>
+            Letzte Aktivitäten
+          </v-card-title>
+          <v-divider></v-divider>
+          <v-list lines="two" class="pa-0">
+            <v-list-item
+              v-for="(activity, i) in activities"
+              :key="i"
+              :prepend-avatar="activity.avatar"
+              :title="activity.user"
+              :subtitle="activity.action"
+              class="border-bottom pa-4"
+            >
+              <template v-slot:append>
+                <div class="text-caption text-grey">{{ activity.time }}</div>
+              </template>
+            </v-list-item>
+          </v-list>
+          <v-divider></v-divider>
+          <v-card-actions class="justify-center">
+            <v-btn variant="text" color="primary">Alle Aktivitäten anzeigen</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
+
 <style scoped>
-
+.border-bottom {
+  border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+}
+.border-dashed {
+  border-style: dashed !important;
+}
+.border-thin {
+  border-width: 2px !important;
+}
 </style>
-
-
-
-

@@ -21,6 +21,7 @@ import Lagerverwaltung from "@/components/Artikel/Artikeldetails.vue";
 import MietvertragConfirm from "@/components/MietvertragConfirm.vue";
 import store from "@/store/store.js";
 import AbrechnungDetails from "@/components/Abrechnung/AbrechnungDetails.vue";
+import Dashboard_ALT from "@/components/Dashboard_ALT.vue";
 
 
 const routes = [
@@ -40,6 +41,12 @@ const routes = [
         path: '/testing',
         name: 'testing',
         component: Testing,
+        meta: { requiresAuth: true }, // Markiere diese Route als geschützt
+    },
+    {
+        path: '/dashboard2',
+        name: 'dashboard2',
+        component: Dashboard_ALT,
         meta: { requiresAuth: true }, // Markiere diese Route als geschützt
     },
     {
