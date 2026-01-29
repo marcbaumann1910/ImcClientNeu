@@ -43,7 +43,7 @@ const snackbarTimeout = computed(() => {
   if (snackbarTimeoutOverride.value !== null) return snackbarTimeoutOverride.value;
 
   // Sonst Standardregel
-  return snackbarColor.value === 'error' ? -1 : 5000;
+  return snackbarColor.value === 'error' ? -1 : 2000;
 });
 const einkaufspreisInput = ref('') // string fürs Feld
 const verkaufspreisInput = ref('') // string fürs Feld
@@ -282,6 +282,17 @@ async function duplicateArtikel(isNewArtikel) {
 
     console.log("Artikel erfolgreich kopiert:", resultData)
     artikelOriginal.value = snapshotWithoutBestand(artikel.value)
+
+    snackbarColor.value = 'success'
+    if(isNewArtikel){
+      snackbarText.value = 'Der Artikel wurde angelegt'
+    }
+    else{
+      snackbarText.value = 'Der Artikel wurde dupliziert'
+    }
+
+    snackbar.value = true
+
     duplicateInProcess.value = false
     artikelMode.value = 'existing' //Hilft beim steuern der DialogYesNoCancel
     //Aktualisiert die ULR, damit diese auf die aktuelle IDArtikel verweist!
@@ -293,6 +304,9 @@ async function duplicateArtikel(isNewArtikel) {
 
   }catch (err) {
     console.log("Fehler beim Kopieren des Artikels:", err)
+    snackbarColor.value = 'error'
+    snackbarText.value = 'Der Artikel konnte nicht dupliziert werden.'
+    snackbar.value = true
     duplicateInProcess.value = false
   }
 }
