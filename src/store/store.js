@@ -10,7 +10,7 @@ const store = createStore({
     state: {
         accessToken: null,
         isAuthLoading: true, //Steuert den Router-Guard in /router/index.js
-        isUserLoggedIn: !!localStorage.getItem('accessToken'), // initialer Zustand basierend auf localStorage
+        isUserLoggedIn: false, 
         userData: {}, // Hier werden die Benutzerdaten gespeichert
         cartItemCount: 0, //Warenkorb Anzahl Einträge
         cartItems: [], //Warenkorb-Einträge
@@ -63,13 +63,16 @@ const store = createStore({
     }, //Hier wird festgelegt ob der Zustand bis zum schließen des Browsers oder des Tabs gespeichert (persistent) sein soll
     plugins: [
         createPersistedState({
-            paths: ['cartItems','userData', 'cartItemCount'], // persistieren der gewünschten Objekten
+            paths: ['cartItems','userData', 'cartItemCount', 'accessToken', 'isUserLoggedIn'], // persistieren der gewünschten Objekten
             storage: window.sessionStorage, // Verwendung von sessionStorage statt localStorage
         }),
     ],
     mutations: {
         setAccessToken(state, token) {
             state.accessToken = token;
+            if (token) {
+                state.isUserLoggedIn = true;
+            }
         },
         setIsAuthLoading(state, isLoading) {
             state.isAuthLoading = isLoading;

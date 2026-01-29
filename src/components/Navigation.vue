@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import {ref, computed, onMounted} from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 import { useDisplay } from "vuetify";
@@ -12,6 +12,11 @@ const current = ref(''); // set from this.$route
 const isLoggedIn = computed(() => !!store.getters.getAccessToken);
 
 const isAdmin = computed(()=> store.getters.getUserData.isAdmin);
+
+onMounted(() => {
+  const user = store.getters.getUserData;
+  console.log('user', user)
+})
 
 console.log('isAdmin', isAdmin.value)
 
