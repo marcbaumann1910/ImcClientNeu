@@ -11,12 +11,8 @@ const { smAndDown } = useDisplay();
 const current = ref(''); // set from this.$route
 const isLoggedIn = computed(() => !!store.getters.getAccessToken);
 
+const userVerein = computed(() => store.getters.getUserData.verein);
 const isAdmin = computed(()=> store.getters.getUserData.isAdmin);
-
-onMounted(() => {
-  const user = store.getters.getUserData;
-  console.log('user', user)
-})
 
 console.log('isAdmin', isAdmin.value)
 
@@ -136,7 +132,7 @@ function goHome(){
          class="toolbarTitle"
          @click="goHome"
          hover
-    >IMS Willstätter Hexen
+    > {{ userVerein }}
     </v-toolbar-title>
     <v-spacer></v-spacer>
 

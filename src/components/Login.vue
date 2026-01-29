@@ -164,7 +164,7 @@ async function login(){
           password: txtPasswort.value
         }
     )
-    //Speichern der des accessToken und des refreshToken
+    //Speichern des accessToken
     await store.dispatch('setAccessToken', response.data.accessToken);
     // localStorage.setItem('accessToken', response.data.accessToken);
     // localStorage.setItem('refreshToken', response.data.refreshToken);
