@@ -110,6 +110,9 @@ function showCartChange(){
   console.log(store.getters.getShowWarenkorbDesktop)
 }
 
+function goHome(){
+  router.push({name: 'dashboard'})
+}
 
 </script>
 
@@ -118,13 +121,18 @@ function showCartChange(){
   <!-- App Bar -->
   <v-app-bar class="mb-6" color="secondary" prominent>
     <!-- Zurück Button links -->
-    <v-btn icon="mdi-arrow-left" @click="goBack" />
+    <v-btn v-if="$vuetify.display.smAndDown" icon="mdi-arrow-left" @click="goBack" />
 
     <div class="nav-icon-wrapper d-flex flex-column align-items-center">
       <v-app-bar-nav-icon v-if="isLoggedIn" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
       <span v-if="isLoggedIn" class="span">Menü</span>
     </div>
-    <v-toolbar-title class="toolbarTitle">IMS Willstätter Hexen</v-toolbar-title>
+    <v-toolbar-title
+         class="toolbarTitle"
+         @click="goHome"
+         hover
+    >IMS Willstätter Hexen
+    </v-toolbar-title>
     <v-spacer></v-spacer>
 
     <!--Login-->
@@ -235,6 +243,10 @@ function showCartChange(){
 
 .toolbarTitle{
   font-size: 20px;
+}
+
+.toolbarTitle:hover{
+  cursor: pointer;
 }
 
 .login{
