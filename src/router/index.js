@@ -197,6 +197,9 @@ router.beforeEach((to, from, next) => {
             // oder der User nicht als eingeloggt gilt
             // Die aktuelle Route als Redirect-Ziel übergeben
             next({ name: 'login', query: { redirect: to.fullPath } });
+        } else if (to.name === 'login' && isUserLoggedIn) {
+            // Wenn der Benutzer bereits eingeloggt ist und versucht, die Login-Seite aufzurufen
+            next({ name: 'dashboard' });
         } else {
             // Weiter zur gewünschten Route
             next();

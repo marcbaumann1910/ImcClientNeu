@@ -146,7 +146,6 @@ const hinweisText = ref('');
 
 
 async function login(){
-  localStorage.clear();
   isLoading.value = true;
   hinweisText.value = '';
   if(txtPasswort.value.length === 0) {
@@ -202,7 +201,13 @@ async function login(){
     console.log('response',response)
 
     // Redirect to the originally requested page or dashboard
-    const redirectPath = router.currentRoute.value.query.redirect || '/dashboard';
+    let redirectPath = router.currentRoute.value.query.redirect || '/dashboard';
+    
+    // Vermeide rekursive Redirects zur Login-Seite
+    if (redirectPath === '/login' || redirectPath.startsWith('/login?')) {
+      redirectPath = '/dashboard';
+    }
+    
     await router.push(redirectPath);
 
 

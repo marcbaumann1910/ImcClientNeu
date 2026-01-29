@@ -132,10 +132,13 @@ api.interceptors.response.use(
                     // Lösche alle auth-relevanten Daten aus dem Store
                     await store.dispatch('logout');
                     // Leite den Benutzer zur Login-Seite weiter mit dem aktuellen Pfad als Redirect-Ziel
-                    await router.push({ 
-                        name: 'login', 
-                        query: { redirect: router.currentRoute.value.fullPath } 
-                    });
+                    // Nur weiterleiten, wenn wir nicht schon auf der Login-Seite sind
+                    if (router.currentRoute.value.name !== 'login') {
+                        await router.push({ 
+                            name: 'login', 
+                            query: { redirect: router.currentRoute.value.fullPath } 
+                        });
+                    }
                     return Promise.reject(tokenRefreshError);
                 }
             }
@@ -143,10 +146,12 @@ api.interceptors.response.use(
             // Wenn es ein 401 ist, der bereits einmal wiederholt wurde, dann ausloggen
             if (status === 401 && originalRequest._retry) {
                 await store.dispatch('logout');
-                await router.push({ 
-                    name: 'login', 
-                    query: { redirect: router.currentRoute.value.fullPath } 
-                });
+                if (router.currentRoute.value.name !== 'login') {
+                    await router.push({ 
+                        name: 'login', 
+                        query: { redirect: router.currentRoute.value.fullPath } 
+                    });
+                }
                 return Promise.reject(error);
             }
 
