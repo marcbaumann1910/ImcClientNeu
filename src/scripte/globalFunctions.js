@@ -120,6 +120,12 @@ function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString('de-DE', options);
 }
 
+function formatDateTime(dateString) {
+    if (!dateString) return '';
+    const options = {day: '2-digit', month: '2-digit', year: 'numeric' , hour: '2-digit', minute: '2-digit'};
+    return new Date(dateString).toLocaleDateString('de-DE', options);
+}
+
 function isVisibleIventarStatus(statusBuchung) {
     //Prüft den itemArtikelDetails.ibp_IDinventarBuchungenPositionenStatus Status
     //Wenn 1 (ausgeliehen) Element anzeigen, sonst nicht
@@ -182,5 +188,6 @@ export {
     isVisibleIventarStatus,
     checkStatusZustandArtikel,
     openDialogToolTip,
-    buildUrl
+    buildUrl,
+    formatDateTime
 }

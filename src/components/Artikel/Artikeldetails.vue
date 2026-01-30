@@ -6,6 +6,7 @@ import {onMounted, computed, ref, watch} from "vue";
 import AuthenticationService from "@/services/AuthenticationService.js";
 import DialogYesNoCancel from "@/components/DialogYesNoCancel.vue";
 import store from "@/store/store.js";
+import {formatDateTime} from "@/scripte/globalFunctions.js";
 const showDialogYesNoCancel = computed(()=> store.getters .getShowDialogYesNoCancel.showDialog)
 const route = useRoute()
 const selectedFile = ref(null)
@@ -19,6 +20,7 @@ const umsatzsteuer = ref([])
 const abrechnungsIntervall = ref([])
 const farbe = ref([])
 const kategorie = ref([])
+const lagerBuchungen = ref([])
 const lagerbestand = ref(0)
 const konfektionsGroessen = ref([])
 const bookingDialog = ref(false)
@@ -85,9 +87,7 @@ watch(isDirty, (d) => {
   else if (saveState.value !== 'saving') saveState.value = 'idle'
 }, { immediate: true })
 
-
-onMounted(async()=>{
-  console.log('IDInventarArtikel::', route.query.IDInventarArtikel);
+async function loadArtikel() {
   try {
     const result = await AuthenticationService.artikel(route.query.IDInventarArtikel);
     artikel.value = result.data.artikel[0];
@@ -100,6 +100,7 @@ onMounted(async()=>{
     konfektionsGroessen.value = result.data.konfektionsGroessen
     preview.value = imageUrl + artikel.value.Bildpfad;
     lagerbestand.value = Number(artikel.value.Bestand ?? 0);
+    lagerBuchungen.value = result.data.lagerBuchungen;
 
     //Deep-Clone durchführen zur Erkennung wann gespeichert werden muss!
     // Clone ohne Bestand
@@ -109,9 +110,17 @@ onMounted(async()=>{
     artikelMode.value = 'existing' //Dient zur Unterscheidung ob Artikel neu erstellt oder existierend geladen wurde
 
     console.log('getArtikel', result)
+    console.log('lagerBuchungen:', lagerBuchungen.value)
   } catch (error) {
     console.error('Fehler beim getArtikel:', error)
   }
+
+}
+
+onMounted(async()=>{
+  await loadArtikel();
+  console.log('IDInventarArtikel::', route.query.IDInventarArtikel);
+
 })
 
 //Sorgt dafür, dass das Bestandsfeld nicht gespeichert wird, da dies per separater Route gespeichert wird!
@@ -302,6 +311,8 @@ async function duplicateArtikel(isNewArtikel) {
       }
     });
 
+    await loadArtikel();
+
   }catch (err) {
     console.log("Fehler beim Kopieren des Artikels:", err)
     snackbarColor.value = 'error'
@@ -357,8 +368,6 @@ async function newArtikel() {
 async function saveNow() {
   //Wenn idInventarArtikel leer ist, dann wird duplicateArtikel aufgerufen.
   //Backend legt den Artikel komplett neu an!
-
-
 
   // 1) Frontend-Validation
   const { valid } = await formRef.value?.validate()
@@ -610,6 +619,7 @@ async function submitBooking() {
       console.log("lagerBestandAenderung:", resultData.message)
       //Wenn kein Fehler, dann im Element v-alert dies als success ausgeben!
       bookingSuccess.value = 'Buchung war erfolgreich!'
+      await loadArtikel();
     }
 
 
@@ -621,6 +631,7 @@ async function submitBooking() {
     await new Promise(r => setTimeout(r, 1000));
     bookingDialog.value = false
     bookingSuccess.value = null
+
 
   } catch (e) {
     console.log("lagerBestandAenderung:", e?.message)
@@ -769,7 +780,7 @@ async function submitBooking() {
               color="primary"
               size="large"
               class="text-none ml-3"
-              prepend-icon="mdi-new-box"
+              prepend-icon="mdi-plus"
               @click="newArtikel"
           >
             Artikel neu
@@ -960,7 +971,7 @@ async function submitBooking() {
               </v-row>
             </v-card-text>
           </v-card>
-
+          <!--Preise & Steuer-->
           <v-card rounded="xl" elevation="2">
             <v-card-title>Preise & Steuer</v-card-title>
             <v-card-text>
@@ -1005,6 +1016,59 @@ async function submitBooking() {
                 </v-col>
               </v-row>
             </v-card-text>
+          </v-card>
+          <!--Lagerbuchungen-->
+          <v-card rounded="xl" elevation="2" class="mt-4">
+            <v-card-title class="d-flex align-center">
+              Lagerbuchungen
+              <v-spacer />
+              <v-btn
+                  icon="mdi-refresh"
+                  variant="text"
+                  @click="loadArtikel"/>
+            </v-card-title>
+
+            <v-card-subtitle class="d-flex align-center">
+              <span class="text-medium-emphasis">Bestand:</span>
+              <span class="ml-2 font-weight-bold">{{ lagerbestand }}</span>
+
+<!--              <v-spacer />
+
+              <span class="text-medium-emphasis">Letzte:</span>
+              <span class="ml-2">+3 · heute 12:10</span>-->
+            </v-card-subtitle>
+
+            <v-divider class="mt-2" />
+
+            <!-- Scrollbarer Bereich Höhe kann im css Bereich eingestellt werden-->
+            <!--.buchungen-scroll {
+            max-height: 150px;   /* hier stellst du die sichtbare Höhe ein */
+            overflow-y: auto;
+            }-->
+            <v-card-text class="pa-0">
+              <div class="buchungen-scroll">
+                <v-list density="compact" class="py-0">
+
+                  <v-list-item v-for="lagerBuchung in lagerBuchungen" :key="lagerBuchung.IDLagerBuchungen">
+                    <template #prepend>
+                      <!--IDLagerAktivitaet: 1 = Zugang, 2 = Abgang-->
+                      <v-icon
+                          :color="lagerBuchung.IDLagerAktivitaet === 1 ? 'success' : 'error'"
+                      >
+                        {{ lagerBuchung.IDLagerAktivitaet === 1 ? 'mdi-plus-circle' : 'mdi-minus-circle' }}
+                      </v-icon>
+
+                    </template>
+                    <v-list-item-title>
+                      {{ lagerBuchung.IDLagerAktivitaet === 2 ? "-" + parseInt(lagerBuchung.VeränderungBestand) + " Abgang " : "+" + parseInt(lagerBuchung.VeränderungBestand) + " Zugang" }}
+                    </v-list-item-title>
+                    <v-list-item-subtitle>{{ lagerBuchung.Vorname }} {{ lagerBuchung.Nachname }} - {{ formatDateTime(lagerBuchung.Datum) }}</v-list-item-subtitle>
+                  </v-list-item>
+
+                </v-list>
+              </div>
+            </v-card-text>
+
           </v-card>
 
         </v-col>
@@ -1090,6 +1154,11 @@ async function submitBooking() {
     flex-direction:column;
     color:rgba(0,0,0,.5);
   }
+
+  .buchungen-scroll {
+     max-height: 150px;   /* hier stellst du die sichtbare Höhe ein */
+     overflow-y: auto;
+   }
 
   </style>
 
