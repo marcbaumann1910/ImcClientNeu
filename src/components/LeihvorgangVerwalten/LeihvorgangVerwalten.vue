@@ -3,6 +3,7 @@ import {computed, onMounted, reactive, ref} from "vue";
 import { useDisplay } from 'vuetify';
 import { useRouter } from 'vue-router';
 import AuthenticationService from "@/services/AuthenticationService.js";
+import DialogMietvertraege from "@/components/LeihvorgangVerwalten/DialogMietvertraege.vue";
 import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme.vue";
 import store from "@/store/store.js";
 import { expansionForLeihvorgang, isVisibleIventarStatus, checkStatusZustandArtikel } from "@/scripte/globalFunctions.js"
@@ -19,6 +20,7 @@ const imageUrl = `${origin}`;                            // <- für Artikelbilde
 const expandedPanels = ref([]);
 // Reaktives Objekt zur Verfolgung des Checkbox-Status
 const checkedItems = reactive({});
+const dlgMietvertraege = ref(null);
 const loading = ref(false);
 const searchArtikels = ref({});
 const searchMitglied = ref('');
@@ -192,6 +194,11 @@ function handleExpansionPanelClick(member) {
     expansionForLeihvorgang(member);
   }
 }
+
+async function downloadMietvertrag(ibp_IDInventarBuchungen) {
+  console.log('ibp_IDInventarBuchungen', ibp_IDInventarBuchungen);
+}
+
 //globalFunctions
 isVisibleIventarStatus;
 checkStatusZustandArtikel;
@@ -199,12 +206,14 @@ checkStatusZustandArtikel;
 import Notifications from '@/components/Notifications.vue';
 import { notifyError, notifySuccess } from '@/scripte/notifications';
 import App from "@/App.vue";
+import axios from "axios";
 
 </script>
 
 <template>
-
+    <DialogMietvertraege ref="dlgMietvertraege" />
     <Notifications />
+    <DialogMietvertraege ref="dlgMietvertraege" />
 
   <v-container max-width="1250">
 <!--    <div>-->
@@ -310,8 +319,21 @@ import App from "@/App.vue";
                   <v-col>
                     <v-list-item-action class="ml-4">
                       <v-list-item-title >Artikel {{ item.anzahlArtikel }} Stück</v-list-item-title>
+                      <v-tooltip text="Mietvertrag herunterladen">
+                        <template v-slot:activator="{ props }">
+                          <v-icon @click="dlgMietvertraege?.open(item.easyVereinMitglied_id)" v-bind="props" color="red" size="large" class="ml-2 mb-1">mdi-file-pdf-box</v-icon>
+                        </template>
+                      </v-tooltip>
+
+                      <v-tooltip text="Mietvertrag per Email senden">
+                        <template v-slot:activator="{ props }">
+                          <v-icon v-bind="props" color="success" size="large" class="ml-2 mb-1">mdi-email-fast-outline</v-icon>
+                        </template>
+                      </v-tooltip>
                     </v-list-item-action>
                   </v-col>
+
+
 
                   <v-list-item-action class="mr-7">
                     <v-list-item-title><b>Gesamtpreis: {{ (Math.round(item.gesamtPreis * 100) / 100).toFixed(2) }} €</b></v-list-item-title>

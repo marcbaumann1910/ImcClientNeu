@@ -104,6 +104,16 @@ export default {
         console.log('leihvorgangNummerAendern/externenummeraendern:', data);
         return Api.patch('/leihvorgangverwalten/artikeltauschen', data);
     },
+    leihvorgangGetMietvertraegeByMember({ easyVereinMitgliedId, status }) {
+        console.log('leihvorgangverwalten/getmietvertraegebymember:');
+
+        return Api.get(`/leihvorgangverwalten/getmietvertraegebymember`,{
+            params: {
+                easyVereinMitgliedId,
+                status
+            }
+        });
+    },
     leihvorgangInventarExterneNummernVergeben(data){
     console.log('leihvorgangInventarExterneNummernUpdateVergeben:', data);
     return Api.patch('/leihvorgangverwalten/inventarexternenummernupdatevergeben', data);

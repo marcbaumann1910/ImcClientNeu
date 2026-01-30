@@ -10,10 +10,12 @@ import DialogRuecknahme from "@/components/LeihvorgangVerwalten/DialogRuecknahme
 import DialogNummerAendern from "@/components/LeihvorgangVerwalten/DialogNummerAendern.vue";
 import DialogArtikelTausch from "@/components/LeihvorgangVerwalten/DialogArtikelTausch.vue";
 import DialogToolTip from "@/components/DialogToolTip.vue";
+import DialogMietvertraege from "@/components/LeihvorgangVerwalten/DialogMietvertraege.vue";
 import { checkStatusZustandArtikel,expansionForLeihvorgang,formatDate,isVisibleIventarStatus} from "@/scripte/globalFunctions.js";
 import store from "@/store/store.js";
 import cloneDeep from 'lodash/cloneDeep'; // Importiere cloneDeep für tiefe Kopien
 
+const dlgMietvertraege = ref(null);
 const artikelDetails = ref(null);
 const checkedAusgeliehen = ref(true);
 const checkedAbgeschlossen = ref(false);
@@ -54,6 +56,7 @@ const kebabs = [
   { title: 'Rücknahme', action: showDialogRuecknahme, icon: 'mdi-arrow-down-thin-circle-outline' },
   { title: 'Nummer ändern', action: showDialogNummerAendern, icon: 'mdi-pencil' },
   { title: 'Tausch', action: showDialogArtikelTausch, icon: 'mdi-swap-horizontal' },
+  { title: 'Mietverträge', action: () => dlgMietvertraege.value?.open(member.value?.easyVereinMitglied_id), icon: 'mdi-file-pdf-box' }
 ];
 
 async function showDialogArtikelTausch(artikelDetails) {
@@ -149,6 +152,8 @@ checkStatusZustandArtikel;
 
 
 <template>
+  <DialogMietvertraege ref="dlgMietvertraege" />
+
   <!-- Suchfeld -->
   <v-row>
     <v-col class="d-flex justify-end">
@@ -223,7 +228,7 @@ checkStatusZustandArtikel;
         <v-list-item
             v-for="kebab in kebabs"
             :key="kebab.title"
-            @click="() => kebab.action(itemArtikelDetails, member)"
+            @click="kebab.action?.(itemArtikelDetails)"
         >
           <v-list-item-title>
             <v-icon left class="mr-2" >{{ kebab.icon }}</v-icon>
